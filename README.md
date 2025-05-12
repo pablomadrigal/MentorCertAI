@@ -1,58 +1,58 @@
-# MentorCertAI - Plataforma de Mentorías 1a1 con Certificación Blockchain
+# MentorCertAI - 1-on-1 Mentoring Platform with Blockchain Certification
 
-## Descripción
+## Description
 
-MentorCertAI es una plataforma web que permite a mentores realizar videollamadas 1a1 con sus estudiantes, generando automáticamente certificados verificables en la blockchain de Starknet. La plataforma integra transcripción automática, análisis de IA para generar exámenes personalizados, y emisión de certificados con NFTs asociados.
+MentorCertAI is a web platform that enables mentors to conduct 1-on-1 video calls with their students, automatically generating verifiable certificates on the Starknet blockchain. The platform integrates automatic transcription, AI analysis for personalized exams, and certificate issuance with associated NFTs.
 
-## Características Principales
+## Key Features
 
-- 📹 Videollamadas 1a1 entre mentores y estudiantes
-- 🎯 Transcripción automática de las sesiones
-- 🤖 Análisis de IA para generar exámenes personalizados
-- 📝 Generación automática de certificados verificables
-- 🔗 Integración con Starknet para NFTs de certificados
-- 📱 Landing page personalizada para estudiantes
+- 📹 1-on-1 video calls between mentors and students
+- 🎯 Automatic session transcription
+- 🤖 AI analysis for personalized exam generation
+- 📝 Automatic generation of verifiable certificates
+- 🔗 Starknet integration for certificate NFTs
+- 📱 Custom landing page for students
 
-## Requisitos del Sistema
+## System Requirements
 
 - Node.js >= 18.x
-- Python >= 3.8 (para integración con IA)
-- Base de datos PostgreSQL
-- Cuenta de desarrollador en Zoom/Google Meet
-- Acceso a Starknet (testnet para desarrollo)
+- Python >= 3.8 (for AI integration)
+- PostgreSQL database
+- Zoom/Google Meet developer account
+- Starknet access (testnet for development)
 
-## Instalación
+## Installation
 
-1. Clonar el repositorio:
+1. Clone the repository:
 ```bash
 git clone https://github.com/your-org/mentor-cert-ai.git
 cd mentor-cert-ai
 ```
 
-2. Instalar dependencias del backend:
+2. Install backend dependencies:
 ```bash
 cd backend
 npm install
 ```
 
-3. Instalar dependencias del frontend:
+3. Install frontend dependencies:
 ```bash
 cd frontend
 npm install
 ```
 
-4. Configurar variables de entorno:
+4. Configure environment variables:
 ```bash
 cp .env.example .env
-# Editar .env con tus credenciales
+# Edit .env with your credentials
 ```
 
-5. Iniciar la base de datos:
+5. Initialize the database:
 ```bash
 npm run db:migrate
 ```
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 mentor-cert-ai/
@@ -75,87 +75,87 @@ mentor-cert-ai/
     └── starknet/
 ```
 
-## Flujo de Trabajo
+## Workflow
 
-1. **Agendamiento**: El mentor agenda una videollamada con el estudiante
-2. **Videollamada**: Se realiza la sesión 1a1
-3. **Transcripción**: Sistema obtiene la transcripción automáticamente
-4. **Análisis**: IA analiza el contenido y genera un examen
-5. **Evaluación**: Estudiante completa el examen
-6. **Certificación**: Si aprueba (>70%), se genera certificado y NFT
+1. **Scheduling**: Mentor schedules a video call with the student
+2. **Video Call**: 1-on-1 session is conducted
+3. **Transcription**: System automatically obtains the transcription
+4. **Analysis**: AI analyzes content and generates an exam
+5. **Evaluation**: Student completes the exam
+6. **Certification**: If passed (>70%), certificate and NFT are generated
 
-## Desarrollo
+## Development
 
-### Fases del Proyecto
+### Project Phases
 
-1. **Fase 1**: Configuración Inicial y Estructura Básica
-   - Setup de backend y frontend
-   - Modelo de datos inicial
-   - Rutas básicas
+1. **Phase 1**: Initial Setup and Basic Structure
+   - Backend and frontend setup
+   - Initial data model
+   - Basic routes
 
-2. **Fase 2**: Integración de Videollamadas
-   - Integración con Zoom/Google Meet
-   - Sistema de transcripción
+2. **Phase 2**: Video Call Integration
+   - Zoom/Google Meet integration
+   - Transcription system
 
-3. **Fase 3**: Análisis de IA
-   - Integración con modelo de lenguaje
-   - Generación de exámenes
+3. **Phase 3**: AI Analysis
+   - Language model integration
+   - Exam generation
 
-4. **Fase 4**: Frontend y Certificados
-   - Interfaz de examen
-   - Sistema de certificados
+4. **Phase 4**: Frontend and Certificates
+   - Exam interface
+   - Certificate system
 
-5. **Fase 5**: Blockchain
-   - Contrato Starknet
-   - NFTs de certificados
+5. **Phase 5**: Blockchain
+   - Starknet contract
+   - Certificate NFTs
 
-6. **Fase 6**: Pruebas y Despliegue
-   - Testing completo
-   - Despliegue en producción
+6. **Phase 6**: Testing and Deployment
+   - Complete testing
+   - Production deployment
 
-### Guías de Desarrollo
+### Development Guidelines
 
-- Seguir las convenciones de código en `instructions/rules/cursor_rules.md`
-- Mantener cobertura de pruebas > 80%
-- Documentar cambios significativos
-- Revisar PRs antes de merge
+- Follow code conventions in `instructions/rules/cursor_rules.md`
+- Maintain test coverage > 80%
+- Document significant changes
+- Review PRs before merge
 
 ## API Endpoints
 
-### Estudiantes
-- `POST /api/students` - Crear nuevo estudiante
-- `GET /api/students/:id` - Obtener estudiante
-- `GET /api/students/:id/certificates` - Listar certificados
+### Students
+- `POST /api/students` - Create new student
+- `GET /api/students/:id` - Get student
+- `GET /api/students/:id/certificates` - List certificates
 
-### Certificados
-- `POST /api/certificates` - Generar certificado
-- `GET /api/certificates/:id` - Obtener certificado
-- `GET /api/certificates/:id/nft` - Obtener NFT asociado
+### Certificates
+- `POST /api/certificates` - Generate certificate
+- `GET /api/certificates/:id` - Get certificate
+- `GET /api/certificates/:id/nft` - Get associated NFT
 
-### Exámenes
-- `POST /api/exams` - Generar examen
-- `POST /api/exams/:id/submit` - Enviar respuestas
-- `GET /api/exams/:id/results` - Obtener resultados
+### Exams
+- `POST /api/exams` - Generate exam
+- `POST /api/exams/:id/submit` - Submit answers
+- `GET /api/exams/:id/results` - Get results
 
-## Contribución
+## Contributing
 
-1. Fork el repositorio
-2. Crear rama feature (`git checkout -b feature/AmazingFeature`)
-3. Commit cambios (`git commit -m 'Add AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abrir Pull Request
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
-## Licencia
+## License
 
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
+This project is under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Contacto
+## Contact
 
-- Equipo de Desarrollo - dev@mentorcertai.com
-- Sitio Web - [https://mentorcertai.com](https://mentorcertai.com)
+- Development Team - dev@mentorcertai.com
+- Website - [https://mentorcertai.com](https://mentorcertai.com)
 
-## Agradecimientos
+## Acknowledgments
 
-- [Starknet](https://starknet.io/) por la infraestructura blockchain
-- [Blockcerts](https://www.blockcerts.org/) por el estándar de certificados
-- [Zoom/Google Meet](https://zoom.us/) por las APIs de videollamadas 
+- [Starknet](https://starknet.io/) for blockchain infrastructure
+- [Blockcerts](https://www.blockcerts.org/) for certificate standard
+- [Zoom/Google Meet](https://zoom.us/) for video call APIs 
