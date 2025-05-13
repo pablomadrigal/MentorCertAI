@@ -1,7 +1,3 @@
-¡Perfecto! Aquí tienes el documento markdown con las guías de estilo basadas en nuestra conversación. Lo he estructurado para que sea claro y fácil de usar para los desarrolladores.
-
-Markdown
-
 # Guías de Estilo - MentorCertAi
 
 **Versión:** 1.0
