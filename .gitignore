@@ -45,3 +45,6 @@ webapp/.vercel
 *.tsbuildinfo
 next-env.d.ts 
 webapp/next-env.d.ts
+
+# transcripts
+transcripts
