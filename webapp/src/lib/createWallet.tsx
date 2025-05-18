@@ -8,12 +8,14 @@ import {
   CairoOption,
   CairoOptionVariant,
   CairoCustomEnum,
+  wallet,
 } from "starknet";
 import crypto from "crypto";
+import { convertSignedMessage } from "./utils";
 
 const algorithm = "aes-256-ecb"; // Encryption algorithm
-
-const ARGENT_ACCOUNT_CLASS_HASH = "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f";
+const ETH_SEPOLIA_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+const ARGENT_ACCOUNT_CLASS_HASH = "0x1a736d6ed154502257f02b1ccdf4d9d1089f80811cd6acad48e6b6a9d1f2003";
 
 // Derive encryption key from data
 export const getHashFromString = (data: string) => {
@@ -85,14 +87,10 @@ export const generateAndDeployNewWalletFromPrivateKey = async (
   pin: string,
   variable?: string
 ) => {
-  const RPC_KEY = process.env.NEXT_PUBLIC_METAMASK_RPC_SECRET_KEY ?? "";
+  const RPC_KEY = process.env.NEXT_PUBLIC_RPC_URL ?? "";
 
-  console.log("The RPC key is:", RPC_KEY);
   // connect provider
-  const provider = new RpcProvider({
-    nodeUrl:
-      "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/IQNV8HbIxfgGVkxJZyazEK38KIgLQCIn",
-  });
+  const provider = new RpcProvider({ nodeUrl: RPC_KEY });
 
   //new Argent X account v0.4.0
   const argentXaccountClassHash =
@@ -136,45 +134,33 @@ export const generateAndDeployNewWalletFromPrivateKey = async (
 };
 
 export const deployWithPaymaster = async (encryptedPrivateKey: string, pin: string, paymasterUrl: string, paymasterApiKey: string, rpcUrl: string) => {
-  console.log('Starting wallet deployment with paymaster...');
   try {
-    console.log('Decrypting private key...');
     const privateKey = getDecryptedPrivateKey(encryptedPrivateKey, pin);
     const starkKeyPub = ec.starkCurve.getStarkKey(privateKey);
-    console.log('Stark public key generated:', starkKeyPub);
 
-    console.log('Preparing Argent account constructor data...');
+    const axGuardian = new CairoOption<unknown>(CairoOptionVariant.None);
     const ArgentAAConstructorCallData = CallData.compile({
       owner: starkKeyPub,
-      guardian: '0',
+      guardian: axGuardian,
     });
+
     const WalletHexAddress = hash.calculateContractAddressFromHash(
       starkKeyPub,
       ARGENT_ACCOUNT_CLASS_HASH,
       ArgentAAConstructorCallData,
       0
     );
-    console.log('Wallet address calculated:', WalletHexAddress);
-
-    console.log('Checking paymaster compatibility...');
-    const compatibilityResponse = await fetch(`${paymasterUrl}/paymaster/v1/accounts/${WalletHexAddress}/compatible`, {
-      method: "GET"
-    });
-    if (!compatibilityResponse.ok) {
-      throw new Error('Paymaster compatibility check failed');
-    }
-    console.log('Paymaster compatibility confirmed');
 
     const deploymentData = {
       class_hash: ARGENT_ACCOUNT_CLASS_HASH,
       salt: ARGENT_ACCOUNT_CLASS_HASH,
-      unique: true,
-      calldata: ArgentAAConstructorCallData,
-      sigdata: []
+      unique: "0x1",
+      calldata: ArgentAAConstructorCallData.map(x => {
+        const hex = BigInt(x).toString(16);
+        return `0x${hex}`;
+      })
     };
-    console.log('Deployment data prepared:', deploymentData);
 
-    console.log('Building typed data for deployment...');
     const buildTypedDataResponse = await fetch(`${paymasterUrl}/paymaster/v1/build-typed-data`, {
       method: "POST",
       headers: {
@@ -193,37 +179,23 @@ export const deployWithPaymaster = async (encryptedPrivateKey: string, pin: stri
       throw new Error('Failed to build typed data');
     }
 
-    const typedData = await buildTypedDataResponse.json();
-    console.log("Typed data received:", typedData);
-
-    console.log('Initializing RPC provider and account...');
-    const provider = new RpcProvider({ nodeUrl: rpcUrl })
-    const accountAX = new Account(provider, WalletHexAddress, privateKey);
-    console.log('Signing typed data...');
-    const signedTypedData = await accountAX.signMessage(typedData);
-    console.log('Typed data signed successfully');
-
-    console.log('Executing deployment transaction...');
-    const executeResponse = await fetch(`${paymasterUrl}/paymaster/v1/execute`, {
+    const deployResponse = await fetch(`${paymasterUrl}/paymaster/v1/deploy-account`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "api-key": paymasterApiKey,
       },
       body: JSON.stringify({
-        typedData: signedTypedData,
+        userAddress: WalletHexAddress,
         deploymentData
       })
-    });
+    })
 
-    if (!executeResponse.ok) {
+    if (!deployResponse.ok) {
       throw new Error('Failed to execute deployment');
     }
 
-    const executeResult = await executeResponse.json();
-    console.log('Deployment successful!');
-    console.log('Transaction hash:', executeResult.transactionHash);
-    console.log('Contract address:', WalletHexAddress);
+    const executeResult = await deployResponse.json();
 
     return {
       transactionHash: executeResult.transactionHash,
@@ -231,8 +203,6 @@ export const deployWithPaymaster = async (encryptedPrivateKey: string, pin: stri
     };
 
   } catch (error) {
-    console.error('Wallet deployment failed:', error);
     throw error;
   }
 }
-
