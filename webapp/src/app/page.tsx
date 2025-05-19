@@ -8,16 +8,14 @@ import { deployWithPaymaster, generatePrivateKeyEncrypted } from "@/lib/createWa
 
 const deployWallet = async (e: React.MouseEvent) => {
   e.preventDefault()
-  const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL ?? ""
   const mensisPrivateKey = process.env.NEXT_PUBLIC_MENSIS_PRIVATE_KEY ?? ""
   const paymasterUrl = process.env.NEXT_PUBLIC_ANVU_URL ?? ""
   const paymasterApiKey = process.env.NEXT_PUBLIC_AVNU_PAYMASTER_API_KEY ?? ""
 
-  console.log("rpcUrl", rpcUrl)
   console.log("privateKey", mensisPrivateKey)
 
   const pk = generatePrivateKeyEncrypted("123456")
-  deployWithPaymaster(pk, "123456", paymasterUrl, paymasterApiKey, rpcUrl)
+  deployWithPaymaster(pk, "123456", paymasterUrl, paymasterApiKey)
 
   //deployWithSendETH(mensisPrivateKey, rpcUrl)
 }

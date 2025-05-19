@@ -8,13 +8,10 @@ import {
   CairoOption,
   CairoOptionVariant,
   CairoCustomEnum,
-  wallet,
 } from "starknet";
 import crypto from "crypto";
-import { convertSignedMessage } from "./utils";
 
 const algorithm = "aes-256-ecb"; // Encryption algorithm
-const ETH_SEPOLIA_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 const ARGENT_ACCOUNT_CLASS_HASH = "0x1a736d6ed154502257f02b1ccdf4d9d1089f80811cd6acad48e6b6a9d1f2003";
 
 // Derive encryption key from data
@@ -40,13 +37,6 @@ export const decryptData = (encryptedData: string, pin: string): string => {
   return decrypted;
 };
 
-export const getDecryptedPrivateKey = (
-  encryptedPrivateKey: string,
-  pin: string
-) => {
-  return decryptData(encryptedPrivateKey, pin);
-};
-
 export const generatePrivateKeyEncrypted = (pin: string): string => {
   const privateKey = stark.randomAddress();
   const encryptedPrivateKey = encryptData(privateKey, pin);
@@ -54,7 +44,14 @@ export const generatePrivateKeyEncrypted = (pin: string): string => {
   return encryptedPrivateKey;
 };
 
-export const getFutureWalletAdressFromPrivateKey = (
+export const getDecryptedPrivateKey = (
+  encryptedPrivateKey: string,
+  pin: string
+) => {
+  return decryptData(encryptedPrivateKey, pin);
+};
+
+export const getFutureWalletAdress = (
   encryptedPrivateKey: string,
   pin: string
 ) => {
@@ -82,7 +79,7 @@ export const getFutureWalletAdressFromPrivateKey = (
   return AXcontractAddress;
 };
 
-export const generateAndDeployNewWalletFromPrivateKey = async (
+export const generateAndDeployPreChargedWallet = async (
   encryptedPrivateKey: string,
   pin: string,
   variable?: string
@@ -133,7 +130,7 @@ export const generateAndDeployNewWalletFromPrivateKey = async (
   return AXcontractFinalAddress;
 };
 
-export const deployWithPaymaster = async (encryptedPrivateKey: string, pin: string, paymasterUrl: string, paymasterApiKey: string, rpcUrl: string) => {
+export const deployWithPaymaster = async (encryptedPrivateKey: string, pin: string, paymasterUrl: string, paymasterApiKey: string) => {
   try {
     const privateKey = getDecryptedPrivateKey(encryptedPrivateKey, pin);
     const starkKeyPub = ec.starkCurve.getStarkKey(privateKey);
