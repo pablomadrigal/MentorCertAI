@@ -1,9 +1,20 @@
+"use client"
 import Link from "next/link"
 import { Header } from "../components/organisms/Header"
 import { Footer } from "../components/organisms/Footer"
 import { Button } from "../components/atoms/Button"
+import { useState } from "react"
+import { LoginModal } from "../components/molecules/LoginModal"
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleSubmit = (email: string) => {
+    // Aquí puedes agregar la lógica para manejar el envío del correo
+    console.log('Email submitted:', email)
+    setIsModalOpen(false)
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
@@ -21,14 +32,13 @@ export default function Home() {
                 by blockchain technology.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Link href="/login" passHref>
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto bg-transparent border-2 border-secondary-main text-secondary-main hover:bg-secondary-main hover:text-white transition-all"
-                  >
-                    Login as Student
-                  </Button>
-                </Link>
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto bg-transparent border-2 border-secondary-main text-secondary-main hover:bg-secondary-main hover:text-white transition-all"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Login as Student
+                </Button>
                 <Link href="/mentor/signup" passHref>
                   <Button
                     size="lg"
@@ -258,6 +268,12 @@ export default function Home() {
         </section>
       </main>
 
+      <LoginModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmit}
+      />
+      
       <Footer />
     </div>
   )

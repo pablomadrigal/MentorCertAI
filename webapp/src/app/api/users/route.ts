@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { createClient } from '@supabase/supabase-js'
 
+
 // Configuración de Supabase
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -10,7 +11,7 @@ const supabase = createClient(
 export async function GET() {
   try {
     const { data, error } = await supabase
-      .from('students')
+      .from('person')
       .select('*')
     
     if (error) {
