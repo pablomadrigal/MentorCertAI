@@ -7,6 +7,6 @@ const paymasterApiKey = process.env.AVNU_PAYMASTER_API_KEY ?? ""
 
 export async function GET() {
   const privateKey = generatePrivateKeyEncrypted(pk_pw)
-  deployWithPaymaster(privateKey, pk_pw, paymasterUrl, paymasterApiKey)
-  return NextResponse.json({})
+  const address = await deployWithPaymaster(privateKey, pk_pw, paymasterUrl, paymasterApiKey)
+  return NextResponse.json({address: address})
 }
