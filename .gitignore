@@ -53,3 +53,6 @@ transcripts/
 examples/
 ai-agents/transcriptions
 ai-agents/user_speech
+
+# cairo
+cairo/certificate_nft/target
