@@ -1,7 +1,24 @@
+"use client"
 import Link from "next/link"
 import { Header } from "../components/organisms/Header"
 import { Footer } from "../components/organisms/Footer"
 import { Button } from "../components/atoms/Button"
+import { deployWithPaymaster, generatePrivateKeyEncrypted } from "@/lib/createWallet"
+
+
+const deployWallet = async (e: React.MouseEvent) => {
+  e.preventDefault()
+  const mensisPrivateKey = process.env.NEXT_PUBLIC_MENSIS_PRIVATE_KEY ?? ""
+  const paymasterUrl = process.env.NEXT_PUBLIC_ANVU_URL ?? ""
+  const paymasterApiKey = process.env.NEXT_PUBLIC_AVNU_PAYMASTER_API_KEY ?? ""
+
+  console.log("privateKey", mensisPrivateKey)
+
+  const pk = generatePrivateKeyEncrypted("123456")
+  deployWithPaymaster(pk, "123456", paymasterUrl, paymasterApiKey)
+
+  //deployWithSendETH(mensisPrivateKey, rpcUrl)
+}
 
 export default function Home() {
   return (
@@ -13,7 +30,13 @@ export default function Home() {
         <section className="bg-gradient-primary py-20">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+              <button
+                onClick={deployWallet}
+                className="px-4 py-2 bg-primary-main rounded hover:bg-primary-dark transition-colors"
+              >
+                Deploy Wallet
+              </button>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">
                 AI-Powered Mentoring with Blockchain Certification
               </h1>
               <p className="text-xl mb-8 text-text-primary">
