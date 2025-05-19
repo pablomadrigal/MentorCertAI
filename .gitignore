@@ -37,6 +37,7 @@ webapp/yarn-error.log*
 .env
 webapp/.env
 webapp/.env.local
+ai-agents/.env
 
 # vercel
 .vercel
@@ -50,3 +51,5 @@ webapp/next-env.d.ts
 # transcripts
 transcripts/
 examples/
+ai-agents/transcriptions
+ai-agents/user_speech
