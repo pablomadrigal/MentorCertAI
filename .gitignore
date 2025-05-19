@@ -37,6 +37,7 @@ webapp/yarn-error.log*
 .env
 webapp/.env
 webapp/.env.local
+ai-agents/.env
 
 # vercel
 .vercel
@@ -48,3 +49,13 @@ webapp/next-env.d.ts
 
 
 transcripts/
+
+# cairo
+cairo/certificate_nft/target
+
+# ai agents
+ai-agents/transcriptions
+ai-agents/user_speech
+ai-agents/examples
+ai-agents/transcripts
+
