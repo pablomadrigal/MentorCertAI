@@ -9,12 +9,6 @@ import { LoginModal } from "../components/molecules/LoginModal"
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const handleSubmit = (email: string) => {
-    // Aquí puedes agregar la lógica para manejar el envío del correo
-    console.log('Email submitted:', email)
-    setIsModalOpen(false)
-  }
-
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
@@ -271,7 +265,6 @@ export default function Home() {
       <LoginModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmit}
       />
       
       <Footer />
