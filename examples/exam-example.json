@@ -1,0 +1,54 @@
+{
+    "success": true,
+    "data": [
+        {
+            "type": "multiple_choice",
+            "question": "What is the primary topic of the test?",
+            "options": [
+                "General knowledge",
+                "Stock market",
+                "Crypto",
+                "Weather patterns"
+            ],
+            "answer": "Crypto"
+        },
+        {
+            "type": "multiple_choice",
+            "question": "What technology will be used starting in January?",
+            "options": [
+                "AI algorithms",
+                "Blockchain certificates",
+                "Traditional paper documents",
+                "Cloud storage"
+            ],
+            "answer": "Blockchain certificates"
+        },
+        {
+            "type": "multiple_choice",
+            "question": "Where will blockchain certificates be used?",
+            "options": [
+                "In the stock market",
+                "In Menses",
+                "For weather forecasting",
+                "In the gaming industry"
+            ],
+            "answer": "In Menses"
+        },
+        {
+            "type": "yes_no",
+            "question": "Is the agent already on the phone?",
+            "answer": "yes"
+        },
+        {
+            "type": "multiple_choice",
+            "question": "When will the use of blockchain certificates begin?",
+            "options": [
+                "October",
+                "December",
+                "January",
+                "March"
+            ],
+            "answer": "January"
+        }
+    ]
+}
