@@ -2,22 +2,16 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { useAuth } from "../../../app/context/AuthContext"
 import { Header } from "../../../components/organisms/Header"
 import { Footer } from "../../../components/organisms/Footer"
 import { VideoCallComponent } from "../../../components/organisms/VideoCallComponent"
 
 export default function SessionPage({ params }: { params: { sessionId: string } }) {
   const router = useRouter()
-  const { user, isLoading: authLoading } = useAuth()
   const [isLoading, setIsLoading] = useState(true)
   const [session, setSession] = useState<any>(null)
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login")
-      return
-    }
 
     const fetchSession = async () => {
       try {
@@ -27,8 +21,8 @@ export default function SessionPage({ params }: { params: { sessionId: string } 
         // Mock session data
         setSession({
           id: Number.parseInt(params.sessionId),
-          studentId: user?.role === "student" ? user.id : 2,
-          mentorId: user?.role === "mentor" ? user.id : 1,
+          studentId: 2,
+          mentorId: 1,
           dateTime: new Date().toISOString(),
           completed: false,
         })
@@ -38,29 +32,20 @@ export default function SessionPage({ params }: { params: { sessionId: string } 
         setIsLoading(false)
       }
     }
+    fetchSession()
 
-    if (user) {
-      fetchSession()
-    }
-  }, [user, authLoading, router, params.sessionId])
+  }, [params.sessionId])
 
   const handleEndCall = async () => {
     try {
       // In a real app, this would update the session in the API
       await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Redirect based on user role
-      if (user?.role === "student") {
-        router.push(`/student/exam/${params.sessionId}`)
-      } else {
-        router.push("/mentor/dashboard")
-      }
     } catch (error) {
       console.error("Error ending call:", error)
     }
   }
 
-  if (authLoading || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-main"></div>

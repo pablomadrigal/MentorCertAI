@@ -9,11 +9,9 @@ import { Footer } from "../../../components/organisms/Footer"
 import { Button } from "../../../components/atoms/Button"
 import { Input } from "../../../components/atoms/Input"
 import { FormField } from "../../../components/molecules/FormField"
-import { useAuth } from "../../../app/context/AuthContext"
 
 export default function MentorSignup() {
   const router = useRouter()
-  const { login } = useAuth()
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [acceptTerms, setAcceptTerms] = useState(false)
@@ -59,9 +57,6 @@ export default function MentorSignup() {
       // Registrar al usuario como mentor
       // En una implementación real, aquí se enviarían los datos al backend para crear la cuenta
       console.log("Form submitted:", { fullName, email, acceptTerms })
-
-      // Iniciar sesión automáticamente después del registro
-      await login(email, "mentor")
 
       // Redirigir directamente al dashboard de mentor
       router.push("/mentor/dashboard")
