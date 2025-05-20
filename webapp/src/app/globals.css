@@ -2,8 +2,25 @@
 @config "../../tailwind.config.ts";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary-dark: #0f172a;
+  --primary-main: #1e2a38;
+  --primary-light: #38bdf8;
+  --secondary-dark: #2a1a67;
+  --secondary-main: #7b61ff;
+  --secondary-light: #9d89ff;
+  --accent-main: #3ddc97;
+  --accent-light: #65e5af;
+  --accent-dark: #2ab77a;
+  --background: #0f172a;
+  --surface: #1e293b;
+  --surface-lighter: #334155;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --success: #3ddc97;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-disabled: #64748b;
 }
 
 @theme inline {
@@ -22,7 +39,7 @@
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text-primary);
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -59,6 +76,17 @@ body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+/* Patrón de hexágonos pegados uno a otro - sin rombos horizontales */
+.hexagon-network {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='96' viewBox='0 0 84 96'%3E%3Cpath fill='none' stroke='white' stroke-width='0.4' stroke-dasharray='3 2' d='M42,0 L84,24 L84,72 L42,96 L0,72 L0,24 Z'/%3E%3Cpath fill='none' stroke='white' stroke-width='0.4' stroke-dasharray='3 2' d='M42,0 L84,24 L84,72 L42,96 L0,72 L0,24 Z' transform='translate(84, 0)'/%3E%3Cpath fill='none' stroke='white' stroke-width='0.4' stroke-dasharray='3 2' d='M42,0 L84,24 L84,72 L42,96 L0,72 L0,24 Z' transform='translate(42, 96)'/%3E%3Cpath fill='none' stroke='white' stroke-width='0.4' stroke-dasharray='3 2' d='M42,0 L84,24 L84,72 L42,96 L0,72 L0,24 Z' transform='translate(-42, 96)'/%3E%3Cpath fill='none' stroke='white' stroke-width='0.4' stroke-dasharray='3 2' d='M42,0 L84,24 L84,72 L42,96 L0,72 L0,24 Z' transform='translate(-84, 0)'/%3E%3Cpath fill='none' stroke='white' stroke-width='0.4' stroke-dasharray='3 2' d='M42,0 L84,24 L84,72 L42,96 L0,72 L0,24 Z' transform='translate(-42, -96)'/%3E%3Cpath fill='none' stroke='white' stroke-width='0.4' stroke-dasharray='3 2' d='M42,0 L84,24 L84,72 L42,96 L0,72 L0,24 Z' transform='translate(42, -96)'/%3E%3C/svg%3E");
+  background-size: 60px 70px; /* Reducido de 84px 96px para hexágonos más pequeños */
+  background-position: center center;
+  opacity: 0.15; /* Aumentado de 0.05 para hacerlos ligeramente más visibles */
 }
 
 @layer utilities {

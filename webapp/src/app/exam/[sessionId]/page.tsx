@@ -1,18 +1,18 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { Header } from "../../../../components/organisms/Header"
-import { Footer } from "../../../../components/organisms/Footer"
-import { ExamComponent } from "../../../../components/organisms/ExamComponent"
+import { useParams } from "next/navigation"
+import { Header } from "../../../components/organisms/Header"
+import { Footer } from "../../../components/organisms/Footer"
+import { ExamComponent } from "../../../components/organisms/ExamComponent"
 
-export default function ExamPage({ params }: { params: { sessionId: string } }) {
-  const router = useRouter()
+export default function ExamPage() {
+  const params = useParams()
+  const sessionId = params.sessionId as string
   const [isLoading, setIsLoading] = useState(true)
   const [session, setSession] = useState<any>(null)
 
   useEffect(() => {
-
     const fetchSession = async () => {
       try {
         // In a real app, this would fetch the session from the API
@@ -20,7 +20,7 @@ export default function ExamPage({ params }: { params: { sessionId: string } }) 
 
         // Mock session data
         setSession({
-          id: Number.parseInt(params.sessionId),
+          id: Number.parseInt(sessionId),
           studentId: 0,
           mentorId: 1,
           dateTime: new Date().toISOString(),
@@ -33,7 +33,8 @@ export default function ExamPage({ params }: { params: { sessionId: string } }) 
       }
     }
 
-  }, [router, params.sessionId])
+    fetchSession()
+  }, [sessionId])
 
   if (isLoading) {
     return (
@@ -66,7 +67,7 @@ export default function ExamPage({ params }: { params: { sessionId: string } }) 
 
       <main className="grow py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-8">Certification Exam</h1>
+          <h1 className="text-3xl font-bold mb-8">Certification Exam for {sessionId}</h1>
           <div className="max-w-3xl mx-auto">
             <ExamComponent sessionId={session.id} studentId={session.studentId} />
           </div>

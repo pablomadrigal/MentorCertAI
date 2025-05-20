@@ -207,7 +207,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-linear-to-br from-primary-dark via-primary-main to-primary-dark opacity-90"></div>
 
           {/* Hexágonos para blockchain - ahora más pequeños */}
-          <div className="absolute inset-0 z-0 opacity-8">
+          <div className="absolute inset-0 z-0">
             <div className="hexagon-network"></div>
           </div>
 

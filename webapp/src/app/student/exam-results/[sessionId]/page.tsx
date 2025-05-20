@@ -1,16 +1,18 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams, useParams } from "next/navigation"
 import { Header } from "../../../../components/organisms/Header"
 import { Footer } from "../../../../components/organisms/Footer"
 import { Button } from "../../../../components/atoms/Button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/atoms/Card"
 import { NFTDisplayComponent } from "../../../../components/organisms/NFTDisplayComponent"
 
-export default function ExamResultsPage({ params }: { params: { sessionId: string } }) {
+export default function ExamResultsPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const params = useParams()
+  const sessionId = params.sessionId as string
   const score = Number.parseInt(searchParams.get("score") || "0")
   const passed = score >= 70
 
@@ -70,7 +72,7 @@ export default function ExamResultsPage({ params }: { params: { sessionId: strin
       }
     }
 
-  }, [params.sessionId, score, passed])
+  }, [sessionId, score, passed])
 
   if (isLoading) {
     return (
