@@ -204,7 +204,7 @@ export default function Home() {
         {/* Hero Section with Modern Pattern */}
         <section ref={heroRef} className="bg-gradient-primary py-20 relative overflow-hidden">
           {/* Fondo base */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-dark via-primary-main to-primary-dark opacity-90"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-primary-dark via-primary-main to-primary-dark opacity-90"></div>
 
           {/* Hexágonos para blockchain - ahora más pequeños */}
           <div className="absolute inset-0 z-0 opacity-8">
@@ -227,7 +227,7 @@ export default function Home() {
                 <Link href="/login" passHref>
                   <Button
                     size="lg"
-                    className="w-full sm:w-auto bg-gradient-to-r from-primary-main to-primary-light text-white hover:from-primary-light hover:to-primary-main transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(56,189,248,0.2)] hover:[box-shadow:0_0_15px_rgba(56,189,248,0.3)]"
+                    className="w-full sm:w-auto bg-linear-to-r from-primary-main to-primary-light text-white hover:from-primary-light hover:to-primary-main transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(56,189,248,0.2)] hover:[box-shadow:0_0_15px_rgba(56,189,248,0.3)]"
                   >
                     Login as Student
                   </Button>
@@ -235,7 +235,7 @@ export default function Home() {
                 <Link href="/mentor/signup" passHref>
                   <Button
                     size="lg"
-                    className="w-full sm:w-auto bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(123,97,255,0.2)] hover:[box-shadow:0_0_15px_rgba(123,97,255,0.3)]"
+                    className="w-full sm:w-auto bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(123,97,255,0.2)] hover:[box-shadow:0_0_15px_rgba(123,97,255,0.3)]"
                   >
                     Become a Mentor
                   </Button>
@@ -246,13 +246,13 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section className="py-16 bg-gradient-to-r from-primary-dark to-primary-main">
+        <section className="py-16 bg-linear-to-r from-primary-dark to-primary-main">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12 text-text-primary">Platform Features</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="rounded-lg shadow-lg overflow-hidden">
-                <div className="bg-gradient-to-br from-primary-main to-primary-light p-6 flex flex-col items-center">
+                <div className="bg-linear-to-br from-primary-main to-primary-light p-6 flex flex-col items-center">
                   <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-6 backdrop-blur-sm">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -282,7 +282,7 @@ export default function Home() {
               </div>
 
               <div className="rounded-lg shadow-lg overflow-hidden">
-                <div className="bg-gradient-to-br from-secondary-dark to-secondary-main p-6 flex flex-col items-center">
+                <div className="bg-linear-to-br from-secondary-dark to-secondary-main p-6 flex flex-col items-center">
                   <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-6 backdrop-blur-sm">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -308,7 +308,7 @@ export default function Home() {
               </div>
 
               <div className="rounded-lg shadow-lg overflow-hidden">
-                <div className="bg-gradient-to-br from-primary-dark to-accent-main p-6 flex flex-col items-center">
+                <div className="bg-linear-to-br from-primary-dark to-accent-main p-6 flex flex-col items-center">
                   <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-6 backdrop-blur-sm">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -338,13 +338,13 @@ export default function Home() {
         {/* How It Works Section - Rediseñada */}
         <section className="py-20 bg-surface relative overflow-hidden">
           {/* Línea de conexión - ahora con z-index bajo para que no cubra el texto */}
-          <div className="absolute left-1/2 top-32 bottom-32 w-1 bg-gradient-to-b from-secondary-main to-accent-main -z-0"></div>
+          <div className="absolute left-1/2 top-32 bottom-32 w-1 bg-linear-to-b from-secondary-main to-accent-main -z-0"></div>
 
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-16 relative z-10 bg-surface py-2">
               <h2 className="text-4xl font-bold mb-4 text-text-primary inline-block relative">
                 How It Works
-                <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-secondary-main to-accent-main"></span>
+                <span className="absolute -bottom-2 left-0 right-0 h-1 bg-linear-to-r from-secondary-main to-accent-main"></span>
               </h2>
               <p className="text-text-secondary text-lg max-w-2xl mx-auto">
                 Our streamlined process makes it easy to get started, connect with mentors, and earn recognized
@@ -357,7 +357,7 @@ export default function Home() {
               <div className="flex flex-col md:flex-row items-center mb-24 relative group">
                 {/* Número del paso - visible en móvil y escritorio */}
                 <div className="absolute left-1/2 md:left-auto md:right-[calc(50%-12px)] top-0 transform -translate-x-1/2 md:translate-x-0 md:-translate-y-1/2 z-10">
-                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-primary-main to-primary-light flex items-center justify-center shadow-lg border-4 border-surface group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-linear-to-br from-primary-main to-primary-light flex items-center justify-center shadow-lg border-4 border-surface group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl md:text-4xl font-bold text-white">1</span>
                   </div>
                 </div>
@@ -369,7 +369,7 @@ export default function Home() {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary-light opacity-5 rounded-full -mr-10 -mt-10"></div>
 
                     <h3 className="text-2xl font-bold text-text-primary mb-4 inline-flex items-center">
-                      <span className="bg-gradient-to-r from-primary-light to-secondary-main bg-clip-text text-transparent">
+                      <span className="bg-linear-to-r from-primary-light to-secondary-main bg-clip-text text-transparent">
                         Sign Up
                       </span>
                       <svg
@@ -413,7 +413,7 @@ export default function Home() {
 
                 {/* Imagen */}
                 <div className="md:w-1/2 hidden md:flex justify-center">
-                  <div className="w-64 h-64 md:w-80 md:h-80 rounded-2xl p-4 flex items-center justify-center bg-gradient-to-br from-surface-lighter to-surface/50 shadow-lg transform transition-all duration-300 group-hover:translate-y-[-5px] group-hover:shadow-xl">
+                  <div className="w-64 h-64 md:w-80 md:h-80 rounded-2xl p-4 flex items-center justify-center bg-linear-to-br from-surface-lighter to-surface/50 shadow-lg transform transition-all duration-300 group-hover:translate-y-[-5px] group-hover:shadow-xl">
                     <Image
                       src="/undraw_complete-form_aarh.svg"
                       alt="Sign Up Process"
@@ -429,7 +429,7 @@ export default function Home() {
               <div className="flex flex-col md:flex-row-reverse items-center mb-24 relative group">
                 {/* Número del paso - visible en móvil y escritorio */}
                 <div className="absolute left-1/2 md:left-[calc(50%-12px)] top-0 transform -translate-x-1/2 md:translate-x-0 md:-translate-y-1/2 z-10">
-                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-secondary-dark to-secondary-main flex items-center justify-center shadow-lg border-4 border-surface group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-linear-to-br from-secondary-dark to-secondary-main flex items-center justify-center shadow-lg border-4 border-surface group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl md:text-4xl font-bold text-white">2</span>
                   </div>
                 </div>
@@ -441,7 +441,7 @@ export default function Home() {
                     <div className="absolute top-0 left-0 w-32 h-32 bg-secondary-main opacity-5 rounded-full -ml-10 -mt-10"></div>
 
                     <h3 className="text-2xl font-bold text-text-primary mb-4 inline-flex items-center">
-                      <span className="bg-gradient-to-r from-secondary-main to-accent-main bg-clip-text text-transparent">
+                      <span className="bg-linear-to-r from-secondary-main to-accent-main bg-clip-text text-transparent">
                         Schedule Sessions
                       </span>
                       <svg
@@ -486,7 +486,7 @@ export default function Home() {
 
                 {/* Imagen */}
                 <div className="md:w-1/2 hidden md:flex justify-center">
-                  <div className="w-64 h-64 md:w-80 md:h-80 rounded-2xl p-4 flex items-center justify-center bg-gradient-to-br from-surface-lighter to-surface/50 shadow-lg transform transition-all duration-300 group-hover:translate-y-[-5px] group-hover:shadow-xl">
+                  <div className="w-64 h-64 md:w-80 md:h-80 rounded-2xl p-4 flex items-center justify-center bg-linear-to-br from-surface-lighter to-surface/50 shadow-lg transform transition-all duration-300 group-hover:translate-y-[-5px] group-hover:shadow-xl">
                     <Image
                       src="/undraw_live-collaboration_i8an.svg"
                       alt="Schedule Sessions"
@@ -502,7 +502,7 @@ export default function Home() {
               <div className="flex flex-col md:flex-row items-center relative group">
                 {/* Número del paso - visible en móvil y escritorio */}
                 <div className="absolute left-1/2 md:left-auto md:right-[calc(50%-12px)] top-0 transform -translate-x-1/2 md:translate-x-0 md:-translate-y-1/2 z-10">
-                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-accent-dark to-accent-main flex items-center justify-center shadow-lg border-4 border-surface group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-linear-to-br from-accent-dark to-accent-main flex items-center justify-center shadow-lg border-4 border-surface group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl md:text-4xl font-bold text-primary-dark">3</span>
                   </div>
                 </div>
@@ -514,7 +514,7 @@ export default function Home() {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-accent-main opacity-5 rounded-full -mr-10 -mt-10"></div>
 
                     <h3 className="text-2xl font-bold text-text-primary mb-4 inline-flex items-center">
-                      <span className="bg-gradient-to-r from-accent-main to-primary-light bg-clip-text text-transparent">
+                      <span className="bg-linear-to-r from-accent-main to-primary-light bg-clip-text text-transparent">
                         Earn Certificates
                       </span>
                       <svg
@@ -559,7 +559,7 @@ export default function Home() {
 
                 {/* Imagen */}
                 <div className="md:w-1/2 hidden md:flex justify-center">
-                  <div className="w-64 h-64 md:w-80 md:h-80 rounded-2xl p-4 flex items-center justify-center bg-gradient-to-br from-surface-lighter to-surface/50 shadow-lg transform transition-all duration-300 group-hover:translate-y-[-5px] group-hover:shadow-xl">
+                  <div className="w-64 h-64 md:w-80 md:h-80 rounded-2xl p-4 flex items-center justify-center bg-linear-to-br from-surface-lighter to-surface/50 shadow-lg transform transition-all duration-300 group-hover:translate-y-[-5px] group-hover:shadow-xl">
                     <Image
                       src="/undraw_certificate_71gt.svg"
                       alt="Earn Certificates"
@@ -576,7 +576,7 @@ export default function Home() {
                 <Link href="/login" passHref>
                   <Button
                     size="lg"
-                    className="bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(123,97,255,0.2)] hover:[box-shadow:0_0_15px_rgba(123,97,255,0.3)]"
+                    className="bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(123,97,255,0.2)] hover:[box-shadow:0_0_15px_rgba(123,97,255,0.3)]"
                   >
                     Start Your Journey Now
                   </Button>
@@ -587,7 +587,7 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 bg-gradient-to-r from-primary-dark to-primary-main">
+        <section className="py-16 bg-linear-to-r from-primary-dark to-primary-main">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-6 text-white">Ready to Start Your Learning Journey?</h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto text-text-primary">

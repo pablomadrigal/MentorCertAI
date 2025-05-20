@@ -158,7 +158,7 @@ export default function StudentDashboard() {
     <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="flex-grow py-8">
+      <main className="grow py-8">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">Student Dashboard</h1>
 
@@ -207,7 +207,7 @@ export default function StudentDashboard() {
                   {displayNFTs.slice(0, 2).map((nft) => (
                     <div key={nft.id} className="relative group">
                       {/* Capa de gradiente con tamaño fijo de 1px */}
-                      <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary-light via-secondary-main to-accent-main p-[1px]"></div>
+                      <div className="absolute inset-0 rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main p-px"></div>
                       <Card className="relative rounded-[7px] z-10 bg-surface">
                         <CardHeader className="p-4">
                           <CardTitle className="text-base truncate" title={nft.metadata.name}>
@@ -216,7 +216,7 @@ export default function StudentDashboard() {
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
                           <div className="flex items-center space-x-4">
-                            <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
+                            <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0">
                               <Image
                                 src={nft.metadata.image || "/placeholder.svg"}
                                 alt={nft.metadata.name}
@@ -224,7 +224,7 @@ export default function StudentDashboard() {
                                 className="object-cover"
                               />
                             </div>
-                            <div className="flex-grow">
+                            <div className="grow">
                               <p className="text-xs text-text-secondary mb-1">
                                 {nft.metadata.attributes.find((attr) => attr.trait_type === "Subject")?.value}
                               </p>
@@ -245,7 +245,7 @@ export default function StudentDashboard() {
                   ))}
 
                   <Link href="/student/nfts" passHref>
-                    <Button className="w-full bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all duration-300">
+                    <Button className="w-full bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all duration-300">
                       View All NFTs
                     </Button>
                   </Link>

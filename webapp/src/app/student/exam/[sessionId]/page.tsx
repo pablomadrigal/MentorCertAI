@@ -48,7 +48,7 @@ export default function ExamPage({ params }: { params: { sessionId: string } }) 
       <div className="flex flex-col min-h-screen">
         <Header />
 
-        <main className="flex-grow py-8">
+        <main className="grow py-8">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-3xl font-bold mb-4">Session Not Found</h1>
             <p className="mb-8">The session you're looking for doesn't exist or you don't have access to it.</p>
@@ -64,7 +64,7 @@ export default function ExamPage({ params }: { params: { sessionId: string } }) 
     <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="flex-grow py-8">
+      <main className="grow py-8">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">Certification Exam</h1>
           <div className="max-w-3xl mx-auto">

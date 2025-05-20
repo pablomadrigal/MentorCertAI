@@ -78,11 +78,11 @@ export default function MentorSignup() {
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
 
-      <main className="flex-grow py-16">
+      <main className="grow py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <div className="bg-surface rounded-lg shadow-lg p-8 border border-surface-lighter">
-              <h1 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-secondary-main to-accent-main bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold mb-6 text-center bg-linear-to-r from-secondary-main to-accent-main bg-clip-text text-transparent">
                 Become a Mentor
               </h1>
 
@@ -139,7 +139,7 @@ export default function MentorSignup() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110"
+                    className="w-full bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110"
                   >
                     {isSubmitting ? (
                       <div className="flex items-center justify-center">

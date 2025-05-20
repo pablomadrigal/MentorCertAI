@@ -84,12 +84,12 @@ export default function ExamResultsPage({ params }: { params: { sessionId: strin
     <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="flex-grow py-8">
+      <main className="grow py-8">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8 text-center">Exam Results</h1>
 
           <div className="max-w-3xl mx-auto">
-            <div className="relative p-[1px] rounded-lg bg-gradient-to-r from-primary-light via-secondary-main to-accent-main shadow-md mb-8">
+            <div className="relative p-px rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main shadow-md mb-8">
               <Card className="rounded-[7px]">
                 <CardHeader>
                   <CardTitle className="text-center">Your Score: {score}%</CardTitle>
@@ -128,7 +128,7 @@ export default function ExamResultsPage({ params }: { params: { sessionId: strin
               <div className="space-y-8">
                 <div>
                   <h2 className="text-2xl font-bold mb-4 text-center">Your Certificate</h2>
-                  <div className="relative p-[1px] rounded-lg bg-gradient-to-r from-primary-light via-secondary-main to-accent-main shadow-md">
+                  <div className="relative p-px rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main shadow-md">
                     <div className="bg-white p-8 rounded-[7px] text-slate-800 relative overflow-hidden">
                       {/* Elementos decorativos de fondo con mayor opacidad */}
                       <div className="absolute top-0 right-0 w-40 h-40 bg-accent-main/20 rounded-full -mr-20 -mt-20"></div>
@@ -142,8 +142,8 @@ export default function ExamResultsPage({ params }: { params: { sessionId: strin
 
                       <div className="border-8 border-accent-main/20 p-8 rounded-lg bg-white shadow-inner relative overflow-hidden z-10">
                         {/* Elementos decorativos */}
-                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-light via-secondary-main to-accent-main"></div>
-                        <div className="absolute bottom-0 right-0 w-full h-2 bg-gradient-to-r from-accent-main via-secondary-main to-primary-light"></div>
+                        <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-primary-light via-secondary-main to-accent-main"></div>
+                        <div className="absolute bottom-0 right-0 w-full h-2 bg-linear-to-r from-accent-main via-secondary-main to-primary-light"></div>
 
                         {/* Patrones decorativos en las esquinas */}
                         <div className="absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 border-secondary-main/30 rounded-tl-lg"></div>
@@ -154,7 +154,7 @@ export default function ExamResultsPage({ params }: { params: { sessionId: strin
                         <div className="text-center relative z-10">
                           <div className="mb-6">
                             <h3 className="text-3xl font-bold mb-2 text-slate-900">Certificate of Completion</h3>
-                            <div className="w-32 h-1 bg-gradient-to-r from-secondary-main to-accent-main mx-auto"></div>
+                            <div className="w-32 h-1 bg-linear-to-r from-secondary-main to-accent-main mx-auto"></div>
                           </div>
 
                           <p className="text-lg mb-8 text-slate-700">This certifies that</p>
