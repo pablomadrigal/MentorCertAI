@@ -93,7 +93,7 @@ export function LoginForm() {
 
                 <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-light brightness-110 shadow-md"
+                    className="w-full bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-light brightness-110 shadow-md"
                     disabled={isLoading}
                 >
                     {isLoading ? "Logging in..." : "Login"}

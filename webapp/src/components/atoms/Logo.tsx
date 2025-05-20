@@ -12,7 +12,7 @@ export function Logo({ className = "", linkClassName = "", size = "default" }: L
     return (
         <Link
             href="/"
-            className={`${sizeClass} font-bold bg-gradient-to-r from-primary-light to-secondary-main bg-clip-text text-transparent ${linkClassName}`}
+            className={`${sizeClass} font-bold bg-linear-to-r from-primary-light to-secondary-main bg-clip-text text-transparent ${linkClassName}`}
         >
             <span className={className}>MentorCertAi</span>
         </Link>

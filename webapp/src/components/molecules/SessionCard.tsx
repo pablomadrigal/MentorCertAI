@@ -32,7 +32,7 @@ export function SessionCard({
     const isPast = new Date(dateTime) < new Date()
 
     return (
-        <div className="relative p-[1px] rounded-lg bg-gradient-to-r from-primary-light via-secondary-main to-accent-main shadow-md hover:shadow-lg transition-shadow duration-300">
+        <div className="relative p-px rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main shadow-md hover:shadow-lg transition-shadow duration-300">
             <Card className="h-full rounded-[7px] flex flex-col">
                 <CardHeader className="p-4">
                     <div className="flex justify-between items-center">
@@ -53,7 +53,7 @@ export function SessionCard({
                         </Badge>
                     </div>
                 </CardHeader>
-                <CardContent className="p-4 pt-0 flex-grow flex flex-col justify-between">
+                <CardContent className="p-4 pt-0 grow flex flex-col justify-between">
                     <div className="space-y-3">
                         <div className="space-y-1">
                             <div>
@@ -72,7 +72,7 @@ export function SessionCard({
                     {!completed && !isPast && (
                         <Button
                             onClick={onJoin}
-                            className="w-full text-sm py-1 h-auto mt-3 bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg"
+                            className="w-full text-sm py-1 h-auto mt-3 bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +93,7 @@ export function SessionCard({
                     {completed && userRole === "student" && (
                         <Button
                             onClick={onJoin}
-                            className="w-full text-sm py-1 h-auto mt-3 bg-gradient-to-r from-accent-dark to-accent-main text-primary-dark hover:from-accent-main hover:to-accent-light transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg"
+                            className="w-full text-sm py-1 h-auto mt-3 bg-linear-to-r from-accent-dark to-accent-main text-primary-dark hover:from-accent-main hover:to-accent-light transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"

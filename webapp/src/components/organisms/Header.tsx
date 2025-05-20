@@ -75,7 +75,7 @@ export function Header() {
                   Login
                 </Link>
                 <Link href="/mentor/signup" passHref>
-                  <Button className="bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark brightness-110">
+                  <Button className="bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark brightness-110">
                     Become a Mentor
                   </Button>
                 </Link>
@@ -148,7 +148,7 @@ export function Header() {
                     Login
                   </Link>
                   <Link href="/mentor/signup" passHref>
-                    <Button className="w-full bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark brightness-110">
+                    <Button className="w-full bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark brightness-110">
                       Become a Mentor
                     </Button>
                   </Link>

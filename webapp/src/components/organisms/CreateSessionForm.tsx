@@ -93,7 +93,7 @@ export function CreateSessionForm() {
 
                 <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg brightness-110"
+                    className="w-full bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg brightness-110"
                     disabled={isLoading}
                 >
                     {isLoading ? "Creating..." : "Create Session"}

@@ -17,7 +17,7 @@ interface NFTCardProps {
 export function NFTCard({ id, metadata }: NFTCardProps) {
     return (
         <div className="relative group">
-            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary-light via-secondary-main to-accent-main p-[1px]"></div>
+            <div className="absolute inset-0 rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main p-px"></div>
             <Card className="relative rounded-[7px] z-10 bg-surface">
                 <CardHeader>
                     <CardTitle className="text-xl">{metadata.name}</CardTitle>

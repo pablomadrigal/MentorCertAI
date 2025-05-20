@@ -166,7 +166,7 @@ export function ExamComponent({ sessionId, studentId }: ExamComponentProps) {
 
   if (questions.length === 0) {
     return (
-      <div className="relative p-[1px] rounded-lg bg-gradient-to-r from-primary-light via-secondary-main to-accent-main shadow-md">
+      <div className="relative p-px rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main shadow-md">
         <Card className="w-full rounded-[7px]">
           <CardContent className="p-6">
             <div className="text-center">
@@ -186,7 +186,7 @@ export function ExamComponent({ sessionId, studentId }: ExamComponentProps) {
   const allAnswered = answers.every((answer) => answer !== null && answer !== undefined)
 
   return (
-    <div className="relative p-[1px] rounded-lg bg-gradient-to-r from-primary-light via-secondary-main to-accent-main shadow-md">
+    <div className="relative p-px rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main shadow-md">
       <Card className="w-full rounded-[7px]">
         <CardHeader>
           <CardTitle>

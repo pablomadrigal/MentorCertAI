@@ -19,7 +19,7 @@ function RoomContent({ disconnect }: { disconnect: () => void }) {
     }, [room, disconnect]);
 
     return (
-        <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 via-blue-50 to-blue-200">
+        <div className="relative flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-gray-100 via-blue-50 to-blue-200">
             <div className="w-full max-w-5xl flex flex-col items-center justify-center gap-4 p-4">
                 <VideoConference
                     chatMessageFormatter={formatChatMessageLinks}
