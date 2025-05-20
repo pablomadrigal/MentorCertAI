@@ -37,6 +37,7 @@ webapp/yarn-error.log*
 .env
 webapp/.env
 webapp/.env.local
+ai-agents/.env
 
 # vercel
 .vercel
