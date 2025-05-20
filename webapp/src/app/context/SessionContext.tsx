@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { useAuth } from "./AuthContext"
 
 type Session = {
@@ -55,7 +55,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [nfts, setNFTs] = useState<NFT[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
-  const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
     if (!user) return
 
     setIsLoading(true)
@@ -71,9 +71,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user])
 
-  const fetchCertificates = async () => {
+  const fetchCertificates = useCallback(async () => {
     if (!user || user.role !== "student") return
 
     setIsLoading(true)
@@ -89,9 +89,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user])
 
-  const fetchNFTs = async () => {
+  const fetchNFTs = useCallback(async () => {
     if (!user || user.role !== "student") return
 
     setIsLoading(true)
@@ -107,7 +107,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user])
 
   const createSession = async (session: Omit<Session, "id">) => {
     setIsLoading(true)
@@ -141,7 +141,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         fetchNFTs()
       }
     }
-  }, [user])
+  }, [user, fetchCertificates, fetchNFTs, fetchSessions])
 
   return (
     <SessionContext.Provider

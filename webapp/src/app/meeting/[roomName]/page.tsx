@@ -1,26 +1,12 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useRoomContext, useTracks, ControlBar, PreJoin, ParticipantName, formatChatMessageLinks, VideoConference } from '@livekit/components-react';
-import { RoomEvent, Track, Room, isLocalTrack } from 'livekit-client';
+import { useRoomContext, PreJoin, formatChatMessageLinks, VideoConference } from '@livekit/components-react';
+import { RoomEvent, Room } from 'livekit-client';
 import { RoomContext } from '@livekit/components-react';
 
-function RoomContent({ disconnect }: { disconnect: () => any }) {
+function RoomContent({ disconnect }: { disconnect: () => void }) {
     const room = useRoomContext();
-    const [identity, setIdentity] = useState<string>('');
-
-    useEffect(() => {
-        const randomIdentity = `user-${Math.random().toString(36).substring(2, 8)}`;
-        setIdentity(randomIdentity);
-    }, []);
-
-    const tracks = useTracks(
-        [
-            { source: Track.Source.Camera, withPlaceholder: true },
-            { source: Track.Source.ScreenShare, withPlaceholder: false },
-        ],
-        { onlySubscribed: false },
-    );
 
     useEffect(() => {
         const handleDisconnected = () => {
@@ -30,7 +16,7 @@ function RoomContent({ disconnect }: { disconnect: () => any }) {
         return () => {
             room.off(RoomEvent.Disconnected, handleDisconnected);
         };
-    }, [room]);
+    }, [room, disconnect]);
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 via-blue-50 to-blue-200">
@@ -43,7 +29,7 @@ function RoomContent({ disconnect }: { disconnect: () => any }) {
     );
 }
 
-function RoomWrapper({ roomName, room, displayName, disconnect }: { roomName: string, room: Room, displayName?: string, disconnect: () => any }) {
+function RoomWrapper({ roomName, room, displayName, disconnect }: { roomName: string, room: Room, displayName?: string, disconnect: () => void }) {
     const [token, setToken] = useState<string | null>(null);
 
     useEffect(() => {
@@ -65,7 +51,7 @@ function RoomWrapper({ roomName, room, displayName, disconnect }: { roomName: st
         return () => {
             room.disconnect();
         };
-    }, [roomName, room]);
+    }, [roomName, room, displayName]);
 
     if (!roomName) {
         return <div className="flex items-center justify-center h-screen">Room not found.</div>;
