@@ -42,7 +42,7 @@ export function LoginForm() {
             console.log("Logged in as:", mockUser)
             router.push(role === "student" ? "/student/dashboard" : "/mentor/dashboard")
         } catch (err) {
-            setError("Failed to login. Please try again.")
+            setError(`Failed to login. Please try again. ${JSON.stringify(err)}`)
         } finally {
             setIsLoading(false)
         }

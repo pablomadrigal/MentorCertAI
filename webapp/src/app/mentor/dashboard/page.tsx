@@ -98,7 +98,7 @@ export default function MentorDashboard() {
 
     return () => clearTimeout(timer)
 
-  }, [setSessions, mockSessions, setDataLoaded])
+  }, [setSessions, setDataLoaded])
 
   // Contar sesiones por tipo
   const upcomingSessions = sessions.filter((s) => !s.completed).length

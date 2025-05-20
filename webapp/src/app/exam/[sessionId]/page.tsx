@@ -6,6 +6,15 @@ import { Header } from "../../../components/organisms/Header"
 import { Footer } from "../../../components/organisms/Footer"
 import { ExamComponent } from "../../../components/organisms/ExamComponent"
 
+interface ExamData {
+  questions: Array<{
+    id: string;
+    text: string;
+    options: string[];
+  }>;
+  // Add other relevant fields
+}
+
 export default function ExamPage() {
   const params = useParams()
   const sessionId = params.sessionId as string
@@ -48,14 +57,12 @@ export default function ExamPage() {
     return (
       <div className="flex flex-col min-h-screen">
         <Header />
-
         <main className="grow py-8">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-3xl font-bold mb-4">Session Not Found</h1>
             <p className="mb-8">The session you're looking for doesn't exist or you don't have access to it.</p>
           </div>
         </main>
-
         <Footer />
       </div>
     )

@@ -405,8 +405,8 @@ export default function Home() {
                     </div>
 
                     <div className="text-sm text-text-secondary italic border-l-2 border-secondary-main pl-3">
-                      "The sign-up process was incredibly smooth. In minutes, I was matched with the perfect mentor for
-                      my needs." - Sarah K.
+                      &ldquo;The sign-up process was incredibly smooth. In minutes, I was matched with the perfect mentor for
+                      my needs.&rdquo; - Sarah K.
                     </div>
                   </div>
                 </div>
@@ -478,7 +478,7 @@ export default function Home() {
                     </div>
 
                     <div className="text-sm text-text-secondary italic border-l-2 border-secondary-main pl-3">
-                      "The scheduling system is so flexible. I can easily find times that work with my busy schedule." -
+                      &ldquo;The scheduling system is so flexible. I can easily find times that work with my busy schedule.&rdquo; -
                       Michael T.
                     </div>
                   </div>
@@ -551,8 +551,8 @@ export default function Home() {
                     </div>
 
                     <div className="text-sm text-text-secondary italic border-l-2 border-secondary-main pl-3">
-                      "My blockchain certificate has real value. I've already used it to demonstrate my skills to
-                      potential employers." - Alex R.
+                      &ldquo;My blockchain certificate has real value. I've already used it to demonstrate my skills to
+                      potential employers.&rdquo; - Alex R.
                     </div>
                   </div>
                 </div>

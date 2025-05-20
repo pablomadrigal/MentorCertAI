@@ -106,6 +106,10 @@ export function SessionList({ useMockData = true, mockData = defaultMockData, fi
                     completed={session.completed}
                     userRole="student"
                     onJoin={() => handleJoinSession(session.id)}
+                    title={session.subject}
+                    description={session.dateTime}
+                    date={session.dateTime}
+                    status={session.completed ? "Completed" : "Upcoming"}
                 />
             ))}
         </div>

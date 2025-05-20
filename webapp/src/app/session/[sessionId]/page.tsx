@@ -1,13 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { Header } from "../../../components/organisms/Header"
 import { Footer } from "../../../components/organisms/Footer"
 import { VideoCallComponent } from "../../../components/organisms/VideoCallComponent"
 
 export default function SessionPage({ params }: { params: { sessionId: string } }) {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [session, setSession] = useState<any>(null)
 

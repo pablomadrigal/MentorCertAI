@@ -6,6 +6,10 @@ import { Badge } from "../atoms/Badge"
 import { formatDate } from "../../lib/utils"
 
 interface SessionCardProps {
+    title: string;
+    description: string;
+    date: string;
+    status: string;
     id: number
     dateTime: string
     mentorName?: string

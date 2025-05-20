@@ -121,8 +121,10 @@ export default function StudentDashboard() {
   const [nfts, setNfts] = useState(mockNFTs)
 
   useEffect(() => {
+    // Your effect code here
+  }, []);
 
-
+  useEffect(() => {
     // Asegurarse de que siempre haya datos de ejemplo visibles
     const timer = setTimeout(() => {
       setSessions(mockSessions)
@@ -131,7 +133,6 @@ export default function StudentDashboard() {
     }, 500)
 
     return () => clearTimeout(timer)
-
   }, [setDataLoaded, mockSessions, mockNFTs])
 
   // Contar sesiones por tipo
