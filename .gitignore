@@ -35,6 +35,7 @@ webapp/yarn-error.log*
 # local env files
 .env*.local
 .env
+.venv/
 webapp/.env
 webapp/.env.local
 ai-agents/.env

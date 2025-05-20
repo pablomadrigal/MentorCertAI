@@ -12,7 +12,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code
-COPY . .
+# COPY . .
+COPY transcriber-online.py .
 
 # Create directories for transcriptions
 RUN mkdir -p transcriptions user_speech
@@ -20,5 +21,7 @@ RUN mkdir -p transcriptions user_speech
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 
+EXPOSE 8081
+
 # Run the script
-CMD ["python3", "transcriber-online.py", "dev"] 
+CMD ["python", "transcriber-online.py", "start"]
