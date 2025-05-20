@@ -26,6 +26,7 @@ async def entrypoint(ctx: JobContext):
     async def send_transcript():
         async with aiohttp.ClientSession() as session:
             try:
+                print(f"Sending transcript to {os.environ.get('MENSIS_MENTOR_CERT_URL', 'https://localhost:3000/api/transcript')}")
                 await session.post(
                     os.environ.get('MENSIS_MENTOR_CERT_URL', 'https://localhost:3000/api/transcript'),
                     json={
