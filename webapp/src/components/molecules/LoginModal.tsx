@@ -1,5 +1,5 @@
 import { Button } from "../atoms/Button"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import supabase from "../../lib/supabase"
 
 interface LoginModalProps {

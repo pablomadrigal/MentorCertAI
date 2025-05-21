@@ -2,23 +2,31 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { useAuth } from "../../app/context/AuthContext"
 import { Button } from "../atoms/Button"
+import { Logo } from "../atoms/Logo"
+import { User } from "@/types/user"
 
 export function Header() {
-  const { user, logout } = useAuth()
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user")
+      return storedUser ? JSON.parse(storedUser) : null
+    }
+    return null
+  })
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const handleLogout = () => {
+    localStorage.removeItem("user")
+    setUser(null)
+    window.location.href = "/login"
+  }
 
   return (
     <header className="bg-surface shadow-md border-b border-surface-lighter">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link
-            href="/"
-            className="text-2xl font-bold bg-gradient-to-r from-primary-light to-secondary-main bg-clip-text text-transparent"
-          >
-            MentorCertAi
-          </Link>
+          <Logo />
 
           <div className="hidden md:flex items-center space-x-6">
             {user ? (
@@ -43,26 +51,26 @@ export function Header() {
                   </>
                 )}
                 <Button
-                  onClick={logout}
+                  onClick={handleLogout}
                   variant="outline"
-                  className="border-secondary-main text-secondary-main hover:bg-secondary-main hover:text-white"
+                  className="text-secondary-main ring-2 ring-secondary-main hover:bg-secondary-main hover:text-white transition-all duration-300"
                 >
                   Logout
                 </Button>
               </>
             ) : (
               <>
-                <Link href="/about" className="text-text-primary hover:text-primary-light transition-colors">
+                <Link href="/about" className="text-text-primary hover:text-secondary-main transition-colors">
                   About
                 </Link>
-                <Link href="/features" className="text-text-primary hover:text-primary-light transition-colors">
+                <Link href="/features" className="text-text-primary hover:text-secondary-main transition-colors">
                   Features
                 </Link>
-                <Link href="/login" className="text-text-primary hover:text-primary-light transition-colors">
+                <Link href="/login" className="text-text-primary hover:text-secondary-main transition-colors">
                   Login
                 </Link>
                 <Link href="/mentor/signup" passHref>
-                  <Button className="bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-light">
+                  <Button className="bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark brightness-110">
                     Become a Mentor
                   </Button>
                 </Link>
@@ -116,26 +124,26 @@ export function Header() {
                     </>
                   )}
                   <Button
-                    onClick={logout}
+                    onClick={handleLogout}
                     variant="outline"
-                    className="border-secondary-main text-secondary-main hover:bg-secondary-main hover:text-white"
+                    className="text-secondary-main ring-2 ring-secondary-main hover:bg-secondary-main hover:text-white transition-all duration-300"
                   >
                     Logout
                   </Button>
                 </>
               ) : (
                 <>
-                  <Link href="/about" className="text-text-primary hover:text-primary-light transition-colors">
+                  <Link href="/about" className="text-text-primary hover:text-secondary-main transition-colors">
                     About
                   </Link>
-                  <Link href="/features" className="text-text-primary hover:text-primary-light transition-colors">
+                  <Link href="/features" className="text-text-primary hover:text-secondary-main transition-colors">
                     Features
                   </Link>
-                  <Link href="/login" className="text-text-primary hover:text-primary-light transition-colors">
+                  <Link href="/login" className="text-text-primary hover:text-secondary-main transition-colors">
                     Login
                   </Link>
                   <Link href="/mentor/signup" passHref>
-                    <Button className="w-full bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-light">
+                    <Button className="w-full bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark brightness-110">
                       Become a Mentor
                     </Button>
                   </Link>
