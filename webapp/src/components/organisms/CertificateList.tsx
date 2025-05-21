@@ -16,11 +16,13 @@ export function CertificateList() {
                 id: 1,
                 issueDate: new Date().toISOString(),
                 grade: 95,
+                userId: "0",
             },
             {
                 id: 2,
                 issueDate: new Date(Date.now() - 86400000).toISOString(),
                 grade: 88,
+                userId: "0",
             },
         ]
 
