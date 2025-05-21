@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
-import { Header } from "../../../components/organisms/Header"
-import { Footer } from "../../../components/organisms/Footer"
-import { ExamComponent } from "../../../components/organisms/ExamComponent"
+import { Header } from "@/components/organisms/Header"
+import { Footer } from "@/components/organisms/Footer"
+import { ExamComponent } from "@/components/organisms/ExamComponent"
 
 interface Session {
   id: number;

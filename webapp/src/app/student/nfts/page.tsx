@@ -1,8 +1,8 @@
 "use client"
 
-import { Header } from "../../../components/organisms/Header"
-import { Footer } from "../../../components/organisms/Footer"
-import { NFTList } from "../../../components/organisms/NFTList"
+import { Header } from "@/components/organisms/Header"
+import { Footer } from "@/components/organisms/Footer"
+import { NFTList } from "@/components/organisms/NFTList"
 import { useEffect, useState } from "react"
 
 export default function StudentNFTs() {

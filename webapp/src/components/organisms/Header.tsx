@@ -4,23 +4,13 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "../atoms/Button"
 import { Logo } from "../atoms/Logo"
-import { User } from "@/types/user"
+import { useAuth } from "@/contexts/AuthContext"
+import { LoginModal } from "../molecules/LoginModal"
 
 export function Header() {
-  const [user, setUser] = useState<User | null>(() => {
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user")
-      return storedUser ? JSON.parse(storedUser) : null
-    }
-    return null
-  })
+  const { signOut, isAuthenticated, isMentor, isStudent } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  const handleLogout = () => {
-    localStorage.removeItem("user")
-    setUser(null)
-    window.location.href = "/login"
-  }
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   return (
     <header className="bg-surface shadow-md border-b border-surface-lighter">
@@ -29,15 +19,15 @@ export function Header() {
           <Logo />
 
           <div className="hidden md:flex items-center space-x-6">
-            {user ? (
+            {isAuthenticated ? (
               <>
                 <Link
-                  href={user.role === "student" ? "/student/dashboard" : "/mentor/dashboard"}
+                  href="/"
                   className="text-text-primary hover:text-primary-light transition-colors"
                 >
                   Dashboard
                 </Link>
-                {user.role === "student" && (
+                {isStudent && (
                   <>
                     <Link
                       href="/student/certificates"
@@ -50,8 +40,13 @@ export function Header() {
                     </Link>
                   </>
                 )}
+                {isMentor && (
+                  <Link href="/meeting" className="text-text-primary hover:text-primary-light transition-colors">
+                    Meeting
+                  </Link>
+                )}
                 <Button
-                  onClick={handleLogout}
+                  onClick={signOut}
                   variant="outline"
                   className="text-secondary-main ring-2 ring-secondary-main hover:bg-secondary-main hover:text-white transition-all duration-300"
                 >
@@ -60,20 +55,12 @@ export function Header() {
               </>
             ) : (
               <>
-                <Link href="/about" className="text-text-primary hover:text-secondary-main transition-colors">
-                  About
-                </Link>
-                <Link href="/features" className="text-text-primary hover:text-secondary-main transition-colors">
-                  Features
-                </Link>
-                <Link href="/login" className="text-text-primary hover:text-secondary-main transition-colors">
+                <Button
+                  onClick={() => setIsLoginModalOpen(true)}
+                  className="text-text-primary hover:text-secondary-main transition-colors"
+                >
                   Login
-                </Link>
-                <Link href="/mentor/signup" passHref>
-                  <Button className="bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark brightness-110">
-                    Become a Mentor
-                  </Button>
-                </Link>
+                </Button>
               </>
             )}
           </div>
@@ -99,15 +86,15 @@ export function Header() {
         {isMenuOpen && (
           <div className="mt-4 md:hidden">
             <div className="flex flex-col space-y-4">
-              {user ? (
+              {isAuthenticated ? (
                 <>
                   <Link
-                    href={user.role === "student" ? "/student/dashboard" : "/mentor/dashboard"}
+                    href="/"
                     className="text-text-primary hover:text-primary-light transition-colors"
                   >
                     Dashboard
                   </Link>
-                  {user.role === "student" && (
+                  {isStudent && (
                     <>
                       <Link
                         href="/student/certificates"
@@ -123,8 +110,13 @@ export function Header() {
                       </Link>
                     </>
                   )}
+                  {isMentor && (
+                    <Link href="/meeting" className="text-text-primary hover:text-primary-light transition-colors">
+                      Meeting
+                    </Link>
+                  )}
                   <Button
-                    onClick={handleLogout}
+                    onClick={signOut}
                     variant="outline"
                     className="text-secondary-main ring-2 ring-secondary-main hover:bg-secondary-main hover:text-white transition-all duration-300"
                   >
@@ -133,26 +125,20 @@ export function Header() {
                 </>
               ) : (
                 <>
-                  <Link href="/about" className="text-text-primary hover:text-secondary-main transition-colors">
-                    About
-                  </Link>
-                  <Link href="/features" className="text-text-primary hover:text-secondary-main transition-colors">
-                    Features
-                  </Link>
-                  <Link href="/login" className="text-text-primary hover:text-secondary-main transition-colors">
+                  <Button
+                    onClick={() => setIsLoginModalOpen(true)}
+                    className="text-text-primary hover:text-secondary-main transition-colors"
+                  >
                     Login
-                  </Link>
-                  <Link href="/mentor/signup" passHref>
-                    <Button className="w-full bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark brightness-110">
-                      Become a Mentor
-                    </Button>
-                  </Link>
+                  </Button>
                 </>
               )}
             </div>
           </div>
         )}
       </div>
+
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </header>
   )
 }
