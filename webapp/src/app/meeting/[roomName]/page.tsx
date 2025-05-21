@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useRoomContext, PreJoin, formatChatMessageLinks, VideoConference } from '@livekit/components-react';
 import { RoomEvent, Room } from 'livekit-client';
 import { RoomContext } from '@livekit/components-react';
+import { Header } from "@/components/organisms/Header";
 
 function RoomContent({ disconnect }: { disconnect: () => void }) {
     const room = useRoomContext();
@@ -19,8 +20,9 @@ function RoomContent({ disconnect }: { disconnect: () => void }) {
     }, [room, disconnect]);
 
     return (
-        <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 via-blue-50 to-blue-200">
-            <div className="w-full max-w-5xl flex flex-col items-center justify-center gap-4 p-4">
+        <div className="relative flex flex-col min-h-screen bg-gradient-primary">
+            <div className="absolute inset-0 bg-linear-to-br from-primary-dark via-primary-main to-primary-dark opacity-90"></div>
+            <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center gap-4 p-4">
                 <VideoConference
                     chatMessageFormatter={formatChatMessageLinks}
                 />
@@ -40,7 +42,6 @@ function RoomWrapper({ roomName, room, displayName, disconnect }: { roomName: st
                 setToken(data.token);
                 try {
                     await room.connect(process.env.NEXT_PUBLIC_LIVEKIT_URL!, data.token);
-                    // Enable camera and microphone with error handling
                     await room.localParticipant.enableCameraAndMicrophone();
                     console.log('Camera and microphone enabled');
                 } catch (error) {
@@ -54,12 +55,27 @@ function RoomWrapper({ roomName, room, displayName, disconnect }: { roomName: st
     }, [roomName, room, displayName]);
 
     if (!roomName) {
-        return <div className="flex items-center justify-center h-screen">Room not found.</div>;
+        return (
+            <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="grow flex items-center justify-center bg-gradient-primary">
+                    <div className="text-white text-xl">Room not found.</div>
+                </main>
+            </div>
+        );
     }
 
     if (!token) {
-        return <div className="flex items-center justify-center h-screen">Connecting to room...</div>;
+        return (
+            <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="grow flex items-center justify-center bg-gradient-primary">
+                    <div className="text-white text-xl">Connecting to room...</div>
+                </main>
+            </div>
+        );
     }
+
     return (
         <RoomContext.Provider value={room}>
             <RoomContent disconnect={disconnect} />
@@ -69,6 +85,7 @@ function RoomWrapper({ roomName, room, displayName, disconnect }: { roomName: st
 
 export default function RoomPage() {
     const params = useParams();
+    const router = useRouter();
     const roomName = params?.roomName as string;
     const [enterRoom, setEnterRoom] = useState<boolean>(false);
     const [room] = useState(() => new Room({
@@ -76,15 +93,26 @@ export default function RoomPage() {
         dynacast: true,
     }));
 
+    const handleDisconnect = () => {
+        setEnterRoom(false);
+        router.push('/meeting');
+    }
+
     return (
-        <div>
-            {enterRoom ? (
-                <RoomWrapper roomName={roomName} room={room} disconnect={() => setEnterRoom(false)} />
-            ) : (
-                <>
-                    <PreJoin onSubmit={() => setEnterRoom(true)} />
-                </>
-            )}
+        <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="grow">
+                {enterRoom ? (
+                    <RoomWrapper roomName={roomName} room={room} disconnect={handleDisconnect} />
+                ) : (
+                    <div className="bg-gradient-primary min-h-[calc(100vh-64px)]">
+                        <div className="absolute inset-0 bg-linear-to-br from-primary-dark via-primary-main to-primary-dark opacity-90"></div>
+                        <div className="relative z-10 container mx-auto px-4 py-8">
+                            <PreJoin onSubmit={() => setEnterRoom(true)} />
+                        </div>
+                    </div>
+                )}
+            </main>
         </div>
     );
 } 
