@@ -8,6 +8,27 @@ import { Button } from "../../../../components/atoms/Button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/atoms/Card"
 import { NFTDisplayComponent } from "../../../../components/organisms/NFTDisplayComponent"
 
+interface Certificate {
+  id: number;
+  studentId: number;
+  issueDate: string;
+  grade: number;
+}
+
+interface NFT {
+  id: number;
+  certificateId: number;
+  metadata: {
+    name: string;
+    description: string;
+    image: string;
+    attributes: Array<{
+      trait_type: string;
+      value: string;
+    }>;
+  };
+}
+
 export default function ExamResultsPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -17,11 +38,11 @@ export default function ExamResultsPage() {
   const passed = score >= 70
 
   const [isLoading, setIsLoading] = useState(true)
-  const [certificate, setCertificate] = useState<any>(null)
-  const [nft, setNft] = useState<any>(null)
+  const [certificate, setCertificate] = useState<Certificate | null>(null)
+  const [nft, setNft] = useState<NFT | null>(null)
 
   useEffect(() => {
-    const fetchResults = async () => {
+    const loadResults = async () => {
       try {
         // In a real app, this would fetch the certificate and NFT from the API
         await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -72,6 +93,7 @@ export default function ExamResultsPage() {
       }
     }
 
+    loadResults()
   }, [sessionId, score, passed])
 
   if (isLoading) {

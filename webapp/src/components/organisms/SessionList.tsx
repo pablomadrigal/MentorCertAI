@@ -5,7 +5,7 @@ import { SessionCard } from "../molecules/SessionCard"
 import { useRouter } from "next/navigation"
 
 interface Session {
-    id: number
+    id: string
     studentId: number
     studentEmail: string
     studentName: string
@@ -18,15 +18,13 @@ interface Session {
 }
 
 interface SessionListProps {
-    useMockData?: boolean
-    mockData?: Session[]
     filter?: "all" | "upcoming" | "completed"
 }
 
 // Mock data for sessions
-const defaultMockData: Session[] = [
+const mockData: Session[] = [
     {
-        id: 101,
+        id: '101',
         studentId: 201,
         studentEmail: "emma@example.com",
         studentName: "Emma Wilson",
@@ -38,7 +36,7 @@ const defaultMockData: Session[] = [
         completed: false,
     },
     {
-        id: 102,
+        id: '102',
         studentId: 202,
         studentEmail: "david@example.com",
         studentName: "David Miller",
@@ -50,7 +48,7 @@ const defaultMockData: Session[] = [
         completed: false,
     },
     {
-        id: 103,
+        id: '103',
         studentId: 203,
         studentEmail: "sophia@example.com",
         studentName: "Sophia Chen",
@@ -63,12 +61,12 @@ const defaultMockData: Session[] = [
     }
 ]
 
-export function SessionList({ useMockData = true, mockData = defaultMockData, filter = "all" }: SessionListProps) {
+export function SessionList({ filter = "all" }: SessionListProps) {
     const router = useRouter()
     const [displaySessions, setDisplaySessions] = useState<Session[]>([])
 
     useEffect(() => {
-        const sessions = mockData || defaultMockData
+        const sessions = mockData
         let filtered = [...sessions]
 
         if (filter === "upcoming") {
@@ -80,7 +78,7 @@ export function SessionList({ useMockData = true, mockData = defaultMockData, fi
         setDisplaySessions(filtered)
     }, [mockData, filter])
 
-    const handleJoinSession = (sessionId: number) => {
+    const handleJoinSession = (sessionId: string) => {
         router.push(`/session/${sessionId}`)
     }
 
@@ -102,7 +100,6 @@ export function SessionList({ useMockData = true, mockData = defaultMockData, fi
                     mentorName={session.mentorName}
                     studentName={session.studentName}
                     subject={session.subject}
-                    link={session.link}
                     completed={session.completed}
                     userRole="student"
                     onJoin={() => handleJoinSession(session.id)}

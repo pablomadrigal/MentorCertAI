@@ -41,6 +41,7 @@ export function CreateSessionForm() {
             setDateTime("")
         } catch (err) {
             setError("Failed to create session. Please try again.")
+            console.error("Error creating session:", err)
         } finally {
             setIsLoading(false)
         }

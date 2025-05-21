@@ -551,7 +551,7 @@ export default function Home() {
                     </div>
 
                     <div className="text-sm text-text-secondary italic border-l-2 border-secondary-main pl-3">
-                      &ldquo;My blockchain certificate has real value. I've already used it to demonstrate my skills to
+                      &ldquo;My blockchain certificate has real value. I&apos;ve already used it to demonstrate my skills to
                       potential employers.&rdquo; - Alex R.
                     </div>
                   </div>

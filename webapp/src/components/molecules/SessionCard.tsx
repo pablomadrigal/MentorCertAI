@@ -6,16 +6,15 @@ import { Badge } from "../atoms/Badge"
 import { formatDate } from "../../lib/utils"
 
 interface SessionCardProps {
+    id: string;
     title: string;
     description: string;
     date: string;
     status: string;
-    id: number
     dateTime: string
     mentorName?: string
     studentName?: string
     subject?: string
-    link: string
     completed: boolean
     userRole: "student" | "mentor"
     onJoin: () => void
@@ -27,7 +26,6 @@ export function SessionCard({
     mentorName,
     studentName,
     subject,
-    link,
     completed,
     userRole,
     onJoin,
@@ -44,13 +42,13 @@ export function SessionCard({
                             className="text-base truncate"
                             title={
                                 userRole === "student"
-                                    ? "Session with " + (mentorName || "Mentor")
-                                    : "Session with " + (studentName || "Student")
+                                    ? "Session with " + (mentorName || "Mentor") + " - " + id
+                                    : "Session with " + (studentName || "Student") + " - " + id
                             }
                         >
                             {userRole === "student"
-                                ? "Session with " + (mentorName || "Mentor")
-                                : "Session with " + (studentName || "Student")}
+                                ? "Session with " + (mentorName || "Mentor") + " - " + id
+                                : "Session with " + (studentName || "Student") + " - " + id}
                         </CardTitle>
                         <Badge variant={completed ? "success" : isPast ? "error" : "default"} className="text-xs shrink-0 ml-2">
                             {completed ? "Completed" : isPast ? "Missed" : "Upcoming"}

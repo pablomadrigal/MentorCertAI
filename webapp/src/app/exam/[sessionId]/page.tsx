@@ -6,20 +6,19 @@ import { Header } from "../../../components/organisms/Header"
 import { Footer } from "../../../components/organisms/Footer"
 import { ExamComponent } from "../../../components/organisms/ExamComponent"
 
-interface ExamData {
-  questions: Array<{
-    id: string;
-    text: string;
-    options: string[];
-  }>;
-  // Add other relevant fields
+interface Session {
+  id: number;
+  studentId: number;
+  mentorId: number;
+  dateTime: string;
+  completed: boolean;
 }
 
 export default function ExamPage() {
   const params = useParams()
   const sessionId = params.sessionId as string
   const [isLoading, setIsLoading] = useState(true)
-  const [session, setSession] = useState<any>(null)
+  const [session, setSession] = useState<Session | null>(null)
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -60,7 +59,7 @@ export default function ExamPage() {
         <main className="grow py-8">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-3xl font-bold mb-4">Session Not Found</h1>
-            <p className="mb-8">The session you're looking for doesn't exist or you don't have access to it.</p>
+            <p className="mb-8">The session you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.</p>
           </div>
         </main>
         <Footer />

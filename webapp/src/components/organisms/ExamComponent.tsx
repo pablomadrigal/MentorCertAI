@@ -34,7 +34,7 @@ interface ExamComponentProps {
   studentId: number
 }
 
-export function ExamComponent({ sessionId, studentId }: ExamComponentProps) {
+export function ExamComponent({ sessionId }: ExamComponentProps) {
   const router = useRouter()
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -47,7 +47,6 @@ export function ExamComponent({ sessionId, studentId }: ExamComponentProps) {
     const fetchQuestions = async () => {
       try {
         setIsLoading(true)
-
         // In a real implementation, this would load a session-specific JSON file
         // For now, we use a static URL for the example
         const response = await fetch("/api/exams/example")

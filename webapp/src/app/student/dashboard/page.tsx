@@ -197,7 +197,7 @@ export default function StudentDashboard() {
                   </button>
                 </div>
               </div>
-              <SessionList useMockData={true} mockData={mockSessions} filter={activeFilter} />
+              <SessionList filter={activeFilter} />
             </div>
 
             <div className="space-y-8">
