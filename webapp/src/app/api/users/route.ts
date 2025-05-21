@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { createClient } from '@supabase/supabase-js'
 
-
 // Configuración de Supabase
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -29,12 +28,8 @@ export async function POST(request: Request) {
   try {
     console.log('📝 Iniciando POST request para crear estudiante');
     
-    // Verificar el Content-Type
     const contentType = request.headers.get('content-type');
-    console.log('📨 Content-Type recibido:', contentType);
-    
     if (!contentType || !contentType.includes('application/json')) {
-      console.log('❌ Error: Content-Type inválido');
       return NextResponse.json(
         { error: 'El contenido debe ser application/json' },
         { status: 400 }
@@ -56,8 +51,6 @@ export async function POST(request: Request) {
     const { email, lastname, name, isProfesor } = body;
     console.log('📋 Datos extraídos:', { email, lastname, name, isProfesor });
 
-    // Insertar nuevo estudiante en Supabase
-    console.log('🔄 Intentando insertar en Supabase...');
     const { data, error } = await supabase
       .from('person')
       .insert([
