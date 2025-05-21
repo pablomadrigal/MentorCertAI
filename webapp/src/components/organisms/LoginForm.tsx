@@ -6,19 +6,12 @@ import { useRouter } from "next/navigation"
 import { Button } from "../atoms/Button"
 import { Input } from "../atoms/Input"
 import { FormField } from "../molecules/FormField"
-
-// Mock user type
-type User = {
-    id: number
-    name: string
-    email: string
-    role: "student" | "mentor"
-}
+import { User } from "@/types/user"
 
 export function LoginForm() {
     const router = useRouter()
     const [email, setEmail] = useState("")
-    const [role, setRole] = useState<"student" | "mentor">("student")
+    const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
@@ -28,21 +21,24 @@ export function LoginForm() {
         setIsLoading(true)
 
         try {
-            // Mock login
-            await new Promise(resolve => setTimeout(resolve, 1000))
-
-            // In a real app, this would be an API call
+            // Mock login - in a real app, this would be an API call
             const mockUser: User = {
                 id: 1,
                 name: "John Doe",
-                email,
-                role
+                email: email,
+                role: "student",
             }
 
-            console.log("Logged in as:", mockUser)
-            router.push(role === "student" ? "/student/dashboard" : "/mentor/dashboard")
-        } catch (err) {
-            setError(`Failed to login. Please try again. ${JSON.stringify(err)}`)
+            // Simulate API delay
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+
+            // Store user in localStorage
+            localStorage.setItem("user", JSON.stringify(mockUser))
+
+            // Redirect based on role
+            router.push(mockUser.role === "student" ? "/student/dashboard" : "/mentor/dashboard")
+        } catch (error) {
+            setError("Invalid email or password")
         } finally {
             setIsLoading(false)
         }
@@ -54,8 +50,8 @@ export function LoginForm() {
 
             {error && <div className="mb-4 p-3 bg-error/10 border border-error text-error rounded-md">{error}</div>}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <FormField label="Email" htmlFor="email">
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <FormField label="Email" htmlFor="email" error={error}>
                     <Input
                         id="email"
                         type="email"
@@ -67,36 +63,24 @@ export function LoginForm() {
                     />
                 </FormField>
 
-                <div className="space-y-2">
-                    <label className="block text-sm font-medium text-text-primary">I am a:</label>
-                    <div className="flex space-x-4">
-                        <label className="flex items-center space-x-2">
-                            <input
-                                type="radio"
-                                checked={role === "student"}
-                                onChange={() => setRole("student")}
-                                className="h-4 w-4 text-secondary-main"
-                            />
-                            <span className="text-text-primary">Student</span>
-                        </label>
-                        <label className="flex items-center space-x-2">
-                            <input
-                                type="radio"
-                                checked={role === "mentor"}
-                                onChange={() => setRole("mentor")}
-                                className="h-4 w-4 text-secondary-main"
-                            />
-                            <span className="text-text-primary">Mentor</span>
-                        </label>
-                    </div>
-                </div>
+                <FormField label="Password" htmlFor="password">
+                    <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        placeholder="Enter your password"
+                        className="bg-surface-lighter border-surface-lighter text-text-primary"
+                    />
+                </FormField>
 
                 <Button
                     type="submit"
                     className="w-full bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-light brightness-110 shadow-md"
                     disabled={isLoading}
                 >
-                    {isLoading ? "Logging in..." : "Login"}
+                    {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
             </form>
         </div>

@@ -4,27 +4,21 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "../atoms/Button"
 import { Logo } from "../atoms/Logo"
-
-// Mock user type
-type User = {
-  id: number
-  name: string
-  email: string
-  role: "student" | "mentor"
-}
+import { User } from "@/types/user"
 
 export function Header() {
-  // Mock user state - in a real app this would come from a proper auth system
-  const [user, setUser] = useState<User | null>({
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "student"
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user")
+      return storedUser ? JSON.parse(storedUser) : null
+    }
+    return null
   })
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const logout = () => {
+  const handleLogout = () => {
+    localStorage.removeItem("user")
     setUser(null)
+    window.location.href = "/login"
   }
 
   return (
@@ -56,7 +50,7 @@ export function Header() {
                   </>
                 )}
                 <Button
-                  onClick={logout}
+                  onClick={handleLogout}
                   variant="outline"
                   className="text-secondary-main ring-2 ring-secondary-main hover:bg-secondary-main hover:text-white transition-all duration-300"
                 >
@@ -129,7 +123,7 @@ export function Header() {
                     </>
                   )}
                   <Button
-                    onClick={logout}
+                    onClick={handleLogout}
                     variant="outline"
                     className="text-secondary-main ring-2 ring-secondary-main hover:bg-secondary-main hover:text-white transition-all duration-300"
                   >

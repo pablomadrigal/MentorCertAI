@@ -1,20 +1,17 @@
 import Link from "next/link"
+import { LogoProps } from "@/types/ui"
 
-interface LogoProps {
-    className?: string
-    linkClassName?: string
-    size?: "default" | "small"
-}
-
-export function Logo({ className = "", linkClassName = "", size = "default" }: LogoProps) {
-    const sizeClass = size === "small" ? "text-xl" : "text-2xl"
-
+export function Logo({ className, linkClassName, size = "default" }: LogoProps) {
     return (
-        <Link
-            href="/"
-            className={`${sizeClass} font-bold bg-linear-to-r from-primary-light to-secondary-main bg-clip-text text-transparent ${linkClassName}`}
-        >
-            <span className={className}>MentorCertAi</span>
+        <Link href="/" className={linkClassName}>
+            <div className={`flex items-center space-x-2 ${className}`}>
+                <div className={`relative ${size === "default" ? "h-8 w-8" : "h-6 w-6"}`}>
+                    <img src="/logo.svg" alt="MentorCertAI Logo" className="w-full h-full" />
+                </div>
+                <span className={`font-bold ${size === "default" ? "text-xl" : "text-lg"}`}>
+                    MentorCertAI
+                </span>
+            </div>
         </Link>
     )
 } 

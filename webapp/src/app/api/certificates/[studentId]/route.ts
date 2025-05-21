@@ -22,9 +22,11 @@ const certificates = [
   },
 ]
 
-export async function GET(request: NextRequest,
-  { params }: { params: { studentId: string } }) {
-    const { studentId } = params;
+export async function GET(
+  request: NextRequest,
+  { params } : { params: Promise<{ studentId: string }> }
+) {
+    const { studentId } = await params;
 
   const studentCertificates = certificates.filter((c) => c.studentId === studentId)
 

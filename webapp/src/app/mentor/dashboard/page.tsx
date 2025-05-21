@@ -1,110 +1,38 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Header } from "../../../components/organisms/Header"
-import { Footer } from "../../../components/organisms/Footer"
-import { SessionList } from "../../../components/organisms/SessionList"
-import { CreateSessionForm } from "../../../components/organisms/CreateSessionForm"
-
-// Datos de ejemplo para el dashboard
-const mockSessions = [
-  {
-    id: 101,
-    studentId: 201,
-    studentEmail: "emma@example.com",
-    studentName: "Emma Wilson",
-    mentorId: 3,
-    mentorName: "Bob Johnson",
-    subject: "JavaScript Fundamentals",
-    dateTime: new Date(Date.now() + 172800000).toISOString(), // 2 días en el futuro
-    link: "https://meet.mentorcertai.com/mock101",
-    completed: false,
-  },
-  {
-    id: 102,
-    studentId: 202,
-    studentEmail: "david@example.com",
-    studentName: "David Miller",
-    mentorId: 3,
-    mentorName: "Bob Johnson",
-    subject: "React Hooks Advanced",
-    dateTime: new Date(Date.now() + 86400000).toISOString(), // 1 día en el futuro
-    link: "https://meet.mentorcertai.com/mock102",
-    completed: false,
-  },
-  {
-    id: 103,
-    studentId: 203,
-    studentEmail: "sophia@example.com",
-    studentName: "Sophia Chen",
-    mentorId: 3,
-    mentorName: "Bob Johnson",
-    subject: "API Design Patterns",
-    dateTime: new Date(Date.now() - 86400000).toISOString(), // 1 día en el pasado
-    link: "https://meet.mentorcertai.com/mock103",
-    completed: true,
-  },
-  {
-    id: 104,
-    studentId: 204,
-    studentEmail: "james@example.com",
-    studentName: "James Taylor",
-    mentorId: 3,
-    mentorName: "Bob Johnson",
-    subject: "Database Optimization",
-    dateTime: new Date(Date.now() - 172800000).toISOString(), // 2 días en el pasado
-    link: "https://meet.mentorcertai.com/mock104",
-    completed: true,
-  },
-  {
-    id: 105,
-    studentId: 205,
-    studentEmail: "olivia@example.com",
-    studentName: "Olivia Martinez",
-    mentorId: 3,
-    mentorName: "Bob Johnson",
-    subject: "UI/UX Best Practices",
-    dateTime: new Date(Date.now() + 345600000).toISOString(), // 4 días en el futuro
-    link: "https://meet.mentorcertai.com/mock105",
-    completed: false,
-  },
-  {
-    id: 106,
-    studentId: 206,
-    studentEmail: "noah@example.com",
-    studentName: "Noah Garcia",
-    mentorId: 3,
-    mentorName: "Bob Johnson",
-    subject: "Mobile App Development",
-    dateTime: new Date(Date.now() + 259200000).toISOString(), // 3 días en el futuro
-    link: "https://meet.mentorcertai.com/mock106",
-    completed: false,
-  },
-]
-
-// Tipos de filtro para las sesiones
-type FilterType = "all" | "upcoming" | "completed"
+import { Header } from "@/components/organisms/Header"
+import { Footer } from "@/components/organisms/Footer"
+import { SessionList } from "@/components/organisms/SessionList"
+import { CreateSessionForm } from "@/components/organisms/CreateSessionForm"
+import { FilterType, Session } from "@/types/session"
 
 export default function MentorDashboard() {
   const [dataLoaded, setDataLoaded] = useState(false)
   const [activeFilter, setActiveFilter] = useState<FilterType>("all")
-  const [sessions, setSessions] = useState(mockSessions)
+  const [sessions, setSessions] = useState<Session[]>([])
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setSessions(mockSessions)
-      setDataLoaded(true)
-    }, 500)
+    const fetchSessions = async () => {
+      try {
+        const response = await fetch(`/api/sessions?filter=${activeFilter}`)
+        const data = await response.json()
+        setSessions(data)
+        setDataLoaded(true)
+      } catch (error) {
+        console.error('Error fetching sessions:', error)
+        setDataLoaded(true)
+      }
+    }
 
-    return () => clearTimeout(timer)
+    fetchSessions()
+  }, [activeFilter])
 
-  }, [setSessions, setDataLoaded])
-
-  // Contar sesiones por tipo
+  // Count sessions by type
   const upcomingSessions = sessions.filter((s) => !s.completed).length
   const completedSessions = sessions.filter((s) => s.completed).length
 
-  // Manejar el cambio de filtro
+  // Handle filter change
   const handleFilterChange = (filter: FilterType) => {
     setActiveFilter(filter)
   }
@@ -159,7 +87,7 @@ export default function MentorDashboard() {
                   </button>
                 </div>
               </div>
-              <SessionList useMockData={true} mockData={mockSessions} filter={activeFilter} />
+              <SessionList sessions={sessions} />
             </div>
 
             <div>

@@ -1,145 +1,50 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Header } from "../../../components/organisms/Header"
-import { Footer } from "../../../components/organisms/Footer"
-import { SessionList } from "../../../components/organisms/SessionList"
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/atoms/Card"
+import { Header } from "@/components/organisms/Header"
+import { Footer } from "@/components/organisms/Footer"
+import { SessionList } from "@/components/organisms/SessionList"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card"
 import Image from "next/image"
 import Link from "next/link"
-import { Button } from "../../../components/atoms/Button"
-
-// Datos de ejemplo para el dashboard
-const mockSessions = [
-  {
-    id: 201,
-    studentId: 1,
-    studentEmail: "john@example.com",
-    studentName: "John Doe",
-    mentorId: 3,
-    mentorName: "Bob Johnson",
-    subject: "JavaScript Fundamentals",
-    dateTime: new Date(Date.now() + 172800000).toISOString(), // 2 días en el futuro
-    link: "https://meet.mentorcertai.com/mock201",
-    completed: false,
-  },
-  {
-    id: 202,
-    studentId: 1,
-    studentEmail: "john@example.com",
-    studentName: "John Doe",
-    mentorId: 4,
-    mentorName: "Alice Brown",
-    subject: "React Hooks Advanced",
-    dateTime: new Date(Date.now() + 86400000).toISOString(), // 1 día en el futuro
-    link: "https://meet.mentorcertai.com/mock202",
-    completed: false,
-  },
-  {
-    id: 203,
-    studentId: 1,
-    studentEmail: "john@example.com",
-    studentName: "John Doe",
-    mentorId: 3,
-    mentorName: "Bob Johnson",
-    subject: "API Design Patterns",
-    dateTime: new Date(Date.now() - 86400000).toISOString(), // 1 día en el pasado
-    link: "https://meet.mentorcertai.com/mock203",
-    completed: true,
-  },
-  {
-    id: 204,
-    studentId: 1,
-    studentEmail: "john@example.com",
-    studentName: "John Doe",
-    mentorId: 4,
-    mentorName: "Alice Brown",
-    subject: "Database Optimization",
-    dateTime: new Date(Date.now() - 172800000).toISOString(), // 2 días en el pasado
-    link: "https://meet.mentorcertai.com/mock204",
-    completed: true,
-  },
-]
-
-// Datos de ejemplo para NFTs
-const mockNFTs = [
-  {
-    id: 1,
-    certificateId: 1,
-    metadata: {
-      name: "JavaScript Mastery",
-      description: "This NFT certifies completion of JavaScript Fundamentals mentoring session",
-      image: "/javascript-certificate.png",
-      attributes: [
-        {
-          trait_type: "Subject",
-          value: "JavaScript Fundamentals",
-        },
-        {
-          trait_type: "Grade",
-          value: "95%",
-        },
-        {
-          trait_type: "Date",
-          value: new Date(Date.now() - 604800000).toLocaleDateString(),
-        },
-      ],
-    },
-  },
-  {
-    id: 2,
-    certificateId: 2,
-    metadata: {
-      name: "React Developer",
-      description: "This NFT certifies completion of React Advanced mentoring session",
-      image: "/placeholder-gsng6.png",
-      attributes: [
-        {
-          trait_type: "Subject",
-          value: "React Advanced",
-        },
-        {
-          trait_type: "Grade",
-          value: "88%",
-        },
-        {
-          trait_type: "Date",
-          value: new Date(Date.now() - 1209600000).toLocaleDateString(),
-        },
-      ],
-    },
-  },
-]
-
-// Tipos de filtro para las sesiones
-type FilterType = "all" | "upcoming" | "completed"
+import { Button } from "@/components/atoms/Button"
+import { FilterType, Session } from "@/types/session"
+import { NFT } from "@/types/nft"
 
 export default function StudentDashboard() {
   const [dataLoaded, setDataLoaded] = useState(false)
   const [activeFilter, setActiveFilter] = useState<FilterType>("all")
-  const [sessions, setSessions] = useState(mockSessions)
-  const [nfts, setNfts] = useState(mockNFTs)
+  const [sessions, setSessions] = useState<Session[]>([])
+  const [nfts, setNfts] = useState<NFT[]>([])
 
   useEffect(() => {
-    // Your effect code here
-  }, []);
+    const fetchData = async () => {
+      try {
+        const [sessionsResponse, nftsResponse] = await Promise.all([
+          fetch(`/api/sessions?filter=${activeFilter}`),
+          fetch('/api/nfts')
+        ])
 
-  useEffect(() => {
-    // Asegurarse de que siempre haya datos de ejemplo visibles
-    const timer = setTimeout(() => {
-      setSessions(mockSessions)
-      setNfts(mockNFTs)
-      setDataLoaded(true)
-    }, 500)
+        const sessionsData = await sessionsResponse.json()
+        const nftsData = await nftsResponse.json()
 
-    return () => clearTimeout(timer)
-  }, [setDataLoaded, mockSessions, mockNFTs])
+        setSessions(sessionsData)
+        setNfts(nftsData)
+        setDataLoaded(true)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+        setDataLoaded(true)
+      }
+    }
 
-  // Contar sesiones por tipo
+    fetchData()
+  }, [activeFilter])
+
+  // Count sessions by type
   const upcomingSessions = sessions.filter((s) => !s.completed).length
   const completedSessions = sessions.filter((s) => s.completed).length
 
-  // Manejar el cambio de filtro
+  // Handle filter change
   const handleFilterChange = (filter: FilterType) => {
     setActiveFilter(filter)
   }
@@ -151,9 +56,6 @@ export default function StudentDashboard() {
       </div>
     )
   }
-
-  // Usar los NFTs de la sesión o los mock NFTs si no hay datos
-  const displayNFTs = nfts.length > 0 ? nfts : mockNFTs
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -197,17 +99,16 @@ export default function StudentDashboard() {
                   </button>
                 </div>
               </div>
-              <SessionList filter={activeFilter} />
+              <SessionList sessions={sessions} />
             </div>
 
             <div className="space-y-8">
-              {/* Sección de NFTs */}
+              {/* NFT Rewards section */}
               <div>
                 <h2 className="text-2xl font-bold mb-4">Your NFT Rewards</h2>
                 <div className="space-y-4">
-                  {displayNFTs.slice(0, 2).map((nft) => (
+                  {nfts.slice(0, 2).map((nft) => (
                     <div key={nft.id} className="relative group">
-                      {/* Capa de gradiente con tamaño fijo de 1px */}
                       <div className="absolute inset-0 rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main p-px"></div>
                       <Card className="relative rounded-[7px] z-10 bg-surface">
                         <CardHeader className="p-4">

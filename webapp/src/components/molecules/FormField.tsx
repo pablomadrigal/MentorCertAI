@@ -1,11 +1,5 @@
 import type React from "react"
-
-interface FormFieldProps {
-    label: string
-    htmlFor: string
-    error?: string
-    children: React.ReactNode
-}
+import { FormFieldProps } from "@/types/ui"
 
 export function FormField({ label, htmlFor, error, children }: FormFieldProps) {
     return (
@@ -14,7 +8,7 @@ export function FormField({ label, htmlFor, error, children }: FormFieldProps) {
                 {label}
             </label>
             {children}
-            {error && <p className="text-sm text-error">{error}</p>}
+            {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
     )
 } 
