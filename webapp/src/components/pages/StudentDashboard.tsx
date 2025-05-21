@@ -109,8 +109,8 @@ export function StudentDashboard() {
                                             <div className="absolute inset-0 rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main p-px"></div>
                                             <Card className="relative rounded-[7px] z-10 bg-surface">
                                                 <CardHeader className="p-4">
-                                                    {nft.metadata ? <CardTitle className="text-base truncate" title={nft.metadata.name}>
-                                                        {nft.metadata.name}
+                                                    {nft.nft_metadata ? <CardTitle className="text-base truncate" title={nft.nft_metadata.name}>
+                                                        {nft.nft_metadata.name}
                                                     </CardTitle> : <CardTitle className="text-base truncate" title={nft.nft_id.toString()}>
                                                         {nft.nft_id.toString()}
                                                     </CardTitle>}
@@ -118,9 +118,9 @@ export function StudentDashboard() {
                                                 <CardContent className="p-4 pt-0">
                                                     <div className="flex items-center space-x-4">
                                                         <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0">
-                                                            {nft.metadata && nft.metadata.image ? <Image
-                                                                src={nft.metadata.image}
-                                                                alt={nft.metadata.name || "NFT Image"}
+                                                            {nft.nft_metadata && nft.nft_metadata.image ? <Image
+                                                                src={nft.nft_metadata.image}
+                                                                alt={nft.nft_metadata.name || "NFT Image"}
                                                                 fill
                                                                 className="object-cover"
                                                             /> : <Image
@@ -131,8 +131,8 @@ export function StudentDashboard() {
                                                             />}
                                                         </div>
                                                         <div className="grow">
-                                                            {nft.metadata && nft.metadata.attributes && (
-                                                                nft.metadata.attributes.map((attr) => (
+                                                            {nft.nft_metadata && nft.nft_metadata.attributes && (
+                                                                nft.nft_metadata.attributes.map((attr) => (
                                                                     <p key={attr.trait_type} className="text-xs text-text-secondary mb-1">
                                                                         {attr.trait_type}:{" "}
                                                                         <span className="text-accent-main font-medium">

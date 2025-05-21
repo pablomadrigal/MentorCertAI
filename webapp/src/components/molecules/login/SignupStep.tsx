@@ -1,6 +1,6 @@
 import { Button } from "@/components/atoms/Button"
 import { Input } from "@/components/atoms/Input"
-import { FormField } from "../FormField"
+import { FormField } from "@/components/molecules/FormField"
 import { useState } from "react"
 import { UserRole } from "@/types/auth"
 
