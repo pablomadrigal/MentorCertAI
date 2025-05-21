@@ -155,8 +155,8 @@ export function ExamComponent({ sessionId }: ExamComponentProps) {
                     key={option}
                     onClick={() => handleAnswer(option)}
                     className={`w-full p-4 text-left rounded-lg border transition-all duration-300 ${currentAnswer === option
-                        ? "border-primary-main bg-primary-main/10"
-                        : "border-surface-lighter hover:border-primary-main/50"
+                      ? "border-primary-main bg-primary-main/10"
+                      : "border-surface-lighter hover:border-primary-main/50"
                       }`}
                   >
                     {option}
@@ -170,8 +170,8 @@ export function ExamComponent({ sessionId }: ExamComponentProps) {
                 <button
                   onClick={() => handleAnswer("yes")}
                   className={`flex-1 p-4 rounded-lg border transition-all duration-300 ${currentAnswer === "yes"
-                      ? "border-primary-main bg-primary-main/10"
-                      : "border-surface-lighter hover:border-primary-main/50"
+                    ? "border-primary-main bg-primary-main/10"
+                    : "border-surface-lighter hover:border-primary-main/50"
                     }`}
                 >
                   Yes
@@ -179,8 +179,8 @@ export function ExamComponent({ sessionId }: ExamComponentProps) {
                 <button
                   onClick={() => handleAnswer("no")}
                   className={`flex-1 p-4 rounded-lg border transition-all duration-300 ${currentAnswer === "no"
-                      ? "border-primary-main bg-primary-main/10"
-                      : "border-surface-lighter hover:border-primary-main/50"
+                    ? "border-primary-main bg-primary-main/10"
+                    : "border-surface-lighter hover:border-primary-main/50"
                     }`}
                 >
                   No
@@ -222,10 +222,10 @@ export function ExamComponent({ sessionId }: ExamComponentProps) {
                   <div
                     key={index}
                     className={`h-2 w-8 rounded-full ${index === currentQuestionIndex
-                        ? "bg-primary-main"
-                        : answers[index] !== ""
-                          ? "bg-accent-main"
-                          : "bg-gray-200"
+                      ? "bg-primary-main"
+                      : answers[index] !== ""
+                        ? "bg-accent-main"
+                        : "bg-gray-200"
                       }`}
                   />
                 ))}
