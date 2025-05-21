@@ -13,7 +13,7 @@ export function MentorDashboard() {
     useEffect(() => {
         const fetchSessions = async () => {
             try {
-                const response = await fetch(`/api/sessions?filter=${activeFilter}`)
+                const response = await fetch(`/api/sessions`)
                 const data = await response.json()
                 setSessions(data)
                 setDataLoaded(true)
@@ -83,7 +83,7 @@ export function MentorDashboard() {
                                 </button>
                             </div>
                         </div>
-                        <SessionList sessions={sessions} />
+                        <SessionList sessions={sessions} filter={activeFilter} />
                     </div>
 
                     <div>

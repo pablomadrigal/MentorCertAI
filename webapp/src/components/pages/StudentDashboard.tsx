@@ -19,7 +19,7 @@ export function StudentDashboard() {
         const fetchData = async () => {
             try {
                 const [sessionsResponse, nftsResponse] = await Promise.all([
-                    fetch(`/api/sessions?filter=${activeFilter}`),
+                    fetch(`/api/sessions`),
                     fetch('/api/nfts')
                 ])
 
@@ -36,7 +36,7 @@ export function StudentDashboard() {
         }
 
         fetchData()
-    }, [activeFilter])
+    }, [])
 
     // Count sessions by type
     const upcomingSessions = sessions.filter((s) => !s.completed).length
@@ -96,7 +96,7 @@ export function StudentDashboard() {
                                     </button>
                                 </div>
                             </div>
-                            <SessionList sessions={sessions} />
+                            <SessionList sessions={sessions} filter={activeFilter} />
                         </div>
 
                         <div className="space-y-8">
@@ -105,37 +105,42 @@ export function StudentDashboard() {
                                 <h2 className="text-2xl font-bold mb-4">Your NFT Rewards</h2>
                                 <div className="space-y-4">
                                     {nfts.slice(0, 2).map((nft) => (
-                                        <div key={nft.id} className="relative group">
+                                        <div key={nft.nft_id} className="relative group">
                                             <div className="absolute inset-0 rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main p-px"></div>
                                             <Card className="relative rounded-[7px] z-10 bg-surface">
                                                 <CardHeader className="p-4">
-                                                    <CardTitle className="text-base truncate" title={nft.metadata.name}>
+                                                    {nft.metadata ? <CardTitle className="text-base truncate" title={nft.metadata.name}>
                                                         {nft.metadata.name}
-                                                    </CardTitle>
+                                                    </CardTitle> : <CardTitle className="text-base truncate" title={nft.nft_id.toString()}>
+                                                        {nft.nft_id.toString()}
+                                                    </CardTitle>}
                                                 </CardHeader>
                                                 <CardContent className="p-4 pt-0">
                                                     <div className="flex items-center space-x-4">
                                                         <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0">
-                                                            <Image
-                                                                src={nft.metadata.image || "/placeholder.svg"}
-                                                                alt={nft.metadata.name}
+                                                            {nft.metadata && nft.metadata.image ? <Image
+                                                                src={nft.metadata.image}
+                                                                alt={nft.metadata.name || "NFT Image"}
                                                                 fill
                                                                 className="object-cover"
-                                                            />
+                                                            /> : <Image
+                                                                src="/placeholder.svg"
+                                                                alt="Placeholder"
+                                                                fill
+                                                                className="object-cover"
+                                                            />}
                                                         </div>
                                                         <div className="grow">
-                                                            <p className="text-xs text-text-secondary mb-1">
-                                                                {nft.metadata.attributes.find((attr) => attr.trait_type === "Subject")?.value}
-                                                            </p>
-                                                            <p className="text-xs text-text-secondary">
-                                                                Grade:{" "}
-                                                                <span className="text-accent-main font-medium">
-                                                                    {nft.metadata.attributes.find((attr) => attr.trait_type === "Grade")?.value}
-                                                                </span>
-                                                            </p>
-                                                            <p className="text-xs text-text-secondary">
-                                                                {nft.metadata.attributes.find((attr) => attr.trait_type === "Date")?.value}
-                                                            </p>
+                                                            {nft.metadata && nft.metadata.attributes && (
+                                                                nft.metadata.attributes.map((attr) => (
+                                                                    <p key={attr.trait_type} className="text-xs text-text-secondary mb-1">
+                                                                        {attr.trait_type}:{" "}
+                                                                        <span className="text-accent-main font-medium">
+                                                                            {attr.value}
+                                                                        </span>
+                                                                    </p>
+                                                                ))
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </CardContent>

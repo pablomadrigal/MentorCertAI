@@ -17,7 +17,7 @@ export function ExamComponent({ sessionId }: ExamComponentProps) {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch(`/api/exam/${sessionId}`)
+        const response = await fetch(`/api/exam?room=${sessionId}`)
         const examData: ExamData = await response.json()
 
         if (examData.success) {
@@ -43,22 +43,6 @@ export function ExamComponent({ sessionId }: ExamComponentProps) {
         }
       } catch (error) {
         console.error("Error fetching questions:", error)
-        // Fallback to mock data if API fails
-        const fallbackQuestions: Question[] = [
-          {
-            type: "multiple_choice",
-            question: "What is the main purpose of React?",
-            options: ["To build user interfaces", "To handle server-side logic", "To manage databases", "To create APIs"],
-            answer: "To build user interfaces",
-          },
-          {
-            type: "yes_no",
-            question: "Is TypeScript a superset of JavaScript?",
-            answer: "yes",
-          },
-        ]
-        setExamData({ success: true, data: fallbackQuestions })
-        setAnswers(fallbackQuestions.reduce((acc, question, index) => ({ ...acc, [index]: "" }), {} as Record<number, string>))
       } finally {
         setIsLoading(false)
       }
