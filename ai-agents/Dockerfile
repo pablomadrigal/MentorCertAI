@@ -23,16 +23,19 @@ COPY . .
 # Create directories for transcriptions
 RUN mkdir -p transcriptions user_speech
 
-
 # ensure that any dependent models are downloaded at build-time
 RUN python3 transcriber-online.py download-files
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-
+ENV HOST=0.0.0.0
+ENV PORT=8081
 
 # expose healthcheck port
 EXPOSE 8081
 
-# Run the script
-CMD ["python3", "transcriber-online.py", "dev"] 
+# Make scripts executable
+RUN chmod +x transcriber-online.py web_server.py
+
+# Run both services
+CMD python3 web_server.py & python3 transcriber-online.py dev 
