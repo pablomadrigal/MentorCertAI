@@ -1,72 +1,31 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter, useSearchParams, useParams } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { Header } from "@/components/organisms/Header"
 import { Footer } from "@/components/organisms/Footer"
 import { Button } from "@/components/atoms/Button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card"
 import { NFTDisplayComponent } from "@/components/organisms/NFTDisplayComponent"
-import { NFT } from "@/types/nft"
 import { Certificate } from "@/types/certificate"
-
+import { useAuth } from "@/contexts/AuthContext"
+import { NFT } from "@/types/nft"
 export default function ExamResultsPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const params = useParams()
   const sessionId = params.sessionId as string
-  const score = Number.parseInt(searchParams.get("score") || "0")
-  const passed = score >= 70
+  const { user } = useAuth()
 
   const [isLoading, setIsLoading] = useState(true)
   const [certificate, setCertificate] = useState<Certificate | null>(null)
-  const [nft, setNft] = useState<NFT | null>(null)
 
   useEffect(() => {
     const loadResults = async () => {
       try {
-        // In a real app, this would fetch the certificate and NFT from the API
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        const response = await fetch(`/api/user/${user?.id}/certificates/${sessionId}`)
+        const certificatesData: Certificate[] = await response.json()
+        setCertificate(certificatesData[0])
 
-        if (passed) {
-          // Mock certificate data
-          setCertificate({
-            id: Math.floor(Math.random() * 1000),
-            userId: "0",
-            issueDate: new Date().toISOString(),
-            grade: score,
-          })
-
-          // Mock NFT data
-          setNft({
-            id: Math.floor(Math.random() * 1000),
-            certificateId: Math.floor(Math.random() * 1000).toString(),
-            metadata: {
-              name: "MentorCertAi Achievement",
-              description:
-                "This NFT certifies the successful completion of a mentoring session and passing the certification exam.",
-              image: "/placeholder.svg?key=bazmm",
-              attributes: [
-                {
-                  trait_type: "Course",
-                  value: "Advanced Mentoring",
-                },
-                {
-                  trait_type: "Grade",
-                  value: `${score}%`,
-                },
-                {
-                  trait_type: "Date",
-                  value: new Date().toLocaleDateString(),
-                },
-                {
-                  trait_type: "Student",
-                  value: "Student",
-                },
-              ],
-            },
-          })
-        }
       } catch (error) {
         console.error("Error fetching results:", error)
       } finally {
@@ -75,7 +34,7 @@ export default function ExamResultsPage() {
     }
 
     loadResults()
-  }, [sessionId, score, passed])
+  }, [user?.id, sessionId])
 
   if (isLoading) {
     return (
@@ -83,6 +42,22 @@ export default function ExamResultsPage() {
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary-main"></div>
       </div>
     )
+  }
+
+  if (!certificate) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-2xl font-bold">No certificate found</div>
+      </div>
+    )
+  }
+
+  const passed = certificate?.score >= 70
+  const nft: NFT = {
+    nft_id: certificate?.nft_id,
+    certificateId: certificate?.id,
+    nft_metadata: certificate?.nft_metadata,
+    nft_transaction: certificate?.nft_transaction
   }
 
   return (
@@ -97,14 +72,14 @@ export default function ExamResultsPage() {
             <div className="relative p-px rounded-lg bg-linear-to-r from-primary-light via-secondary-main to-accent-main shadow-md mb-8">
               <Card className="rounded-[7px]">
                 <CardHeader>
-                  <CardTitle className="text-center">Your Score: {score}%</CardTitle>
+                  <CardTitle className="text-center">Your Score: {certificate?.score}%</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex justify-center mb-6">
                     <div
                       className={`w-32 h-32 rounded-full border-8 ${passed ? "border-accent-main" : "border-error"} flex items-center justify-center`}
                     >
-                      <span className="text-3xl font-bold">{score}%</span>
+                      <span className="text-3xl font-bold">{certificate?.score}%</span>
                     </div>
                   </div>
 
@@ -129,7 +104,7 @@ export default function ExamResultsPage() {
               </Card>
             </div>
 
-            {passed && certificate && nft && (
+            {passed && certificate && certificate.nft_id && (
               <div className="space-y-8">
                 <div>
                   <h2 className="text-2xl font-bold mb-4 text-center">Your Certificate</h2>
@@ -166,7 +141,7 @@ export default function ExamResultsPage() {
                           <p className="text-2xl font-bold mb-8 text-secondary-dark">{"Student"}</p>
                           <p className="text-lg mb-8 text-slate-700">
                             has successfully completed the mentoring session and passed the certification exam with a
-                            score of <span className="text-accent-dark font-bold">{score}%</span>.
+                            score of <span className="text-accent-dark font-bold">{certificate?.score}%</span>.
                           </p>
 
                           <div className="flex justify-between items-center mt-12">

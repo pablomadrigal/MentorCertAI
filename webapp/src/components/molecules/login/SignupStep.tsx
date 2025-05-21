@@ -1,6 +1,6 @@
 import { Button } from "@/components/atoms/Button"
 import { Input } from "@/components/atoms/Input"
-import { FormField } from "../FormField"
+import { FormField } from "@/components/molecules/FormField"
 import { useState } from "react"
 import { UserRole } from "@/types/auth"
 
@@ -86,7 +86,7 @@ export const SignupStep = ({ onSubmit, loading }: SignupStepProps) => {
             <div className="pt-4">
                 <Button
                     onClick={handleSubmit}
-                    disabled={loading || !acceptTerms || !!error}
+                    disabled={loading || !acceptTerms || !!error || !fullName.trim()}
                     className="w-full bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110"
                 >
                     {loading ? (

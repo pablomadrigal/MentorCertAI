@@ -3,33 +3,34 @@ import { NFT } from '@/types/nft'
 
 // Mock data for NFTs
 const mockNFTs: NFT[] = [
-  {
-    id: 1,
-    certificateId: "1",
-    metadata: {
-      name: "JavaScript Mastery",
-      description: "This NFT certifies completion of JavaScript Fundamentals mentoring session",
-      image: "/javascript-certificate.png",
-      attributes: [
-        {
-          trait_type: "Subject",
-          value: "JavaScript Fundamentals",
-        },
-        {
-          trait_type: "Grade",
-          value: "95%",
-        },
-        {
-          trait_type: "Date",
-          value: new Date(Date.now() - 604800000).toLocaleDateString(),
-        },
-      ],
+    {
+      nft_id: 1,
+      certificateId: 1,
+      nft_metadata: {
+        name: "JavaScript Mastery",
+        description: "This NFT certifies completion of JavaScript Fundamentals mentoring session",
+        image: "/javascript-certificate.png",
+        attributes: [
+          {
+            trait_type: "Subject",
+            value: "JavaScript Fundamentals",
+          },
+          {
+            trait_type: "Grade",
+            value: "95%",
+          },
+          {
+            trait_type: "Date",
+            value: new Date(Date.now() - 604800000).toLocaleDateString(),
+          },
+        ],
+      },
+      nft_transaction: ''
     },
-  },
   {
-    id: 2,
-    certificateId: "2",
-    metadata: {
+    nft_id: 2,
+    certificateId: 2,
+    nft_metadata: {
       name: "React Developer",
       description: "This NFT certifies completion of React Advanced mentoring session",
       image: "/placeholder-gsng6.png",
@@ -48,6 +49,7 @@ const mockNFTs: NFT[] = [
         },
       ],
     },
+    nft_transaction: ''
   },
 ]
 
