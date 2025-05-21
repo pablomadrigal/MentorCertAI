@@ -8,14 +8,38 @@ from livekit.plugins import deepgram
 import datetime
 import os
 import aiohttp
-import json
+from aiohttp import web
 
 load_dotenv(dotenv_path=Path(__file__).parent / '.env')
 
 # Configure LiveKit to use secure WebSocket
 os.environ['LIVEKIT_WS_URL'] = os.environ.get('LIVEKIT_WS_URL', '').replace('ws://', 'wss://')
 
+async def get_transcript(request):
+    room_name = request.match_info.get('room_name')
+    if not room_name:
+        return web.Response(status=400, text="Room name is required")
+    
+    transcriptions_dir = Path("transcriptions")
+    filename = transcriptions_dir / f"transcript_{room_name}.txt"
+    
+    if not filename.exists():
+        return web.Response(status=404, text="No transcriptions found for this room")
+    
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    return web.Response(text=content)
+
 async def entrypoint(ctx: JobContext):
+    # Set up web server
+    app = web.Application()
+    app.router.add_get('/transcript/{room_name}', get_transcript)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', 8081)
+    await site.start()
+    
     transcriptions = []
     transcriptions_dir = Path("transcriptions")
     user_speech_dir = Path("user_speech")
