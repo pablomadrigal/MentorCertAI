@@ -2,7 +2,7 @@ export type FilterType = "all" | "upcoming" | "completed"
 
 export interface Session {
   id: string
-  studentId: number
+  studentId: string
   studentEmail: string
   studentName: string
   mentorId: number

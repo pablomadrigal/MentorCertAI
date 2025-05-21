@@ -90,3 +90,10 @@ export async function GET(request: Request) {
     );
   }
 }
+
+export async function POST(request: Request) {
+  const { examData } = await request.json();
+
+  // Here you can save the exam data to your database
+  console.log('Received exam data:', examData);
+}
