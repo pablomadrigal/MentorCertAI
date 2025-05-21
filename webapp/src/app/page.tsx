@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/atoms/Button"
@@ -8,196 +8,22 @@ import { Header } from "@/components/organisms/Header"
 import { Footer } from "@/components/organisms/Footer"
 import { useState } from "react"
 import { LoginModal } from "../components/molecules/LoginModal"
+import { useParticleAnimation } from "@/hooks/useParticleAnimation"
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // Efecto para inicializar y animar las partículas interactivas
-  useEffect(() => {
-    if (!canvasRef.current || !heroRef.current) return
+  useParticleAnimation({
+    canvasRef: canvasRef as React.RefObject<HTMLCanvasElement>,
+    containerRef: heroRef as React.RefObject<HTMLDivElement>
+  })
 
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-
-    // Ajustar el tamaño del canvas al contenedor
-    const resizeCanvas = () => {
-      if (!canvas || !heroRef.current) return
-      canvas.width = heroRef.current.offsetWidth
-      canvas.height = heroRef.current.offsetHeight
-    }
-
-    resizeCanvas()
-    window.addEventListener("resize", resizeCanvas)
-
-    // Clase para las partículas - ahora más grandes y visibles
-    class Particle {
-      x: number
-      y: number
-      size: number
-      baseX: number
-      baseY: number
-      density: number
-      color: string
-      // Nuevas propiedades para el movimiento de flotación
-      floatAngle: number
-      floatSpeed: number
-
-      constructor(x: number, y: number) {
-        this.x = x
-        this.y = y
-        // Partículas más pequeñas (reducido de Math.random() * 4 + 2)
-        this.size = Math.random() * 3 + 1.5
-        this.baseX = x
-        this.baseY = y
-        this.density = Math.random() * 25 + 5
-
-        // Inicializar propiedades de flotación
-        this.floatAngle = Math.random() * Math.PI * 2
-        // Aumentar la velocidad y amplitud de flotación (de 0.2-0.5 a 0.3-0.8)
-        this.floatSpeed = Math.random() * 0.5 + 0.3
-
-        // Colores menos brillantes (reducido de 0.9 a 0.7)
-        const colors = [
-          "rgba(255, 255, 255, 0.7)",
-          "rgba(123, 97, 255, 0.7)",
-          "rgba(56, 189, 248, 0.7)",
-          "rgba(61, 220, 151, 0.7)",
-        ]
-        this.color = colors[Math.floor(Math.random() * colors.length)]
-      }
-
-      draw() {
-        if (!ctx) return
-        ctx.beginPath()
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
-        ctx.fillStyle = this.color
-        // Sombra menos intensa (reducido de 10 a 6)
-        ctx.shadowColor = this.color
-        ctx.shadowBlur = 6
-        ctx.fill()
-        // Resetear sombra después de dibujar
-        ctx.shadowBlur = 0
-      }
-
-      update(mouseX: number, mouseY: number) {
-        // Calcular distancia entre partícula y cursor
-        const dx = mouseX - this.x
-        const dy = mouseY - this.y
-        const distance = Math.sqrt(dx * dx + dy * dy)
-        const forceDirectionX = dx / distance
-        const forceDirectionY = dy / distance
-
-        // Distancia máxima de efecto del cursor
-        const maxDistance = 100
-        const force = (maxDistance - distance) / maxDistance
-
-        // Si el cursor está cerca, alejar la partícula
-        if (distance < maxDistance) {
-          this.x -= forceDirectionX * force * this.density
-          this.y -= forceDirectionY * force * this.density
-        } else {
-          // Movimiento de flotación cuando no hay interacción con el cursor
-          // Actualizar ángulo para movimiento continuo - incrementado de 0.01 a 0.06
-          this.floatAngle += 0.06
-
-          // Calcular desplazamiento de flotación usando funciones trigonométricas
-          const floatX = Math.sin(this.floatAngle) * this.floatSpeed
-          const floatY = Math.cos(this.floatAngle * 1.5) * this.floatSpeed
-
-          // Si no hay interacción, volver lentamente a la posición original con efecto de flotación
-          if (this.x !== this.baseX) {
-            const dx = this.x - this.baseX
-            this.x -= dx / 10
-          }
-          if (this.y !== this.baseY) {
-            const dy = this.y - this.baseY
-            this.y -= dy / 10
-          }
-
-          // Aplicar el movimiento de flotación
-          this.x += floatX
-          this.y += floatY
-        }
-      }
-    }
-
-    // Inicializar partículas - más densidad
-    const particleCount = Math.min(Math.floor((canvas.width * canvas.height) / 7000), 200)
-    const particles: Particle[] = []
-
-    for (let i = 0; i < particleCount; i++) {
-      const x = Math.random() * canvas.width
-      const y = Math.random() * canvas.height
-      particles.push(new Particle(x, y))
-    }
-
-    // Variables para la posición del mouse
-    let mouseX = 0
-    let mouseY = 0
-
-    // Detectar movimiento del mouse
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!heroRef.current) return
-      const rect = heroRef.current.getBoundingClientRect()
-      mouseX = e.clientX - rect.left
-      mouseY = e.clientY - rect.top
-    }
-
-    window.addEventListener("mousemove", handleMouseMove)
-
-    // Función de animación
-    const animate = () => {
-      if (!ctx || !canvas) return
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      // Dibujar y actualizar cada partícula
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].draw()
-        particles[i].update(mouseX, mouseY)
-      }
-
-      // Dibujar conexiones entre partículas cercanas
-      connectParticles()
-
-      requestAnimationFrame(animate)
-    }
-
-    // Función para conectar partículas cercanas - conexiones más visibles
-    const connectParticles = () => {
-      if (!ctx) return
-      for (let a = 0; a < particles.length; a++) {
-        for (let b = a; b < particles.length; b++) {
-          const dx = particles[a].x - particles[b].x
-          const dy = particles[a].y - particles[b].y
-          const distance = Math.sqrt(dx * dx + dy * dy)
-
-          // Mayor distancia de conexión
-          if (distance < 100) {
-            ctx.beginPath()
-            // Líneas más visibles
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 - distance / 350})`
-            ctx.lineWidth = 0.8
-            ctx.moveTo(particles[a].x, particles[a].y)
-            ctx.lineTo(particles[b].x, particles[b].y)
-            ctx.stroke()
-          }
-        }
-      }
-    }
-
-    // Iniciar animación
-    const animationId = requestAnimationFrame(animate)
-
-    // Limpieza al desmontar
-    return () => {
-      window.removeEventListener("resize", resizeCanvas)
-      window.removeEventListener("mousemove", handleMouseMove)
-      cancelAnimationFrame(animationId)
-    }
-  }, [])
+  const handleLogin = () => {
+    console.log("Login")
+    setIsModalOpen(true)
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -227,15 +53,13 @@ export default function Home() {
                 by blockchain technology.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Link href="/login" passHref>
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto bg-linear-to-r from-primary-main to-primary-light text-white hover:from-primary-light hover:to-primary-main transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(56,189,248,0.2)] hover:[box-shadow:0_0_15px_rgba(56,189,248,0.3)]"
-                    onClick={() => setIsModalOpen(true)}
-                  >
-                    Login as Student
-                  </Button>
-                </Link>
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto bg-linear-to-r from-primary-main to-primary-light text-white hover:from-primary-light hover:to-primary-main transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(56,189,248,0.2)] hover:[box-shadow:0_0_15px_rgba(56,189,248,0.3)]"
+                  onClick={handleLogin}
+                >
+                  Login as Student
+                </Button>
                 <Link href="/mentor/signup" passHref>
                   <Button
                     size="lg"
@@ -612,11 +436,11 @@ export default function Home() {
         </section>
       </main>
 
-      <LoginModal 
+      <LoginModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-      
+
       <Footer />
     </div>
   )
