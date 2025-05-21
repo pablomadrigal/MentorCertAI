@@ -22,7 +22,7 @@ export function Header() {
             {isAuthenticated ? (
               <>
                 <Link
-                  href={isStudent ? "/student/dashboard" : "/mentor/dashboard"}
+                  href="/"
                   className="text-text-primary hover:text-primary-light transition-colors"
                 >
                   Dashboard
@@ -41,8 +41,8 @@ export function Header() {
                   </>
                 )}
                 {isMentor && (
-                  <Link href="/mentor/students" className="text-text-primary hover:text-primary-light transition-colors">
-                    Students
+                  <Link href="/meeting" className="text-text-primary hover:text-primary-light transition-colors">
+                    Meeting
                   </Link>
                 )}
                 <Button
@@ -55,12 +55,6 @@ export function Header() {
               </>
             ) : (
               <>
-                <Link href="/about" className="text-text-primary hover:text-secondary-main transition-colors">
-                  About
-                </Link>
-                <Link href="/features" className="text-text-primary hover:text-secondary-main transition-colors">
-                  Features
-                </Link>
                 <Button
                   onClick={() => setIsLoginModalOpen(true)}
                   className="text-text-primary hover:text-secondary-main transition-colors"
@@ -95,7 +89,7 @@ export function Header() {
               {isAuthenticated ? (
                 <>
                   <Link
-                    href={isStudent ? "/student/dashboard" : "/mentor/dashboard"}
+                    href="/"
                     className="text-text-primary hover:text-primary-light transition-colors"
                   >
                     Dashboard
@@ -117,8 +111,8 @@ export function Header() {
                     </>
                   )}
                   {isMentor && (
-                    <Link href="/mentor/students" className="text-text-primary hover:text-primary-light transition-colors">
-                      Students
+                    <Link href="/meeting" className="text-text-primary hover:text-primary-light transition-colors">
+                      Meeting
                     </Link>
                   )}
                   <Button
@@ -131,23 +125,12 @@ export function Header() {
                 </>
               ) : (
                 <>
-                  <Link href="/about" className="text-text-primary hover:text-secondary-main transition-colors">
-                    About
-                  </Link>
-                  <Link href="/features" className="text-text-primary hover:text-secondary-main transition-colors">
-                    Features
-                  </Link>
                   <Button
                     onClick={() => setIsLoginModalOpen(true)}
                     className="text-text-primary hover:text-secondary-main transition-colors"
                   >
                     Login
                   </Button>
-                  <Link href="/mentor/signup" passHref>
-                    <Button className="w-full bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark brightness-110">
-                      Become a Mentor
-                    </Button>
-                  </Link>
                 </>
               )}
             </div>
