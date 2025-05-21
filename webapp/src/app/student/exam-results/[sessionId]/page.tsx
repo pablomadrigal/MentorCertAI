@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams, useParams } from "next/navigation"
-import { Header } from "../../../../components/organisms/Header"
-import { Footer } from "../../../../components/organisms/Footer"
-import { Button } from "../../../../components/atoms/Button"
-import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/atoms/Card"
-import { NFTDisplayComponent } from "../../../../components/organisms/NFTDisplayComponent"
+import { Header } from "@/components/organisms/Header"
+import { Footer } from "@/components/organisms/Footer"
+import { Button } from "@/components/atoms/Button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card"
+import { NFTDisplayComponent } from "@/components/organisms/NFTDisplayComponent"
 import { NFT } from "@/types/nft"
 import { Certificate } from "@/types/certificate"
 

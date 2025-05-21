@@ -1,8 +1,8 @@
 "use client"
 
-import { Header } from "../../../components/organisms/Header"
-import { Footer } from "../../../components/organisms/Footer"
-import { CertificateList } from "../../../components/organisms/CertificateList"
+import { Header } from "@/components/organisms/Header"
+import { Footer } from "@/components/organisms/Footer"
+import { CertificateList } from "@/components/organisms/CertificateList"
 
 export default function StudentCertificates() {
   return (
