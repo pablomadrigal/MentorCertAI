@@ -5,7 +5,7 @@ import { NFT } from '@/types/nft'
 const mockNFTs: NFT[] = [
   {
     id: 1,
-    certificateId: 1,
+    certificateId: "1",
     metadata: {
       name: "JavaScript Mastery",
       description: "This NFT certifies completion of JavaScript Fundamentals mentoring session",
@@ -28,7 +28,7 @@ const mockNFTs: NFT[] = [
   },
   {
     id: 2,
-    certificateId: 2,
+    certificateId: "2",
     metadata: {
       name: "React Developer",
       description: "This NFT certifies completion of React Advanced mentoring session",

@@ -14,6 +14,7 @@ export function Header() {
     }
     return null
   })
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleLogout = () => {
     localStorage.removeItem("user")

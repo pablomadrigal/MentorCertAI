@@ -7,27 +7,8 @@ import { Footer } from "../../../../components/organisms/Footer"
 import { Button } from "../../../../components/atoms/Button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/atoms/Card"
 import { NFTDisplayComponent } from "../../../../components/organisms/NFTDisplayComponent"
-
-interface Certificate {
-  id: number;
-  studentId: number;
-  issueDate: string;
-  grade: number;
-}
-
-interface NFT {
-  id: number;
-  certificateId: number;
-  metadata: {
-    name: string;
-    description: string;
-    image: string;
-    attributes: Array<{
-      trait_type: string;
-      value: string;
-    }>;
-  };
-}
+import { NFT } from "@/types/nft"
+import { Certificate } from "@/types/certificate"
 
 export default function ExamResultsPage() {
   const router = useRouter()
@@ -51,7 +32,7 @@ export default function ExamResultsPage() {
           // Mock certificate data
           setCertificate({
             id: Math.floor(Math.random() * 1000),
-            studentId: 0,
+            userId: "0",
             issueDate: new Date().toISOString(),
             grade: score,
           })
@@ -59,7 +40,7 @@ export default function ExamResultsPage() {
           // Mock NFT data
           setNft({
             id: Math.floor(Math.random() * 1000),
-            certificateId: Math.floor(Math.random() * 1000),
+            certificateId: Math.floor(Math.random() * 1000).toString(),
             metadata: {
               name: "MentorCertAi Achievement",
               description:

@@ -38,7 +38,7 @@ export function LoginForm() {
             // Redirect based on role
             router.push(mockUser.role === "student" ? "/student/dashboard" : "/mentor/dashboard")
         } catch (error) {
-            setError("Invalid email or password")
+            setError("Invalid email or password" + JSON.stringify(error))
         } finally {
             setIsLoading(false)
         }
