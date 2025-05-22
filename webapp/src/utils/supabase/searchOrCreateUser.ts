@@ -11,27 +11,22 @@ const supabase = createClient(
     }
 );
 
-export async function getIdOrCreateUserByEmail({ mentorId, newUserEmail }: CreateUserIfNotExistsProps) {
+export async function getUserByEmail({ mentorId, newUserEmail }: CreateUserIfNotExistsProps) {
   // Verificar si el mentor tiene el rol correcto
-  const { data: mentorProfile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', mentorId)
-    .single();
+  const { data: mentorProfile, error: profileError } = await supabase.auth.admin.getUserById(mentorId)
 
-  if (profileError || mentorProfile.role !== 'mentor') {
+  if (profileError || mentorProfile.user.user_metadata.role !== 'mentor') {
     throw new Error('Unauthorized');
   }
-  const { data: oldUserId, error: oldUserError } = await supabase.rpc(
-    "get_user_id_by_email",
-    {
-      email: newUserEmail,
-    }
-  );
-  if (oldUserError) throw oldUserError;
-
-  if (oldUserId) {
-    return { user: oldUserId, created: false };
+  const { data, error: oldUserError } = await supabase.rpc('get_user_by_email', {
+    user_email: newUserEmail,
+  });
+  
+  if (oldUserError) {
+    console.error(oldUserError);
+    throw oldUserError;
+  } else if (data.length > 0) {
+    return { user: data[0].id, created: false };
   }
 
   // Crear nuevo usuario

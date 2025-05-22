@@ -11,7 +11,7 @@ interface MentorSessionCardProps {
 }
 
 export function MentorSessionCard({ session, studentName, onJoin }: MentorSessionCardProps) {
-    const formattedDate = formatDate(session.date_time || "")
+    const formattedDate = session.date_time ? formatDate(session.date_time) : undefined
     const isPast = session.date_time ? new Date(session.date_time) < new Date() : false
     const completed = isPast
 
@@ -37,10 +37,10 @@ export function MentorSessionCard({ session, studentName, onJoin }: MentorSessio
                                     {session.theme || "General Mentoring"}
                                 </p>
                             </div>
-                            <div>
+                            {formattedDate && <div>
                                 <p className="text-xs text-text-secondary">Date & Time</p>
                                 <p className="text-sm font-medium">{formattedDate}</p>
-                            </div>
+                            </div>}
                         </div>
                     </div>
 
