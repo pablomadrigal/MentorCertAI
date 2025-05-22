@@ -37,8 +37,13 @@ export async function GET(request: Request) {
 // POST - Crear nuevo certificado
 export async function POST(request: Request) {
   try {
+    console.log('Iniciando solicitud POST');
+
     const contentType = request.headers.get('content-type');
+    console.log('Content-Type recibido:', contentType);
+
     if (!contentType || !contentType.includes('application/json')) {
+      console.log('Error: Content-Type inválido');
       return NextResponse.json(
         { error: 'El contenido debe ser application/json' },
         { status: 400 }
@@ -46,8 +51,10 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    
+    console.log('Body recibido:', JSON.stringify(body, null, 2));
+
     if (!body.user_id || !body.nft_id) {
+      console.log('Error: Faltan campos requeridos', { user_id: body.user_id, nft_id: body.nft_id });
       return NextResponse.json(
         { error: 'user_id y nft_id son requeridos' },
         { status: 400 }
@@ -66,6 +73,16 @@ export async function POST(request: Request) {
       nft_transaction
     } = body;
 
+    console.log('Datos procesados:', {
+      nft_id,
+      user_id,
+      date,
+      score,
+      session_id,
+      theme
+    });
+
+    console.log('Intentando insertar en Supabase...');
     const { data, error } = await supabase
       .from('certificates')
       .insert([{
@@ -83,15 +100,17 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
+      console.error('Error de Supabase:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    console.log('Certificado creado exitosamente:', data);
     return NextResponse.json({
       message: 'Certificado creado exitosamente',
       data
     });
   } catch (error) {
-    console.error("Error crítico:", error);
+    console.error("Error crítico completo:", error);
     return NextResponse.json(
       { error: "Error al procesar la solicitud" },
       { status: 500 }
@@ -111,7 +130,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    
+
     if (!body.id) {
       return NextResponse.json(
         { error: 'Se requiere el id para actualizar' },

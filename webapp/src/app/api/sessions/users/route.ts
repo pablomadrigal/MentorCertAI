@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from '@supabase/supabase-js';
+import { withAuth } from '@/utils/api-middleware'
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_API_KEY!
+  process.env.SUPABASE_SERVICE_ROL!  // Cambiar a service role
 );
 
 // GET - Obtener usuarios en sesión
@@ -39,9 +40,9 @@ export async function GET(request: Request) {
 }
 
 // POST - Agregar usuario a sesión
-export async function POST(request: Request) {
+export const POST = (request: Request) => withAuth(request, async (req, user) => {
   try {
-    const contentType = request.headers.get('content-type');
+    const contentType = req.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
       return NextResponse.json(
         { error: 'El contenido debe ser application/json' },
@@ -49,22 +50,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
-    
-    if (!body.room_id || !body.user_id) {
+    const body = await req.json();
+
+    if (!body.room_id) {
       return NextResponse.json(
-        { error: 'room_id y user_id son requeridos' },
+        { error: 'room_id es requerido' },
         { status: 400 }
       );
     }
 
-    const { room_id, user_id, exam = null, score = null } = body;
+    const { room_id, exam = null, score = null } = body;
 
     const { data, error } = await supabase
       .from('user_at_session')
       .insert([{
         room_id,
-        user_id,
+        user_id: user.sub, // Usar el ID del usuario autenticado
         exam,
         score
       }])
@@ -72,6 +73,7 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
+      console.error('Error de Supabase:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -86,7 +88,7 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+});
 
 // PUT - Actualizar información del usuario en la sesión
 export async function PUT(request: Request) {
@@ -100,7 +102,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    
+
     if (!body.room_id || !body.user_id) {
       return NextResponse.json(
         { error: 'Se requieren room_id y user_id para actualizar' },
