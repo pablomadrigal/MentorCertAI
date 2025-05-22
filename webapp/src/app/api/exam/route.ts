@@ -1,12 +1,9 @@
 import { NextResponse } from 'next/server';
-
+import { createClient } from '@supabase/supabase-js';
 import {GoogleGenAI} from '@google/genai';
 import { list } from '@vercel/blob';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-import fs from 'fs';
-import path from 'path';
-import { createClient } from '@supabase/supabase-js';
 
 export async function GET(request: Request) {
   try {
