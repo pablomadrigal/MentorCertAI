@@ -95,10 +95,45 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { examData } = await request.json();
+  try {
+    const { examData } = await request.json();
 
-  // Here you can save the exam data to your database
-  console.log('Received exam data:', examData);
+    if (!examData) {
+      console.error('No exam data received');
+      return NextResponse.json(
+        { error: 'No exam data provided' },
+        { status: 400 }
+      );
+    }
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    const { data, error } = await supabase
+      .from('exams')
+      .insert([examData])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error saving exam:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Exam saved successfully',
+      data
+    });
+  } catch (error) {
+    console.error('Error processing exam:', error);
+    return NextResponse.json(
+      { error: 'Failed to process exam' },
+      { status: 500 }
+    );
+  }
 }
 
 export async function PUT(request: Request) {

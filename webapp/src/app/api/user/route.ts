@@ -24,14 +24,10 @@ export const GET = (request: Request) => withAuth(request, async (req, user) => 
 
 export async function POST(request: Request) {
   try {
-    console.log('📝 Iniciando POST request para crear estudiante');
-    
-    // Verificar el Content-Type
     const contentType = request.headers.get('content-type');
-    console.log('📨 Content-Type recibido:', contentType);
-    
+
     if (!contentType || !contentType.includes('application/json')) {
-      console.log('❌ Error: Content-Type inválido');
+      console.error('Error: Content-Type inválido');
       return NextResponse.json(
         { error: 'El contenido debe ser application/json' },
         { status: 400 }
@@ -39,48 +35,37 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    console.log('📦 Body recibido:', body);
-    
-    // Validar que los campos requeridos existan
-    if (!body.email || !body.name) {
-      console.log('❌ Error: Campos requeridos faltantes');
+
+    if (!body.email || !body.lastname || !body.name) {
+      console.error('Error: Campos requeridos faltantes');
       return NextResponse.json(
-        { error: 'Email y nombre son requeridos' },
+        { error: 'email, lastname y name son requeridos' },
         { status: 400 }
       );
     }
 
-    const { email, lastname, name, isProfesor } = body;
-    console.log('📋 Datos extraídos:', { email, lastname, name, isProfesor });
+    const { email, lastname, name, isProfesor = false } = body;
 
-    // Insertar nuevo estudiante en Supabase
-    console.log('🔄 Intentando insertar en Supabase...');
     const { data, error } = await supabase
-      .from('person')
-      .insert([
-        {
-          name,
-          email,
-          lastname,
-          isProfesor
-        }
-      ])
+      .from('users')
+      .insert([{ email, lastname, name, isProfesor }])
       .select()
-      .single()
+      .single();
 
     if (error) {
-      console.error('❌ Error de Supabase:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error('Error de Supabase:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    console.log('✅ Estudiante creado exitosamente:', data);
-    return NextResponse.json(data)
+    return NextResponse.json({
+      message: 'Estudiante creado exitosamente',
+      data
+    });
   } catch (error) {
-    console.error("❌ Error crítico creando estudiante:", error);
-    console.error("Stack trace:", error instanceof Error ? error.stack : 'No stack trace disponible');
+    console.error("Error crítico:", error);
     return NextResponse.json(
-      { error: "Error al procesar la solicitud. Asegúrate de enviar un JSON válido" },
-      { status: 400 }
+      { error: "Error al procesar la solicitud" },
+      { status: 500 }
     );
   }
 }

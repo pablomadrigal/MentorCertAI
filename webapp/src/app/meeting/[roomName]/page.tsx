@@ -43,7 +43,6 @@ function RoomWrapper({ roomName, room, displayName, disconnect }: { roomName: st
                 try {
                     await room.connect(process.env.NEXT_PUBLIC_LIVEKIT_URL!, data.token);
                     await room.localParticipant.enableCameraAndMicrophone();
-                    console.log('Camera and microphone enabled');
                 } catch (error) {
                     console.error('Error connecting to room:', error);
                 }

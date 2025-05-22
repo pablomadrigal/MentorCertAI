@@ -40,7 +40,6 @@ export const decryptData = (encryptedData: string, pin: string): string => {
 export const generatePrivateKeyEncrypted = (pin: string): string => {
   const privateKey = stark.randomAddress();
   const encryptedPrivateKey = encryptData(privateKey, pin);
-  console.log("✅ Encrypted private key:", encryptedPrivateKey);
   return encryptedPrivateKey;
 };
 
@@ -75,7 +74,6 @@ export const getFutureWalletAdress = (
     AXConstructorCallData,
     0
   );
-  console.log("✅ Precalculated account address:", AXcontractAddress);
   return AXcontractAddress;
 };
 
@@ -93,7 +91,6 @@ export const generateAndDeployPreChargedWallet = async (
     "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f";
 
   const privateKey = decryptData(encryptedPrivateKey, pin);
-  console.log("Decrypted private key", privateKey);
 
   const starkKeyPubAX = ec.starkCurve.getStarkKey(privateKey);
 
@@ -112,7 +109,6 @@ export const generateAndDeployPreChargedWallet = async (
     AXConstructorCallData,
     0
   );
-  console.log("Precalculated account address=", AXcontractAddress);
 
   const accountAX = new Account(provider, AXcontractAddress, privateKey);
 
@@ -123,9 +119,8 @@ export const generateAndDeployPreChargedWallet = async (
     addressSalt: starkKeyPubAX,
   };
 
-  const { transaction_hash: AXdAth, contract_address: AXcontractFinalAddress } =
+  const { contract_address: AXcontractFinalAddress } =
     await accountAX.deployAccount(deployAccountPayload);
-  console.log("✅ ArgentX wallet deployed at:", AXcontractFinalAddress, AXdAth);
   return AXcontractFinalAddress;
 };
 
@@ -199,6 +194,7 @@ export const deployWithPaymaster = async (encryptedPrivateKey: string, pin: stri
     };
 
   } catch (error) {
+    console.error('Error deploying with paymaster:', error);
     throw error;
   }
 }
