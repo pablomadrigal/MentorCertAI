@@ -5,12 +5,7 @@ import { OtpStep } from "./login/OtpStep"
 import { SignupStep } from "./login/SignupStep"
 import supabase from "@/utils/supabase/client"
 import { LoginModalProps } from "@/types/auth"
-import { generatePrivateKeyEncrypted } from "@/lib/createWallet"
-
-interface LoginModalProps {
-  isOpen: boolean
-  onClose: () => void
-}
+import { generatePrivateKeyEncrypted } from "@/utils/createWallet"
 
 export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const [loading, setLoading] = useState(false)
@@ -79,7 +74,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const handleSignupSubmit = async (data: { fullName: string; role: "student" | "mentor"; acceptTerms: boolean }) => {
     try {
       setLoading(true)
-      const privateKey = generatePrivateKeyEncrypted(process.env.NEXT_PUBLIC_PASSWORD_PK ?? "")
+      const privateKey = generatePrivateKeyEncrypted(process.env.NEXT_PUBLIC_PASSWORD_PK ?? "1234")
       const { error } = await supabase.auth.updateUser({
         data: { full_name: data.fullName, accept_terms: data.acceptTerms, role: data.role, private_key: privateKey },
         email,
