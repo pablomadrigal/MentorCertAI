@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 
-import { GoogleGenerativeAI }from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import fs from 'fs';
 import path from 'path';
+import { createClient } from '@supabase/supabase-js';
 
 export async function GET(request: Request) {
   try {
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
     const conversation = transcriptData.transcripts.map((entry: string) => {
       const match = entry.match(/\[(.*?)\s-\s\d+\]:\s(.*)/);
       if (!match) return null;
-      
+
       const [, timestamp, message] = match;
       return `${timestamp}: ${message}`;
     }).join('\n');
@@ -72,13 +73,13 @@ export async function GET(request: Request) {
       const geminiResponse = await result.response;
       const responseText = geminiResponse.text().replace(/```json\n|\n```/g, '');
       geminiExam = JSON.parse(responseText);
-      
+
     } catch (error) {
       console.error('Error generating exam:', error);
       throw new Error('Failed to generate exam');
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       data: geminiExam
     });
@@ -96,4 +97,83 @@ export async function POST(request: Request) {
 
   // Here you can save the exam data to your database
   console.log('Received exam data:', examData);
+}
+
+export async function PUT(request: Request) {
+  try {
+    const { room_id, examData } = await request.json();
+
+    if (!room_id) {
+      return NextResponse.json(
+        { success: false, message: 'Se requiere el ID de la sala' },
+        { status: 400 }
+      );
+    }
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    // Verificar si ya existe un examen para este room_id
+    const { data: existingExams, error: fetchError } = await supabase
+      .from('user_at_session')
+      .select('exam')
+      .eq('room_id', room_id);
+
+    if (fetchError) {
+      console.error('Error específico de Supabase:', fetchError);
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Error al verificar el examen existente',
+          error: fetchError.message
+        },
+        { status: 500 }
+      );
+    }
+
+    // Verificar si alguno de los registros ya tiene un examen
+    const hasExistingExam = existingExams?.some(record => record.exam !== null);
+    if (hasExistingExam) {
+      return NextResponse.json(
+        { success: false, message: 'Ya existe un examen para esta sala' },
+        { status: 401 }
+      );
+    }
+
+    // Actualizar todos los registros con el mismo room_id
+    const { error: updateError } = await supabase
+      .from('user_at_session')
+      .update({ exam: examData })
+      .eq('room_id', room_id);
+
+    if (updateError) {
+      console.error('Error de actualización:', updateError);
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Error al guardar el examen',
+          error: updateError.message
+        },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Examen guardado exitosamente'
+    });
+
+  } catch (error) {
+    console.error('Error al procesar la solicitud:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Error interno del servidor',
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      },
+      { status: 500 }
+    );
+  }
 }
