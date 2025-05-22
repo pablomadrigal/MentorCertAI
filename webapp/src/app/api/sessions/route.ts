@@ -6,39 +6,25 @@ const supabase = createClient(
   process.env.SUPABASE_API_KEY!
 );
 
-// GET - Obtener usuarios en sesión
-export async function GET(request: Request) {
+// GET - Obtener todas las sesiones
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url);
-    const room_id = searchParams.get('room_id');
-    const user_id = searchParams.get('user_id');
-
-    let query = supabase.from('user_at_session').select('*');
-
-    if (room_id) {
-      query = query.eq('room_id', room_id);
-    }
-    if (user_id) {
-      query = query.eq('user_id', user_id);
-    }
-
-    const { data, error } = await query;
-
+    const { data, error } = await supabase
+      .from('session')
+      .select('*');
+    
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error obteniendo usuarios en sesión:", error);
-    return NextResponse.json(
-      { error: "Error al obtener usuarios en sesión" },
-      { status: 500 }
-    );
+    console.error("Error obteniendo sesiones:", error);
+    return NextResponse.json({ error: "Error al obtener sesiones" }, { status: 500 });
   }
 }
 
-// POST - Agregar usuario a sesión
+// POST - Crear nueva sesión
 export async function POST(request: Request) {
   try {
     const contentType = request.headers.get('content-type');
@@ -51,22 +37,23 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    if (!body.room_id || !body.user_id) {
+    // Validar campos requeridos
+    if (!body.room_id || !body.theme) {
       return NextResponse.json(
-        { error: 'room_id y user_id son requeridos' },
+        { error: 'room_id y theme son requeridos' },
         { status: 400 }
       );
     }
 
-    const { room_id, user_id, exam = null, score = null } = body;
+    const { room_id, theme, transcription = null, owner_id } = body;
 
     const { data, error } = await supabase
-      .from('user_at_session')
-      .insert([{
-        room_id,
-        user_id,
-        exam,
-        score
+      .from('session')
+      .insert([{ 
+        room_id, 
+        theme,
+        transcription,
+        owner_id 
       }])
       .select()
       .single();
@@ -76,7 +63,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-      message: 'Usuario agregado a la sesión exitosamente',
+      message: 'Sesión creada exitosamente',
       data
     });
   } catch (error) {
@@ -88,7 +75,7 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT - Actualizar información del usuario en la sesión
+// PUT - Actualizar sesión
 export async function PUT(request: Request) {
   try {
     const contentType = request.headers.get('content-type');
@@ -101,18 +88,20 @@ export async function PUT(request: Request) {
 
     const body = await request.json();
     
-    if (!body.room_id || !body.user_id) {
+    if (!body.room_id) {
       return NextResponse.json(
-        { error: 'Se requieren room_id y user_id para actualizar' },
+        { error: 'Se requiere el room_id para actualizar' },
         { status: 400 }
       );
     }
 
-    const { room_id, user_id, exam, score } = body;
+    const { room_id, theme, transcription, owner_id } = body;
 
+    // Construir objeto de actualización
     const updateData: any = {};
-    if (exam !== undefined) updateData.exam = exam;
-    if (score !== undefined) updateData.score = score;
+    if (theme !== undefined) updateData.theme = theme;
+    if (transcription !== undefined) updateData.transcription = transcription;
+    if (owner_id !== undefined) updateData.owner_id = owner_id;
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
@@ -122,10 +111,9 @@ export async function PUT(request: Request) {
     }
 
     const { data, error } = await supabase
-      .from('user_at_session')
+      .from('session')
       .update(updateData)
       .eq('room_id', room_id)
-      .eq('user_id', user_id)
       .select()
       .single();
 
@@ -134,7 +122,7 @@ export async function PUT(request: Request) {
     }
 
     return NextResponse.json({
-      message: 'Información actualizada exitosamente',
+      message: 'Sesión actualizada exitosamente',
       data
     });
   } catch (error) {
@@ -146,32 +134,30 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE - Eliminar usuario de la sesión
+// DELETE - Eliminar sesión
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const room_id = searchParams.get('room_id');
-    const user_id = searchParams.get('user_id');
 
-    if (!room_id || !user_id) {
+    if (!room_id) {
       return NextResponse.json(
-        { error: 'Se requieren room_id y user_id para eliminar' },
+        { error: 'Se requiere el room_id para eliminar' },
         { status: 400 }
       );
     }
 
     const { error } = await supabase
-      .from('user_at_session')
+      .from('session')
       .delete()
-      .eq('room_id', room_id)
-      .eq('user_id', user_id);
+      .eq('room_id', room_id);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({
-      message: 'Usuario eliminado de la sesión exitosamente'
+      message: 'Sesión eliminada exitosamente'
     });
   } catch (error) {
     console.error("Error crítico eliminando:", error);

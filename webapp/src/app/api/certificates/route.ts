@@ -6,18 +6,14 @@ const supabase = createClient(
   process.env.SUPABASE_API_KEY!
 );
 
-// GET - Obtener usuarios en sesión
+// GET - Obtener todos los certificados o filtrar por usuario
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const room_id = searchParams.get('room_id');
     const user_id = searchParams.get('user_id');
 
-    let query = supabase.from('user_at_session').select('*');
+    let query = supabase.from('certificates').select('*');
 
-    if (room_id) {
-      query = query.eq('room_id', room_id);
-    }
     if (user_id) {
       query = query.eq('user_id', user_id);
     }
@@ -30,15 +26,15 @@ export async function GET(request: Request) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error obteniendo usuarios en sesión:", error);
+    console.error("Error obteniendo certificados:", error);
     return NextResponse.json(
-      { error: "Error al obtener usuarios en sesión" },
+      { error: "Error al obtener certificados" },
       { status: 500 }
     );
   }
 }
 
-// POST - Agregar usuario a sesión
+// POST - Crear nuevo certificado
 export async function POST(request: Request) {
   try {
     const contentType = request.headers.get('content-type');
@@ -51,22 +47,37 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    if (!body.room_id || !body.user_id) {
+    if (!body.user_id || !body.nft_id) {
       return NextResponse.json(
-        { error: 'room_id y user_id son requeridos' },
+        { error: 'user_id y nft_id son requeridos' },
         { status: 400 }
       );
     }
 
-    const { room_id, user_id, exam = null, score = null } = body;
+    const {
+      nft_id,
+      nft_metadata,
+      image,
+      user_id,
+      date = new Date(),
+      score,
+      session_id,
+      theme,
+      nft_transaction
+    } = body;
 
     const { data, error } = await supabase
-      .from('user_at_session')
+      .from('certificates')
       .insert([{
-        room_id,
+        nft_id,
+        nft_metadata,
+        image,
         user_id,
-        exam,
-        score
+        date,
+        score,
+        session_id,
+        theme,
+        nft_transaction
       }])
       .select()
       .single();
@@ -76,7 +87,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-      message: 'Usuario agregado a la sesión exitosamente',
+      message: 'Certificado creado exitosamente',
       data
     });
   } catch (error) {
@@ -88,7 +99,7 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT - Actualizar información del usuario en la sesión
+// PUT - Actualizar certificado
 export async function PUT(request: Request) {
   try {
     const contentType = request.headers.get('content-type');
@@ -101,18 +112,32 @@ export async function PUT(request: Request) {
 
     const body = await request.json();
     
-    if (!body.room_id || !body.user_id) {
+    if (!body.id) {
       return NextResponse.json(
-        { error: 'Se requieren room_id y user_id para actualizar' },
+        { error: 'Se requiere el id para actualizar' },
         { status: 400 }
       );
     }
 
-    const { room_id, user_id, exam, score } = body;
+    const {
+      id,
+      nft_id,
+      nft_metadata,
+      image,
+      date,
+      score,
+      theme,
+      nft_transaction
+    } = body;
 
     const updateData: any = {};
-    if (exam !== undefined) updateData.exam = exam;
+    if (nft_id !== undefined) updateData.nft_id = nft_id;
+    if (nft_metadata !== undefined) updateData.nft_metadata = nft_metadata;
+    if (image !== undefined) updateData.image = image;
+    if (date !== undefined) updateData.date = date;
     if (score !== undefined) updateData.score = score;
+    if (theme !== undefined) updateData.theme = theme;
+    if (nft_transaction !== undefined) updateData.nft_transaction = nft_transaction;
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
@@ -122,10 +147,9 @@ export async function PUT(request: Request) {
     }
 
     const { data, error } = await supabase
-      .from('user_at_session')
+      .from('certificates')
       .update(updateData)
-      .eq('room_id', room_id)
-      .eq('user_id', user_id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -134,7 +158,7 @@ export async function PUT(request: Request) {
     }
 
     return NextResponse.json({
-      message: 'Información actualizada exitosamente',
+      message: 'Certificado actualizado exitosamente',
       data
     });
   } catch (error) {
@@ -146,32 +170,30 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE - Eliminar usuario de la sesión
+// DELETE - Eliminar certificado
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const room_id = searchParams.get('room_id');
-    const user_id = searchParams.get('user_id');
+    const id = searchParams.get('id');
 
-    if (!room_id || !user_id) {
+    if (!id) {
       return NextResponse.json(
-        { error: 'Se requieren room_id y user_id para eliminar' },
+        { error: 'Se requiere el id para eliminar' },
         { status: 400 }
       );
     }
 
     const { error } = await supabase
-      .from('user_at_session')
+      .from('certificates')
       .delete()
-      .eq('room_id', room_id)
-      .eq('user_id', user_id);
+      .eq('id', id);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({
-      message: 'Usuario eliminado de la sesión exitosamente'
+      message: 'Certificado eliminado exitosamente'
     });
   } catch (error) {
     console.error("Error crítico eliminando:", error);
