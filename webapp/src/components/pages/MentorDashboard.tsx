@@ -4,27 +4,39 @@ import { useEffect, useState } from "react"
 import { SessionList } from "@/components/organisms/SessionList"
 import { CreateSessionForm } from "@/components/organisms/CreateSessionForm"
 import { FilterType, Session } from "@/types/session"
+import { useApi } from "@/hooks/useApi"
+import { useAuth } from "@/contexts/AuthContext"
 
 export function MentorDashboard() {
-    const [dataLoaded, setDataLoaded] = useState(false)
     const [activeFilter, setActiveFilter] = useState<FilterType>("all")
     const [sessions, setSessions] = useState<Session[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const { get } = useApi<Session[]>()
+    const { user } = useAuth()
+
 
     useEffect(() => {
+
         const fetchSessions = async () => {
+            if (!user?.sub) return
+
             try {
-                const response = await fetch(`/api/sessions`)
-                const data = await response.json()
-                setSessions(data)
-                setDataLoaded(true)
-            } catch (error) {
-                console.error('Error fetching sessions:', error)
-                setDataLoaded(true)
+                setIsLoading(true)
+                setError(null)
+                const response = await get(`/sessions`)
+                if (response.data) {
+                    setSessions(response.data)
+                }
+            } catch (err) {
+                setError('Failed to fetch sessions')
+                console.error('Error fetching sessions:', err)
+            } finally {
+                setIsLoading(false)
             }
         }
-
         fetchSessions()
-    }, [activeFilter])
+    }, [user, get])
 
     // Count sessions by type
     const upcomingSessions = sessions.filter((s) => !s.completed).length
@@ -35,10 +47,18 @@ export function MentorDashboard() {
         setActiveFilter(filter)
     }
 
-    if (!dataLoaded) {
+    if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-main"></div>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-red-500">Error: {error}</div>
             </div>
         )
     }

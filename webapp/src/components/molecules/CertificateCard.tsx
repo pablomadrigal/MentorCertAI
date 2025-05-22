@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card"
 import { Button } from "@/components/atoms/Button"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/utils/utils"
 import Image from "next/image"
 import { CertificateCardProps } from "@/types/certificate"
 
