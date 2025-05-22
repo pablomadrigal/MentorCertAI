@@ -7,6 +7,7 @@ import supabase from "@/utils/supabase/client"
 import { LoginModalProps } from "@/types/auth"
 import { generatePrivateKeyEncrypted } from "@/utils/createWallet"
 
+
 export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const [loading, setLoading] = useState(false)
   const [loginStep, setLoginStep] = useState<"email" | "otp" | "signup">("email")
