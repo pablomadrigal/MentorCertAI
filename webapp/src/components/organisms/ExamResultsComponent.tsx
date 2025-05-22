@@ -19,7 +19,7 @@ export function ExamResultsComponent({ sessionId }: ExamResultsComponentProps) {
     useEffect(() => {
         const loadResults = async () => {
             try {
-                const response = await fetch(`/api/user/${user?.id}/certificates/${sessionId}`)
+                const response = await fetch(`/api/user/${user?.sub}/certificates/${sessionId}`)
                 const certificatesData: Certificate[] = await response.json()
                 setCertificate(certificatesData[0])
             } catch (error) {
@@ -28,7 +28,7 @@ export function ExamResultsComponent({ sessionId }: ExamResultsComponentProps) {
         }
 
         loadResults()
-    }, [user?.id, sessionId])
+    }, [user?.sub, sessionId])
 
     if (!certificate) {
         return (

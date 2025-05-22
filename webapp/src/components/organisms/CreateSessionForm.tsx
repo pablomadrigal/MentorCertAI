@@ -5,6 +5,8 @@ import { useState } from "react"
 import { Button } from "../atoms/Button"
 import { Input } from "../atoms/Input"
 import { FormField } from "../molecules/FormField"
+import { useApi } from "@/hooks/useApi"
+import { Session } from "@/types/session"
 
 export function CreateSessionForm() {
     const [studentEmail, setStudentEmail] = useState("")
@@ -13,6 +15,7 @@ export function CreateSessionForm() {
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [success, setSuccess] = useState(false)
+    const { post } = useApi<Session[]>()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -21,24 +24,25 @@ export function CreateSessionForm() {
         setIsLoading(true)
 
         try {
-            // Mock session creation
-            await new Promise(resolve => setTimeout(resolve, 1000))
-
-            // In a real app, this would be an API call
-            const mockSession = {
-                studentEmail,
-                mentorId: 1,
-                dateTime,
-                subject,
-                link: `https://meet.mentorcertai.com/${Date.now()}`,
-                completed: false,
+            const newRoomId = `${Math.random().toString(36).substring(2, 8)}`;
+            const temporalSession: Session = {
+                room_id: newRoomId,
+                theme: subject,
+                date_time: dateTime
             }
-
-            console.log("Created mock session:", mockSession)
+            const createSessionResponse = await post(`/sessions`, temporalSession)
+            if (createSessionResponse.error) {
+                setError(createSessionResponse.error)
+                setIsLoading(false)
+                return
+            }
+            const createdSession = await createSessionResponse.data
+            console.log("session", createdSession)
             setSuccess(true)
             setStudentEmail("")
             setSubject("")
             setDateTime("")
+            setError("")
         } catch (err) {
             setError("Failed to create session. Please try again.")
             console.error("Error creating session:", err)

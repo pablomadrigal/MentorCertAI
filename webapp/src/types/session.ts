@@ -1,24 +1,24 @@
 export type FilterType = "all" | "upcoming" | "completed"
 
-export interface ApiSession {
+export interface Session {
   room_id: string
   theme: string
   transcription?: JSON
   owner_id?: string
+  date_time?: string
 }
 
-export interface Session {
-  id: string
-  studentId: string
-  studentEmail: string
-  studentName: string
-  mentorId: number
-  mentorName: string
-  subject: string
-  dateTime: string
-  link: string
-  completed: boolean
-  examPassed?: boolean
+export interface SessionByPerson {
+  room_id: string
+  user_id: string
+  exam?: JSON
+  score?: number
+}
+
+export interface StudentSession extends Session {
+  user_id: string
+  exam?: JSON
+  score?: number
 }
 
 export interface SessionListProps {

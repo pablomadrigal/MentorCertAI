@@ -1,5 +1,17 @@
 import { NextResponse } from 'next/server';
 import { put, list } from '@vercel/blob';
+import { createClient } from '@supabase/supabase-js';
+
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROL!, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+  }
+);
 
 export async function GET(request: Request) {
   try {
@@ -60,6 +72,19 @@ export async function POST(request: Request) {
       access: 'public',
       addRandomSuffix: false,
     });
+
+    //Update session with transcript URL
+    const { error } = await supabase
+      .from('sessions')
+      .update({ transcription: data })
+      .eq('room_id', data.room);
+
+    if (error) {
+      return NextResponse.json(
+        { success: false, message: 'Transcript file saved but session not updated' },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({ 
       success: true, 

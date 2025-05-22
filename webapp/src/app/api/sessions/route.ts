@@ -1,16 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import { withAuth } from '@/utils/api-middleware'
-import { ApiSession } from "@/types/session";
+import { Session } from "@/types/session";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_API_KEY!
 );
 
-// GET - Obtener todas las sesiones de un usuario
+// GET - Obtener todas las sesiones de un mentor
 export const GET = (request: Request) => withAuth(request, async (req, user) => {
-  console.log("user", user)
   try {
     const { data, error } = await supabase
       .from('session')
@@ -29,7 +28,7 @@ export const GET = (request: Request) => withAuth(request, async (req, user) => 
 });
 
 // POST - Crear nueva sesión
-export async function POST(request: Request) {
+export const POST = (request: Request) => withAuth(request, async (req, user) => {
   try {
     const contentType = request.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
@@ -39,7 +38,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    const body: Session = await request.json();
     
     // Validar campos requeridos
     if (!body.room_id || !body.theme) {
@@ -49,7 +48,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { room_id, theme, transcription = null, owner_id } = body;
+    const { room_id, theme, transcription, date_time } = body;
 
     const { data, error } = await supabase
       .from('session')
@@ -57,7 +56,8 @@ export async function POST(request: Request) {
         room_id, 
         theme,
         transcription,
-        owner_id 
+        owner_id: user.sub,
+        date_time: date_time
       }])
       .select()
       .single();
@@ -77,10 +77,10 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+});
 
-// PUT - Actualizar sesión
-export async function PUT(request: Request) {
+// PUT - Actualizar la fecha de la sesión
+export const PUT = (request: Request) => withAuth(request, async (req, user) => {
   try {
     const contentType = request.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
@@ -99,28 +99,15 @@ export async function PUT(request: Request) {
       );
     }
 
-    const { room_id, theme, transcription, owner_id } = body;
-
-    // Construir objeto de actualización
-    const updateData: ApiSession = {
-        room_id,
-        theme,
-        transcription,
-        owner_id
-    };
-
-
-    if (Object.keys(updateData).length === 0) {
-      return NextResponse.json(
-        { error: 'Se requiere al menos un campo para actualizar' },
-        { status: 400 }
-      );
-    }
+    const { room_id, date_time } = body;
 
     const { data, error } = await supabase
       .from('session')
-      .update(updateData)
+      .update({
+        date_time
+      })
       .eq('room_id', room_id)
+      .eq('owner_id', user.sub)
       .select()
       .single();
 
@@ -139,4 +126,4 @@ export async function PUT(request: Request) {
       { status: 500 }
     );
   }
-}
+});
