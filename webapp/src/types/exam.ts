@@ -2,6 +2,7 @@ export interface BaseQuestion {
   type: string
   question: string
   answer: string | number
+  userAnswer?: string | number
 }
 
 export interface MultipleChoiceQuestion extends BaseQuestion {
@@ -19,9 +20,12 @@ export type Question = MultipleChoiceQuestion | YesNoQuestion
 export interface ExamData {
   success: boolean
   data: Question[]
+  score?: number
 }
 
 export interface ExamComponentProps {
-  sessionId: number
-  studentId: number
+  sessionId: string
+  examData: ExamData
+  loading: boolean
+  onSubmit: (examData: ExamData) => void
 } 

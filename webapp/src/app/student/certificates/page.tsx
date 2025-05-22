@@ -13,13 +13,13 @@ export default function StudentCertificates() {
 
   useEffect(() => {
     const fetchCertificates = async () => {
-      const response = await fetch(`/api/user/${user?.id}/certificates`)
+      const response = await fetch(`/api/user/${user?.sub}/certificates`)
       const certificatesData: Certificate[] = await response.json()
       setCertificates(certificatesData)
       setIsLoading(false)
     }
     fetchCertificates()
-  }, [user?.id])
+  }, [user?.sub])
 
   return (
     <div className="flex flex-col min-h-screen">

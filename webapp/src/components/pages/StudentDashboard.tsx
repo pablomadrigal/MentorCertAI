@@ -8,35 +8,28 @@ import Link from "next/link"
 import { Button } from "@/components/atoms/Button"
 import { FilterType, Session } from "@/types/session"
 import { NFT } from "@/types/nft"
+import { useApi } from "@/hooks/useApi"
 
 export function StudentDashboard() {
-    const [dataLoaded, setDataLoaded] = useState(false)
     const [activeFilter, setActiveFilter] = useState<FilterType>("all")
     const [sessions, setSessions] = useState<Session[]>([])
     const [nfts, setNfts] = useState<NFT[]>([])
+    const { loading: sessionsLoading, error: sessionsError, get: getSessions } = useApi<Session[]>()
+    const { loading: nftsLoading, error: nftsError, get: getNfts } = useApi<NFT[]>()
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const [sessionsResponse, nftsResponse] = await Promise.all([
-                    fetch(`/api/sessions`),
-                    fetch('/api/nfts')
-                ])
+            const [sessionsResponse, nftsResponse] = await Promise.all([
+                getSessions('/sessions'),
+                getNfts('/nfts')
+            ])
 
-                const sessionsData = await sessionsResponse.json()
-                const nftsData = await nftsResponse.json()
-
-                setSessions(sessionsData)
-                setNfts(nftsData)
-                setDataLoaded(true)
-            } catch (error) {
-                console.error('Error fetching data:', error)
-                setDataLoaded(true)
-            }
+            if (sessionsResponse.data) setSessions(sessionsResponse.data)
+            if (nftsResponse.data) setNfts(nftsResponse.data)
         }
 
         fetchData()
-    }, [])
+    }, [getSessions, getNfts])
 
     // Count sessions by type
     const upcomingSessions = sessions.filter((s) => !s.completed).length
@@ -47,10 +40,18 @@ export function StudentDashboard() {
         setActiveFilter(filter)
     }
 
-    if (!dataLoaded) {
+    if (sessionsLoading || nftsLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-main"></div>
+            </div>
+        )
+    }
+
+    if (sessionsError || nftsError) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-red-500">Error loading data</div>
             </div>
         )
     }

@@ -1,9 +1,10 @@
 import { Modal } from "@/components/atoms/Modal"
 import { useState } from "react"
-import supabase from "../../lib/supabase"
 import { EmailStep } from "./login/EmailStep"
 import { OtpStep } from "./login/OtpStep"
 import { SignupStep } from "./login/SignupStep"
+import supabase from "@/utils/supabase/client"
+import { LoginModalProps } from "@/types/auth"
 import { generatePrivateKeyEncrypted } from "@/lib/createWallet"
 
 interface LoginModalProps {

@@ -5,38 +5,22 @@ import { useParams } from "next/navigation"
 import { Header } from "@/components/organisms/Header"
 import { Footer } from "@/components/organisms/Footer"
 import { ExamComponent } from "@/components/organisms/ExamComponent"
-import { ExamResultsComponent } from "@/components/organisms/ExamResultsComponent"
-
-interface Session {
-  id: number;
-  studentId: number;
-  mentorId: number;
-  dateTime: string;
-  completed: boolean;
-  score?: number;
-}
+import { ExamData } from "@/types/exam"
+import { useAuth } from "@/contexts/AuthContext"
 
 export default function ExamPage() {
   const params = useParams()
   const sessionId = params.sessionId as string
   const [isLoading, setIsLoading] = useState(true)
-  const [session, setSession] = useState<Session | null>(null)
+  const [examData, setExamData] = useState<ExamData | null>(null)
+  const { user } = useAuth()
 
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        // In a real app, this would fetch the session from the API
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        // Mock session data - replace with actual API call
-        setSession({
-          id: Number.parseInt(sessionId),
-          studentId: 0,
-          mentorId: 1,
-          dateTime: new Date().toISOString(),
-          completed: false, // This should come from the API
-          score: undefined
-        })
+        const response = await fetch(`/api/user/${user?.sub}/exam?room=${sessionId}`)
+        const data = await response.json()
+        setExamData(data)
       } catch (error) {
         console.error("Error fetching session:", error)
       } finally {
@@ -45,7 +29,7 @@ export default function ExamPage() {
     }
 
     fetchSession()
-  }, [sessionId])
+  }, [sessionId, user?.sub])
 
   if (isLoading) {
     return (
@@ -55,7 +39,7 @@ export default function ExamPage() {
     )
   }
 
-  if (!session) {
+  if (!examData) {
     return (
       <div className="flex flex-col min-h-screen">
         <Header />
@@ -70,6 +54,14 @@ export default function ExamPage() {
     )
   }
 
+  const handleSubmit = async (examData: ExamData) => {
+    console.log(examData)
+    await fetch(`/api/user/${user?.sub}/exam?room=${sessionId}`, {
+      method: "POST",
+      body: JSON.stringify(examData),
+    })
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -78,11 +70,7 @@ export default function ExamPage() {
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">Certification Exam for {sessionId}</h1>
           <div className="max-w-3xl mx-auto">
-            {session.completed ? (
-              <ExamResultsComponent sessionId={session.id} />
-            ) : (
-              <ExamComponent sessionId={session.id} studentId={session.studentId} />
-            )}
+            <ExamComponent sessionId={sessionId} examData={examData} loading={isLoading} onSubmit={handleSubmit} />
           </div>
         </div>
       </main>

@@ -1,8 +1,15 @@
 export type FilterType = "all" | "upcoming" | "completed"
 
+export interface ApiSession {
+  room_id: string
+  theme: string
+  transcription?: JSON
+  owner_id?: string
+}
+
 export interface Session {
   id: string
-  studentId: number
+  studentId: string
   studentEmail: string
   studentName: string
   mentorId: number
