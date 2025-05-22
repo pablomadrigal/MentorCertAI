@@ -1,6 +1,6 @@
 import { Modal } from "@/components/atoms/Modal"
 import { useState } from "react"
-import supabase from "../../lib/supabase"
+import supabase from "../../utils/supabase/client"
 import { EmailStep } from "./login/EmailStep"
 import { OtpStep } from "./login/OtpStep"
 import { SignupStep } from "./login/SignupStep"

@@ -1,4 +1,4 @@
-import { deployWithPaymaster, generatePrivateKeyEncrypted } from "@/lib/createWallet"
+import { deployWithPaymaster, generatePrivateKeyEncrypted } from "@/utils/createWallet"
 import { NextResponse } from "next/server"
 
 const pk_pw=process.env.NEXT_PUBLIC_PASSWORD_PK ?? ""

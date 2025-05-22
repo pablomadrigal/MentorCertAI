@@ -4,27 +4,22 @@ import { useEffect, useState } from "react"
 import { SessionList } from "@/components/organisms/SessionList"
 import { CreateSessionForm } from "@/components/organisms/CreateSessionForm"
 import { FilterType, Session } from "@/types/session"
+import { useApi } from "@/hooks/useApi"
 
 export function MentorDashboard() {
-    const [dataLoaded, setDataLoaded] = useState(false)
     const [activeFilter, setActiveFilter] = useState<FilterType>("all")
     const [sessions, setSessions] = useState<Session[]>([])
+    const { loading, error, get } = useApi<Session[]>()
 
     useEffect(() => {
         const fetchSessions = async () => {
-            try {
-                const response = await fetch(`/api/sessions`)
-                const data = await response.json()
-                setSessions(data)
-                setDataLoaded(true)
-            } catch (error) {
-                console.error('Error fetching sessions:', error)
-                setDataLoaded(true)
+            const response = await get('/sessions')
+            if (response.data) {
+                setSessions(response.data)
             }
         }
-
         fetchSessions()
-    }, [activeFilter])
+    }, [get])
 
     // Count sessions by type
     const upcomingSessions = sessions.filter((s) => !s.completed).length
@@ -35,10 +30,18 @@ export function MentorDashboard() {
         setActiveFilter(filter)
     }
 
-    if (!dataLoaded) {
+    if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-main"></div>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-red-500">Error: {error}</div>
             </div>
         )
     }
