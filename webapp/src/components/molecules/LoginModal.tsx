@@ -1,15 +1,12 @@
 import { Modal } from "@/components/atoms/Modal"
 import { useState } from "react"
-import supabase from "../../lib/supabase"
 import { EmailStep } from "./login/EmailStep"
 import { OtpStep } from "./login/OtpStep"
 import { SignupStep } from "./login/SignupStep"
-import { generatePrivateKeyEncrypted } from "@/lib/createWallet"
+import supabase from "@/utils/supabase/client"
+import { LoginModalProps } from "@/types/auth"
+import { generatePrivateKeyEncrypted } from "@/utils/createWallet"
 
-interface LoginModalProps {
-  isOpen: boolean
-  onClose: () => void
-}
 
 export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const [loading, setLoading] = useState(false)

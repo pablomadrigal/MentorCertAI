@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card"
 import { Button } from "@/components/atoms/Button"
 import { Badge } from "@/components/atoms/Badge"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/utils/utils"
 import { SessionCardProps } from "@/types/session"
 
 export function SessionCard({

@@ -1,17 +1,21 @@
-import { NextResponse } from "next/server";
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
+import { NextResponse } from 'next/server'
+import { withAuth } from '@/utils/api-middleware'
+import { ApiSession } from "@/types/session";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_API_KEY!
 );
 
-// GET - Obtener todas las sesiones
-export async function GET() {
+// GET - Obtener todas las sesiones de un usuario
+export const GET = (request: Request) => withAuth(request, async (req, user) => {
+  console.log("user", user)
   try {
     const { data, error } = await supabase
       .from('session')
-      .select('*');
+      .select('*')
+      .eq('owner_id', user.sub);
     
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -22,7 +26,7 @@ export async function GET() {
     console.error("Error obteniendo sesiones:", error);
     return NextResponse.json({ error: "Error al obtener sesiones" }, { status: 500 });
   }
-}
+});
 
 // POST - Crear nueva sesión
 export async function POST(request: Request) {
@@ -98,10 +102,13 @@ export async function PUT(request: Request) {
     const { room_id, theme, transcription, owner_id } = body;
 
     // Construir objeto de actualización
-    const updateData: any = {};
-    if (theme !== undefined) updateData.theme = theme;
-    if (transcription !== undefined) updateData.transcription = transcription;
-    if (owner_id !== undefined) updateData.owner_id = owner_id;
+    const updateData: ApiSession = {
+        room_id,
+        theme,
+        transcription,
+        owner_id
+    };
+
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
@@ -129,40 +136,6 @@ export async function PUT(request: Request) {
     console.error("Error crítico actualizando:", error);
     return NextResponse.json(
       { error: "Error al procesar la solicitud de actualización" },
-      { status: 500 }
-    );
-  }
-}
-
-// DELETE - Eliminar sesión
-export async function DELETE(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const room_id = searchParams.get('room_id');
-
-    if (!room_id) {
-      return NextResponse.json(
-        { error: 'Se requiere el room_id para eliminar' },
-        { status: 400 }
-      );
-    }
-
-    const { error } = await supabase
-      .from('session')
-      .delete()
-      .eq('room_id', room_id);
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json({
-      message: 'Sesión eliminada exitosamente'
-    });
-  } catch (error) {
-    console.error("Error crítico eliminando:", error);
-    return NextResponse.json(
-      { error: "Error al procesar la solicitud de eliminación" },
       { status: 500 }
     );
   }
