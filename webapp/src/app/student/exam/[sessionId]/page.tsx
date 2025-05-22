@@ -18,7 +18,7 @@ export default function ExamPage() {
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        const response = await fetch(`/api/user/${user?.id}/exam?room=${sessionId}`)
+        const response = await fetch(`/api/user/${user?.sub}/exam?room=${sessionId}`)
         const data = await response.json()
         setExamData(data)
       } catch (error) {
@@ -29,7 +29,7 @@ export default function ExamPage() {
     }
 
     fetchSession()
-  }, [sessionId, user?.id])
+  }, [sessionId, user?.sub])
 
   if (isLoading) {
     return (
@@ -56,7 +56,7 @@ export default function ExamPage() {
 
   const handleSubmit = async (examData: ExamData) => {
     console.log(examData)
-    await fetch(`/api/user/${user?.id}/exam?room=${sessionId}`, {
+    await fetch(`/api/user/${user?.sub}/exam?room=${sessionId}`, {
       method: "POST",
       body: JSON.stringify(examData),
     })

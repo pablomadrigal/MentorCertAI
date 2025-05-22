@@ -1,4 +1,4 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import supabase from './supabase/client'
 
 export type ApiResponse<T = unknown> = {
   data?: T
@@ -8,14 +8,13 @@ export type ApiResponse<T = unknown> = {
 
 class ApiClient {
   private baseUrl: string
-  private supabase = createClientComponentClient()
 
   constructor() {
     this.baseUrl = '/api'
   }
 
   private async getAuthHeader(): Promise<HeadersInit> {
-    const { data: { session } } = await this.supabase.auth.getSession()
+    const { data: { session } } = await supabase.auth.getSession()
     return {
       'Content-Type': 'application/json',
       ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {})

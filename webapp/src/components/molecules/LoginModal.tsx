@@ -1,14 +1,10 @@
 import { Modal } from "@/components/atoms/Modal"
 import { useState } from "react"
-import supabase from "../../utils/supabase/client"
 import { EmailStep } from "./login/EmailStep"
 import { OtpStep } from "./login/OtpStep"
 import { SignupStep } from "./login/SignupStep"
-
-interface LoginModalProps {
-  isOpen: boolean
-  onClose: () => void
-}
+import supabase from "@/utils/supabase/client"
+import { LoginModalProps } from "@/types/auth"
 
 export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const [loading, setLoading] = useState(false)

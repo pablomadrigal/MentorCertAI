@@ -4,7 +4,7 @@ export enum UserRole {
 }
 
 export interface UserProfile {
-  id: string
+  sub: string
   email: string
   full_name: string
   role: UserRole
@@ -19,3 +19,8 @@ export interface AuthContextType {
   isMentor: boolean
   isStudent: boolean
 } 
+
+export interface LoginModalProps {
+  isOpen: boolean
+  onClose: () => void
+}

@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { apiClient, ApiResponse } from '@/utils/api-client'
 
 export function useApi<T, B = unknown>() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const request = async (
+  const request = useCallback(async (
     method: 'get' | 'post' | 'put' | 'delete',
     endpoint: string,
     body?: B
@@ -27,14 +27,19 @@ export function useApi<T, B = unknown>() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  const get = useCallback((endpoint: string) => request('get', endpoint), [request])
+  const post = useCallback((endpoint: string, body?: B) => request('post', endpoint, body), [request])
+  const put = useCallback((endpoint: string, body?: B) => request('put', endpoint, body), [request])
+  const del = useCallback((endpoint: string) => request('delete', endpoint), [request])
 
   return {
     loading,
     error,
-    get: (endpoint: string) => request('get', endpoint),
-    post: (endpoint: string, body?: B) => request('post', endpoint, body),
-    put: (endpoint: string, body?: B) => request('put', endpoint, body),
-    delete: (endpoint: string) => request('delete', endpoint),
+    get,
+    post,
+    put,
+    delete: del
   }
 } 

@@ -22,7 +22,7 @@ export default function ExamResultsPage() {
   useEffect(() => {
     const loadResults = async () => {
       try {
-        const response = await fetch(`/api/user/${user?.id}/certificates/${sessionId}`)
+        const response = await fetch(`/api/user/${user?.sub}/certificates/${sessionId}`)
         const certificatesData: Certificate[] = await response.json()
         setCertificate(certificatesData[0])
 
@@ -34,7 +34,7 @@ export default function ExamResultsPage() {
     }
 
     loadResults()
-  }, [user?.id, sessionId])
+  }, [user?.sub, sessionId])
 
   if (isLoading) {
     return (
