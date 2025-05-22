@@ -112,7 +112,7 @@ export async function PUT(request: Request) {
 
     const { room_id, user_id, exam, score } = body;
 
-    const updateData: any = {};
+    const updateData: {exam?: string, score?: number} = {};
     if (exam !== undefined) updateData.exam = exam;
     if (score !== undefined) updateData.score = score;
 

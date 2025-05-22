@@ -2,16 +2,18 @@ export interface NFT {
     nft_id: number
     certificateId?: number
     nft_transaction: string
-    nft_metadata?: {
-      name?: string
-      description?: string
-      image?: string
-      attributes?: {
-        trait_type: string
-        value: string
-      }[]
-    }
+    nft_metadata?: NFTMetadata
 } 
+
+export interface NFTMetadata {
+  name?: string
+  description?: string
+  image?: string
+  attributes?: {
+    trait_type: string
+    value: string
+  }[]
+}
 
 export interface NFTListProps {
     nfts: NFT[]

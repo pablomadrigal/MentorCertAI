@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from '@supabase/supabase-js';
+import { NFTMetadata } from "@/types/nft";
 
 // Configuración de Supabase
 const supabase = createClient(
@@ -10,10 +11,10 @@ const supabase = createClient(
 // GET - Obtener NFT por ID
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const nft_id = params.id;
+    const { id: nft_id } = await params;
 
     if (!nft_id) {
       return NextResponse.json(
@@ -105,7 +106,7 @@ export async function POST(request: Request) {
 // PUT - Actualizar NFT
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const contentType = request.headers.get('content-type');
@@ -116,11 +117,11 @@ export async function PUT(
       );
     }
 
-    const nft_id = params.id;
+    const { id: nft_id } = await params;
     const body = await request.json();
 
     // Construir objeto de actualización
-    const updateData: any = {};
+    const updateData: {nft_metadata?: NFTMetadata, image?: string} = {};
     if (body.nft_metadata !== undefined) updateData.nft_metadata = body.nft_metadata;
     if (body.image !== undefined) updateData.image = body.image;
 

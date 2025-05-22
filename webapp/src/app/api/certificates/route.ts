@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from '@supabase/supabase-js';
+import { NFTMetadata } from "@/types/nft";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -149,7 +150,7 @@ export async function PUT(request: Request) {
       nft_transaction
     } = body;
 
-    const updateData: any = {};
+    const updateData: { nft_id?: number, nft_metadata?: NFTMetadata, image?: string, date?: string, score?: number, theme?: string, nft_transaction?: string } = {};
     if (nft_id !== undefined) updateData.nft_id = nft_id;
     if (nft_metadata !== undefined) updateData.nft_metadata = nft_metadata;
     if (image !== undefined) updateData.image = image;
