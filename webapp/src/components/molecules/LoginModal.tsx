@@ -4,6 +4,7 @@ import supabase from "../../lib/supabase"
 import { EmailStep } from "./login/EmailStep"
 import { OtpStep } from "./login/OtpStep"
 import { SignupStep } from "./login/SignupStep"
+import { generatePrivateKeyEncrypted } from "@/lib/createWallet"
 
 interface LoginModalProps {
   isOpen: boolean
@@ -77,8 +78,9 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const handleSignupSubmit = async (data: { fullName: string; role: "student" | "mentor"; acceptTerms: boolean }) => {
     try {
       setLoading(true)
+      const privateKey = generatePrivateKeyEncrypted(process.env.NEXT_PUBLIC_PASSWORD_PK ?? "")
       const { error } = await supabase.auth.updateUser({
-        data: { full_name: data.fullName, accept_terms: data.acceptTerms, role: data.role },
+        data: { full_name: data.fullName, accept_terms: data.acceptTerms, role: data.role, private_key: privateKey },
         email,
       })
 
