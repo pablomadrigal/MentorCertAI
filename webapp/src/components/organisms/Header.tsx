@@ -57,7 +57,7 @@ export function Header() {
               <>
                 <Button
                   onClick={() => setIsLoginModalOpen(true)}
-                  className="text-text-primary hover:text-secondary-main transition-colors"
+                  className="bg-gradient-to-r from-[#1a9e6e] to-[#4eeeb0] text-primary-dark hover:from-[#4eeeb0] hover:to-[#1a9e6e] transition-all brightness-110 shadow-md hover:shadow-lg [box-shadow:0_0_15px_rgba(61,220,151,0.3)] hover:[box-shadow:0_0_20px_rgba(61,220,151,0.5)]"
                 >
                   Login
                 </Button>
