@@ -5,6 +5,7 @@ import { useParams } from "next/navigation"
 import { Header } from "@/components/organisms/Header"
 import { Footer } from "@/components/organisms/Footer"
 import { ExamComponent } from "@/components/organisms/ExamComponent"
+import { ExamResultsComponent } from "@/components/organisms/ExamResultsComponent"
 
 interface Session {
   id: number;
@@ -12,6 +13,7 @@ interface Session {
   mentorId: number;
   dateTime: string;
   completed: boolean;
+  score?: number;
 }
 
 export default function ExamPage() {
@@ -26,13 +28,14 @@ export default function ExamPage() {
         // In a real app, this would fetch the session from the API
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
-        // Mock session data
+        // Mock session data - replace with actual API call
         setSession({
           id: Number.parseInt(sessionId),
           studentId: 0,
           mentorId: 1,
           dateTime: new Date().toISOString(),
-          completed: true,
+          completed: false, // This should come from the API
+          score: undefined
         })
       } catch (error) {
         console.error("Error fetching session:", error)
@@ -75,7 +78,11 @@ export default function ExamPage() {
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">Certification Exam for {sessionId}</h1>
           <div className="max-w-3xl mx-auto">
-            <ExamComponent sessionId={session.id} studentId={session.studentId} />
+            {session.completed ? (
+              <ExamResultsComponent sessionId={session.id} />
+            ) : (
+              <ExamComponent sessionId={session.id} studentId={session.studentId} />
+            )}
           </div>
         </div>
       </main>
