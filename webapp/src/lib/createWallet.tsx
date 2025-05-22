@@ -81,8 +81,7 @@ export const getFutureWalletAdress = (
 
 export const generateAndDeployPreChargedWallet = async (
   encryptedPrivateKey: string,
-  pin: string,
-  variable?: string
+  pin: string
 ) => {
   const RPC_KEY = process.env.NEXT_PUBLIC_RPC_URL ?? "";
 
