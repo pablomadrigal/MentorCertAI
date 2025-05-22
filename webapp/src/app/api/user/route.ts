@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { createClient } from '@supabase/supabase-js'
-
+import { getUserByEmail } from "@/utils/supabase/searchOrCreateUser"
+import { withAuth } from "@/utils/api-middleware";
 
 // Configuración de Supabase
 const supabase = createClient(
@@ -8,22 +9,18 @@ const supabase = createClient(
   process.env.SUPABASE_API_KEY!
 )
 
-export async function GET() {
+export const GET = (request: Request) => withAuth(request, async (req, user) => {
+  const url = new URL(req.url);
+  const email = url.searchParams.get('email');
   try {
-    const { data, error } = await supabase
-      .from('person')
-      .select('*')
+    const data = await getUserByEmail({ mentorId: user?.sub as string, newUserEmail: email as string })
     
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    return NextResponse.json(data)
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Error obteniendo estudiantes:", error)
-    return NextResponse.json({ error: "Error al obtener estudiantes" }, { status: 500 })
+    console.error("Error obteniendo sesiones:", error);
+    return NextResponse.json({ error: "Error al obtener sesiones" }, { status: 500 });
   }
-}
+});
 
 export async function POST(request: Request) {
   try {

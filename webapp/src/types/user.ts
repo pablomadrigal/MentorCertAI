@@ -6,3 +6,8 @@ export interface User {
   email: string
   role: UserRole
 } 
+
+export interface CreateUserIfNotExistsProps {
+  mentorId: string;
+  newUserEmail: string;
+}

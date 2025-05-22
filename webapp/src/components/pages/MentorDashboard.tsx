@@ -5,7 +5,6 @@ import { SessionList } from "@/components/organisms/SessionList"
 import { CreateSessionForm } from "@/components/organisms/CreateSessionForm"
 import { FilterType, Session } from "@/types/session"
 import { useApi } from "@/hooks/useApi"
-import { useAuth } from "@/contexts/AuthContext"
 
 export function MentorDashboard() {
     const [activeFilter, setActiveFilter] = useState<FilterType>("all")
@@ -13,14 +12,10 @@ export function MentorDashboard() {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const { get } = useApi<Session[]>()
-    const { user } = useAuth()
-
 
     useEffect(() => {
 
         const fetchSessions = async () => {
-            if (!user?.sub) return
-
             try {
                 setIsLoading(true)
                 setError(null)
@@ -36,11 +31,11 @@ export function MentorDashboard() {
             }
         }
         fetchSessions()
-    }, [user, get])
+    }, [get])
 
     // Count sessions by type
-    const upcomingSessions = sessions.filter((s) => !s.completed).length
-    const completedSessions = sessions.filter((s) => s.completed).length
+    const upcomingSessions = sessions.filter((s) => s.date_time && new Date(s.date_time) > new Date()).length
+    const completedSessions = sessions.filter((s) => !s.date_time || new Date(s.date_time) < new Date()).length
 
     // Handle filter change
     const handleFilterChange = (filter: FilterType) => {
@@ -51,6 +46,14 @@ export function MentorDashboard() {
         return (
             <div className="flex justify-center items-center h-screen">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-main"></div>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-red-500">Error: {error}</div>
             </div>
         )
     }

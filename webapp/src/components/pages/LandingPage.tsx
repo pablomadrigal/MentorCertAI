@@ -51,19 +51,11 @@ export function LandingPage() {
                             <div className="flex flex-col sm:flex-row justify-center gap-4">
                                 <Button
                                     size="lg"
-                                    className="w-full sm:w-auto bg-linear-to-r from-primary-main to-primary-light text-white hover:from-primary-light hover:to-primary-main transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(56,189,248,0.2)] hover:[box-shadow:0_0_15px_rgba(56,189,248,0.3)]"
+                                    className="w-full sm:w-auto bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(123,97,255,0.2)] hover:[box-shadow:0_0_15px_rgba(123,97,255,0.3)]"
                                     onClick={handleLogin}
                                 >
-                                    Login as Student
+                                    Get Started
                                 </Button>
-                                <Link href="/mentor/signup" passHref>
-                                    <Button
-                                        size="lg"
-                                        className="w-full sm:w-auto bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(123,97,255,0.2)] hover:[box-shadow:0_0_15px_rgba(123,97,255,0.3)]"
-                                    >
-                                        Become a Mentor
-                                    </Button>
-                                </Link>
                             </div>
                         </div>
                     </div>
@@ -77,7 +69,7 @@ export function LandingPage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <div className="rounded-lg shadow-lg overflow-hidden">
                                 <div className="bg-linear-to-br from-primary-main to-primary-light p-6 flex flex-col items-center">
-                                    <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-6 backdrop-blur-sm">
+                                    <div className="w-16 h-16 bg-[rgba(255,255,255,0.2)] rounded-full flex items-center justify-center mb-6 backdrop-blur-sm">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             className="h-8 w-8 text-white"
@@ -107,7 +99,7 @@ export function LandingPage() {
 
                             <div className="rounded-lg shadow-lg overflow-hidden">
                                 <div className="bg-linear-to-br from-secondary-dark to-secondary-main p-6 flex flex-col items-center">
-                                    <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-6 backdrop-blur-sm">
+                                    <div className="w-16 h-16 bg-[rgba(255,255,255,0.2)] rounded-full flex items-center justify-center mb-6 backdrop-blur-sm">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             className="h-8 w-8 text-white"
@@ -133,7 +125,7 @@ export function LandingPage() {
 
                             <div className="rounded-lg shadow-lg overflow-hidden">
                                 <div className="bg-linear-to-br from-primary-dark to-accent-main p-6 flex flex-col items-center">
-                                    <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-6 backdrop-blur-sm">
+                                    <div className="w-16 h-16 bg-[rgba(255,255,255,0.2)] rounded-full flex items-center justify-center mb-6 backdrop-blur-sm">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             className="h-8 w-8 text-white"
@@ -400,7 +392,8 @@ export function LandingPage() {
                                 <Link href="/login" passHref>
                                     <Button
                                         size="lg"
-                                        className="bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(123,97,255,0.2)] hover:[box-shadow:0_0_15px_rgba(123,97,255,0.3)]"
+                                        className="bg-gradient-to-r from-[#1a9e6e] to-[#4eeeb0] text-primary-dark hover:from-[#4eeeb0] hover:to-[#1a9e6e] transition-all brightness-110 shadow-md hover:shadow-lg [box-shadow:0_0_15px_rgba(61,220,151,0.3)] hover:[box-shadow:0_0_20px_rgba(61,220,151,0.5)]"
+                                        onClick={handleLogin}
                                     >
                                         Start Your Journey Now
                                     </Button>
@@ -422,7 +415,8 @@ export function LandingPage() {
                             <Link href="/login" passHref>
                                 <Button
                                     size="lg"
-                                    className="w-full sm:w-auto bg-accent-main text-primary-dark hover:bg-accent-light brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(61,220,151,0.2)] hover:[box-shadow:0_0_15px_rgba(61,220,151,0.3)]"
+                                    className="w-full sm:w-auto bg-linear-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(123,97,255,0.2)] hover:[box-shadow:0_0_15px_rgba(123,97,255,0.3)]"
+                                    onClick={handleLogin}
                                 >
                                     Get Started
                                 </Button>

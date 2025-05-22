@@ -1,49 +1,44 @@
 "use client"
 
-import { SessionCard } from "@/components/molecules/SessionCard"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Session, SessionListProps } from "@/types/session"
+import { Session, SessionListProps, StudentSession } from "@/types/session"
 import { useAuth } from "@/contexts/AuthContext"
+import { StudentSessionCard } from "@/components/molecules/StudentSessionCard"
+import { MentorSessionCard } from "@/components/molecules/MentorSessionCard"
 
 export function SessionList({ sessions, filter = "all" }: SessionListProps) {
   const router = useRouter()
   const [filteredSessions, setFilteredSessions] = useState<Session[]>(sessions)
   const { user } = useAuth()
 
-
-  // Aplicar filtros cuando cambian las sesiones o el filtro
   useEffect(() => {
     if (sessions.length === 0) return
 
     let result = [...sessions]
 
-    // Aplicar filtro según el tipo seleccionado
     if (filter === "upcoming") {
-      result = result.filter((session) => !session.completed)
+      result = result.filter((session) => session.date_time && new Date(session.date_time) > new Date())
     } else if (filter === "completed") {
-      result = result.filter((session) => session.completed)
+      result = result.filter((session) => !session.date_time || new Date(session.date_time) < new Date())
     }
 
-    // Ordenar sesiones: primero las próximas, luego las pasadas
     result.sort((a, b) => {
-      // Si el filtro es específico, no necesitamos ordenar por estado
       if (filter === "all") {
-        // Primero ordenar por estado (no completadas primero)
-        if (a.completed !== b.completed) {
-          return a.completed ? 1 : -1
+        if (a.date_time && b.date_time) {
+          return a.date_time > b.date_time ? 1 : -1
         }
       }
 
-      // Luego ordenar por fecha
-      const dateA = new Date(a.dateTime)
-      const dateB = new Date(b.dateTime)
+      const dateA = a.date_time ? new Date(a.date_time) : new Date(0)
+      const dateB = b.date_time ? new Date(b.date_time) : new Date(0)
 
-      if (a.completed) {
-        // Para sesiones completadas, mostrar las más recientes primero
+      const isPastA = dateA < new Date()
+      const isPastB = dateB < new Date()
+
+      if (isPastA && isPastB) {
         return dateB.getTime() - dateA.getTime()
       } else {
-        // Para sesiones próximas, mostrar las más cercanas primero
         return dateA.getTime() - dateB.getTime()
       }
     })
@@ -67,39 +62,46 @@ export function SessionList({ sessions, filter = "all" }: SessionListProps) {
     )
   }
 
-  // Modificar la función handleJoinSession para manejar tanto sesiones como exámenes y certificados
-  const handleJoinSession = (sessionId: string, completed: boolean, examPassed?: boolean) => {
-    // Si la sesión está completada, el examen ha sido aprobado y el usuario es estudiante, ir a certificados
-    if (completed && examPassed && user?.role === "student") {
-      router.push(`/student/certificates?sessionId=${sessionId}`)
-    }
-    // Si la sesión está completada y el usuario es estudiante, ir al examen
-    else if (completed && user?.role === "student") {
-      router.push(`/student/exam/${sessionId}`)
-    } else {
-      // De lo contrario, ir a la sesión de video
+  const handleJoinSessionMentor = (sessionId: string) => {
+    if (!user) return
+    router.push(`/session/${sessionId}`)
+  }
+
+  const handleJoinSessionStudent = (sessionId: string, sessionDate?: string, score?: number) => {
+    if (!user) return
+
+    const completed = sessionDate ? new Date(sessionDate) < new Date() : false
+    const examPassed = score !== undefined && score >= 70
+
+    if (!completed) {
       router.push(`/session/${sessionId}`)
+    } else if (examPassed) {
+      router.push(`/student/certificates?sessionId=${sessionId}`)
+    } else {
+      router.push(`/student/exam/${sessionId}`)
     }
   }
 
-  // Modificar el return para incluir la propiedad examPassed
+  if (!user) return null
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {filteredSessions.map((session) => (
-        <div key={session.id} className="h-full">
-          {" "}
-          {/* Altura fija para cada contenedor de card */}
-          <SessionCard
-            dateTime={session.dateTime}
-            completed={session.completed}
-            examPassed={session.examPassed} // Añadir la propiedad examPassed
-            subject={session.subject}
-            studentName={session.studentName}
-            mentorName={session.mentorName}
-            userRole={user?.role || "student"}
-            onJoin={() => handleJoinSession(session.id, session.completed, session.examPassed)}
-            onViewCertificate={() => router.push(`/student/certificates?sessionId=${session.id}`)} // Añadir manejador para ver certificado
-          />
+        <div key={session.room_id} className="h-full">
+          {user.role === "student" ? (
+            <StudentSessionCard
+              session={session as StudentSession}
+              mentorName={session.owner_id || "Mentor"}
+              onJoin={() => handleJoinSessionStudent(session.room_id, session.date_time, (session as StudentSession).score)}
+              onViewCertificate={() => router.push(`/student/certificates?sessionId=${session.room_id}`)}
+            />
+          ) : (
+            <MentorSessionCard
+              session={session}
+              studentName={session.owner_id || "Student"}
+              onJoin={() => handleJoinSessionMentor(session.room_id)}
+            />
+          )}
         </div>
       ))}
     </div>

@@ -32,8 +32,8 @@ export function StudentDashboard() {
     }, [getSessions, getNfts])
 
     // Count sessions by type
-    const upcomingSessions = sessions.filter((s) => !s.completed).length
-    const completedSessions = sessions.filter((s) => s.completed).length
+    const upcomingSessions = sessions.filter((s) => s.date_time && new Date(s.date_time) > new Date()).length
+    const completedSessions = sessions.filter((s) => !s.date_time || new Date(s.date_time) < new Date()).length
 
     // Handle filter change
     const handleFilterChange = (filter: FilterType) => {
