@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Account,
   ec,
@@ -8,6 +9,7 @@ import {
   CairoOption,
   CairoOptionVariant,
   CairoCustomEnum,
+  TypedData,
 } from "starknet";
 import crypto from "crypto";
 
@@ -199,17 +201,20 @@ export const deployWithPaymaster = async (encryptedPrivateKey: string, pin: stri
   }
 }
 
-const jsonToTypedData = (json: object) => {
+const toTypedDataFromJson = (
+  json: Record<string, string | number>
+): TypedData => {
   return {
     types: {
       StarknetDomain: [
         { name: 'name', type: 'felt' },
         { name: 'version', type: 'felt' },
-        { name: 'chainId', type: 'felt' }
+        { name: 'chainId', type: 'felt' },
       ],
-      Message: [
-        { name: 'content', type: 'felt*' }
-      ]
+      Message: Object.entries(json).map(([key, _]) => ({
+        name: key,
+        type: 'felt',
+      })),
     },
     primaryType: 'Message',
     domain: {
@@ -217,11 +222,9 @@ const jsonToTypedData = (json: object) => {
       version: '1',
       chainId: '0x534e5f5345504f4c4941' // SN_SEPOLIA in hex
     },
-    message: {
-      content: [JSON.stringify(json)]
-    }
-  }
-};
+    message: json,
+  };
+}
 
 export const signMessage = async (encryptedPrivateKey: string, pin: string, message: object) => {
   const privateKey = getDecryptedPrivateKey(encryptedPrivateKey, pin);
@@ -231,6 +234,10 @@ export const signMessage = async (encryptedPrivateKey: string, pin: string, mess
   const provider = new RpcProvider({ nodeUrl: RPC_KEY });
 
   const account = new Account(provider, publicKey, privateKey);
-  const signature = await account.signMessage(jsonToTypedData(message));
-  return signature;
+  const stringified = JSON.stringify(message);
+  const feltHash = hash.starknetKeccak(stringified);
+
+  //const signature = await account.signMessage(feltHash);
+  ///const signature = await account.signMessage(toTypedDataFromJson({ content: JSON.stringify(message) }));
+  return feltHash;
 }

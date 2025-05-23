@@ -5,10 +5,9 @@ import { list } from '@vercel/blob';
 import { JWTPayload, withAuth } from '@/utils/api-middleware';
 import { generateBlockcertSinglePackage, generateBlockcertsV3, mensisIssuer } from '@/utils/certificates/certificates';
 import { Badge, RecipientData } from '@/types/blockcerts';
-import { getPublicAddress, signMessage } from '@/utils/starknet-wallet';
+import { getPublicAddress } from '@/utils/starknet-wallet';
 import { getTotalMintableNFTs, mintNFT } from '@/utils/starknet-contracts';
 import { Session } from '@/types/session';
-import { getRandomUUID } from '@/utils/utils';
 import { Certificate } from '@/types/certificate';
 import { NFTMetadata } from '@/types/nft';
 
@@ -166,7 +165,7 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
       );
     }
 
-    const session = existingExams[0].session[0];
+    const session: Session = existingExams[0].session[0] ?? existingExams[0].session;
 
     // Verificar si alguno de los registros ya tiene un examen
     const hasExistingExam = existingExams?.some(record => record.exam !== null);
@@ -194,7 +193,6 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
         { status: 500 }
       );
     }
-
     // Generate the blockcert package
     const { blockcertPackage, txHash, nft_id } = await generateBlockcertPackage(user, session, score);
 
@@ -206,7 +204,7 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
     };
 
     const certificate: Certificate = {
-      nft_id,
+      nft_id: nft_id.toString(),
       nft_metadata: nft_metadata,
       image: "https://marketplace.canva.com/EAGPQFRI-qU/1/0/1600w/canva-certificado-diploma-de-reconocimiento-profesional-moderno-verde-y-blanco--y6SjD9IvOc.jpg",
       user_id: user.sub as number,
@@ -274,12 +272,14 @@ const generateBlockcertPackage = async (user: JWTPayload, session: Session, scor
   }
 
   const totalMintableNFTs = await getTotalMintableNFTs();
+  console.log("totalMintableNFTs", totalMintableNFTs)
 
   const publicAddress = getPublicAddress(user.user_metadata?.private_key ?? "", PIN);
+  console.log("publicAddress", publicAddress)
   const blockcertsV3 = generateBlockcertsV3(recipient, mensisIssuer, badge);
-  const signature = await signMessage(user.user_metadata?.private_key ?? "", PIN, blockcertsV3);
-  const txHash = await mintNFT(publicAddress, getRandomUUID(), session.theme, score, totalMintableNFTs + 1, signature.toString());
+  const txHash = await mintNFT(publicAddress, score, totalMintableNFTs + BigInt(1));
+
   const blockcertPackage = generateBlockcertSinglePackage(blockcertsV3, txHash);
 
-  return { blockcertPackage, txHash, nft_id: totalMintableNFTs + 1 };
+  return { blockcertPackage, txHash, nft_id: totalMintableNFTs + BigInt(1) };
 }

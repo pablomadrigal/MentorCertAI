@@ -67,9 +67,10 @@ export default function ExamPage() {
     )
   }
 
-  const handleSubmit = async (examData: ExamData) => {
+  const handleSubmit = async (examData: ExamData, score: number) => {
     console.log(examData)
-    await post('/exam', examData)
+    const content = { room_id: sessionId, examData, score };
+    await post("/exam", content)
     setIsExamFinished(true)
   }
 

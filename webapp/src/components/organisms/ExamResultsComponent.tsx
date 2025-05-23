@@ -19,7 +19,7 @@ export function ExamResultsComponent({ sessionId }: ExamResultsComponentProps) {
     useEffect(() => {
         const loadResults = async () => {
             try {
-                const { data } = await get(`/api/certificates/${sessionId}`)
+                const { data } = await get(`/certificates/${sessionId}`)
                 setCertificate(data?.[0] ?? null)
             } catch (error) {
                 console.error("Error fetching results:", error)

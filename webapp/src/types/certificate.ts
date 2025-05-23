@@ -6,7 +6,7 @@ export interface Certificate extends NFT {
   date: string
   score: number
   image: string
-  session_id: number
+  session_id: string
   theme: string
   certificate_metadata?: object
 }
