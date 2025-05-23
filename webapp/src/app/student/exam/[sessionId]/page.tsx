@@ -8,13 +8,11 @@ import { ExamComponent } from "@/components/organisms/ExamComponent"
 import { ExamData } from "@/types/exam"
 import { useAuth } from "@/contexts/AuthContext"
 import { useApi } from "@/hooks/useApi"
-import { ExamResultsComponent } from "@/components/organisms/ExamResultsComponent"
 
 export default function ExamPage() {
   const params = useParams()
   const sessionId = params.sessionId as string
   const [examData, setExamData] = useState<ExamData | null>(null)
-  const [isExamFinished, setIsExamFinished] = useState<boolean>(false)
   const { user } = useAuth()
   const { get, post, loading, error } = useApi<ExamData>()
 
