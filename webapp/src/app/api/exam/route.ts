@@ -15,7 +15,7 @@ import { NFTMetadata } from '@/types/nft';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const PIN = process.env.NEXT_PUBLIC_PASSWORD_PK ?? "";
 
-export async function GET(request: Request) {
+export const GET = (request: Request) => withAuth(request, async () => {
   try {
     // Get room ID from URL
     const url = new URL(request.url);
@@ -26,6 +26,21 @@ export async function GET(request: Request) {
         { success: false, message: 'Room ID is required' },
         { status: 400 }
       );
+    }
+
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_API_KEY!
+    );
+
+    const { data } = await supabase
+      .from('sessions')
+      .select('transcription')
+      .eq('room_id', roomId)
+      .single();
+
+    if (data) {
+      return NextResponse.json(data);
     }
 
     // List blobs with the room ID prefix
@@ -102,7 +117,7 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-}
+})
 
 export const POST = (request: Request) => withAuth(request, async (req, user) => {
   try {
