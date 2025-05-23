@@ -19,6 +19,10 @@ export const GET = (request: Request) => withAuth(request, async (req, user) => 
       return NextResponse.json({ error: 'room_id es requerido' }, { status: 400 });
     }
 
+    if (!room_id) {
+      return NextResponse.json({ error: 'room_id es requerido' }, { status: 400 });
+    }
+
     const { data, error } = await supabase
       .from('user_at_session')
       .select('*')

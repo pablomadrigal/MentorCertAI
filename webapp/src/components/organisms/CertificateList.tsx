@@ -48,12 +48,12 @@ export function CertificateList({ certificates, isLoading }: CertificateListProp
       {certificates.map((certificate: Certificate) => (
         <CertificateCard
           key={certificate.id}
-          id={certificate.id}
+          id={certificate.id ?? 0}
           issueDate={certificate.date}
           score={certificate.score}
           image={certificate.image}
           onDownload={() => handleDownload(certificate)}
-          onViewNFT={() => handleViewNFT(certificate.id)}
+          onViewNFT={() => handleViewNFT(certificate.id ?? 0)}
           isGeneratingPDF={isGeneratingPDF === certificate.id}
         />
       ))}
