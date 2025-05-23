@@ -3,13 +3,14 @@ import { createClient } from '@supabase/supabase-js';
 import { withAuth } from '@/utils/api-middleware'
 import { getUserByEmail } from "@/utils/supabase/searchOrCreateUser";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROL!  // Cambiar a service role
-);
+
 
 // GET - Obtener usuarios en sesión
 export const GET = (request: Request) => withAuth(request, async (req, user) => {
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROL!  // Cambiar a service role
+  );
   try {
     const { searchParams } = new URL(request.url);
     const room_id = searchParams.get('room_id');
@@ -40,6 +41,10 @@ export const GET = (request: Request) => withAuth(request, async (req, user) => 
 
 // POST - Agregar usuario a sesión
 export const POST = (request: Request) => withAuth(request, async (req, user) => {
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROL!  // Cambiar a service role
+  );
   try {
     const contentType = req.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
@@ -91,6 +96,10 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
 
 // PUT - Actualizar información del usuario en la sesión
 export async function PUT(request: Request) {
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROL!  // Cambiar a service role
+  );
   try {
     const contentType = request.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
@@ -149,6 +158,10 @@ export async function PUT(request: Request) {
 
 // DELETE - Eliminar usuario de la sesión
 export async function DELETE(request: Request) {
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROL!  // Cambiar a service role
+  );
   try {
     const { searchParams } = new URL(request.url);
     const room_id = searchParams.get('room_id');

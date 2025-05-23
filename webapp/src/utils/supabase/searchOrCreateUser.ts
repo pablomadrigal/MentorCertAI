@@ -1,17 +1,21 @@
 import { CreateUserIfNotExistsProps } from '@/types/user';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
+export async function getUserByEmail({ mentorId, newUserEmail }: CreateUserIfNotExistsProps) {
+
+  console.log("SUPABASE_URL", process.env.SUPABASE_URL);
+  console.log("SUPABASE_SERVICE_ROL", process.env.SUPABASE_SERVICE_ROL);
+
+  const supabase = createClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROL!, {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
     }
-);
+  }
+  );
 
-export async function getUserByEmail({ mentorId, newUserEmail }: CreateUserIfNotExistsProps) {
   // Verificar si el mentor tiene el rol correcto
   const { data: mentorProfile, error: profileError } = await supabase.auth.admin.getUserById(mentorId)
 
@@ -21,7 +25,7 @@ export async function getUserByEmail({ mentorId, newUserEmail }: CreateUserIfNot
   const { data, error: oldUserError } = await supabase.rpc('get_user_by_email', {
     user_email: newUserEmail,
   });
-  
+
   if (oldUserError) {
     console.error(oldUserError);
     throw oldUserError;
@@ -30,7 +34,7 @@ export async function getUserByEmail({ mentorId, newUserEmail }: CreateUserIfNot
   }
 
   // Crear nuevo usuario
-  const { data: newUser, error: createError }  = await supabase.auth.admin.inviteUserByEmail(newUserEmail)
+  const { data: newUser, error: createError } = await supabase.auth.admin.inviteUserByEmail(newUserEmail)
 
   if (createError) throw createError;
 
