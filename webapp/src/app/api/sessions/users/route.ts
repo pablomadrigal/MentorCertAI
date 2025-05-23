@@ -8,22 +8,20 @@ const supabase = createClient(
 );
 
 // GET - Obtener usuarios en sesión
-export async function GET(request: Request) {
+export const GET = (request: Request) => withAuth(request, async (req, user) => {
   try {
     const { searchParams } = new URL(request.url);
     const room_id = searchParams.get('room_id');
-    const user_id = searchParams.get('user_id');
 
-    let query = supabase.from('user_at_session').select('*');
-
-    if (room_id) {
-      query = query.eq('room_id', room_id);
-    }
-    if (user_id) {
-      query = query.eq('user_id', user_id);
+    if (!room_id) {
+      return NextResponse.json({ error: 'room_id es requerido' }, { status: 400 });
     }
 
-    const { data, error } = await query;
+    const { data, error } = await supabase
+      .from('user_at_session')
+      .select('*')
+      .eq('room_id', room_id)
+      .eq('user_id', user.sub);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -37,7 +35,7 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-}
+})
 
 // POST - Agregar usuario a sesión
 export const POST = (request: Request) => withAuth(request, async (req, user) => {

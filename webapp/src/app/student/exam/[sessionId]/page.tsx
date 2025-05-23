@@ -8,19 +8,21 @@ import { ExamComponent } from "@/components/organisms/ExamComponent"
 import { ExamData } from "@/types/exam"
 import { useAuth } from "@/contexts/AuthContext"
 import { useApi } from "@/hooks/useApi"
+import { ExamResultsComponent } from "@/components/organisms/ExamResultsComponent"
 
 export default function ExamPage() {
   const params = useParams()
   const sessionId = params.sessionId as string
   const [examData, setExamData] = useState<ExamData | null>(null)
+  const [isExamFinished, setIsExamFinished] = useState<boolean>(false)
   const { user } = useAuth()
   const { get, post, loading, error } = useApi<ExamData>()
 
   useEffect(() => {
 
 
-    //PASO #1 Revisar el endpoint GET /sessions/users?room_id=${sessionId} 
-    //Si el examen existe y tiene score, entonces cargar el componente de resultados
+    //PASO #1 Revisar el endpoint GET /sessions/users?room_id=${sessionId}
+    //Si el examen existe y tiene score, entonces cargar el componente de resultados setIsExamFinished(true) 
 
     //PASO #2 Si el examen no existe, entonces cargar el examen desde el endpoint GET /exam?room=${sessionId}
     const fetchSession = async () => {
@@ -61,6 +63,7 @@ export default function ExamPage() {
   const handleSubmit = async (examData: ExamData) => {
     console.log(examData)
     await post('/exam', examData)
+    //cambias la variable isExamFinished a true
   }
 
   return (
@@ -71,6 +74,7 @@ export default function ExamPage() {
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">Certification Exam for {sessionId}</h1>
           <div className="max-w-3xl mx-auto">
+            {/* Si isExamFinished es true, entonces cargar el componente de resultados, si no lo esta cargar el componente de examen */}
             <ExamComponent sessionId={sessionId} examData={examData} loading={loading} onSubmit={handleSubmit} />
           </div>
         </div>
