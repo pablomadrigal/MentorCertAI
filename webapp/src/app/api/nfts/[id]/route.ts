@@ -25,7 +25,7 @@ export async function GET(
 
     const { data, error } = await supabase
       .from('certificates')
-      .select('nft_metadata')
+      .select('nft_metadata, image')
       .eq('nft_id', nft_id)
       .single();
 
@@ -40,7 +40,7 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(data.nft_metadata);
+    return NextResponse.json({ ...data.nft_metadata, image: data.image ?? `${process.env.MENTOR_CERT_AI_URL}/data-science-certificate.png` });
   } catch (error) {
     console.error("Error obteniendo NFT:", error);
     return NextResponse.json(
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    
+
     // Validar campos requeridos
     if (!body.nft_id || !body.nft_metadata) {
       return NextResponse.json(
@@ -121,7 +121,7 @@ export async function PUT(
     const body = await request.json();
 
     // Construir objeto de actualización
-    const updateData: {nft_metadata?: NFTMetadata, image?: string} = {};
+    const updateData: { nft_metadata?: NFTMetadata, image?: string } = {};
     if (body.nft_metadata !== undefined) updateData.nft_metadata = body.nft_metadata;
     if (body.image !== undefined) updateData.image = body.image;
 

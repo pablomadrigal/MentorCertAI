@@ -1,31 +1,29 @@
 import { NextResponse } from "next/server";
 import { createClient } from '@supabase/supabase-js';
 import { NFTMetadata } from "@/types/nft";
+import { withAuth } from "@/utils/api-middleware";
+import { Certificate } from "@/types/certificate";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_API_KEY!
 );
 
-// GET - Obtener todos los certificados o filtrar por usuario
-export async function GET(request: Request) {
+// GET - Obtener todos los certificados por usuario
+export const GET = (request: Request) => withAuth(request, async (req, user) => {
   try {
-    const { searchParams } = new URL(request.url);
-    const user_id = searchParams.get('user_id');
 
-    let query = supabase.from('certificates').select('*');
-
-    if (user_id) {
-      query = query.eq('user_id', user_id);
-    }
-
-    const { data, error } = await query;
+    const { data, error } = await supabase
+      .from('certificates')
+      .select("*")
+      .eq('user_id', user.sub)
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(data);
+    const certificates: Certificate[] = data.map((certificate) => ({ ...certificate, image: certificate.image ?? "/data-science-certificate.png" }));
+    return NextResponse.json(certificates);
   } catch (error) {
     console.error("Error obteniendo certificados:", error);
     return NextResponse.json(
@@ -33,7 +31,7 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-}
+})
 
 // POST - Crear nuevo certificado
 export async function POST(request: Request) {
