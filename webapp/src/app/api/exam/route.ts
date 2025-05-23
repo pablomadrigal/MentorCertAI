@@ -2,8 +2,18 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenAI } from '@google/genai';
 import { list } from '@vercel/blob';
+import { JWTPayload, withAuth } from '@/utils/api-middleware';
+import { generateBlockcertSinglePackage, generateBlockcertsV3, mensisIssuer } from '@/utils/certificates/certificates';
+import { Badge, RecipientData } from '@/types/blockcerts';
+import { getPublicAddress, signMessage } from '@/utils/starknet-wallet';
+import { getTotalMintableNFTs, mintNFT } from '@/utils/starknet-contracts';
+import { Session } from '@/types/session';
+import { getRandomUUID } from '@/utils/utils';
+import { Certificate } from '@/types/certificate';
+import { NFTMetadata } from '@/types/nft';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const PIN = process.env.NEXT_PUBLIC_PASSWORD_PK ?? "";
 
 export async function GET(request: Request) {
   try {
@@ -18,7 +28,6 @@ export async function GET(request: Request) {
       );
     }
 
-    console.log('Room ID:', roomId);
     // List blobs with the room ID prefix
     const { blobs } = await list({ prefix: `transcripts/${roomId}` });
 
@@ -95,51 +104,9 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export const POST = (request: Request) => withAuth(request, async (req, user) => {
   try {
-    const { examData } = await request.json();
-
-    if (!examData) {
-      console.error('No exam data received');
-      return NextResponse.json(
-        { error: 'No exam data provided' },
-        { status: 400 }
-      );
-    }
-
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
-    const { data, error } = await supabase
-      .from('exams')
-      .insert([examData])
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error saving exam:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'Exam saved successfully',
-      data
-    });
-  } catch (error) {
-    console.error('Error processing exam:', error);
-    return NextResponse.json(
-      { error: 'Failed to process exam' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(request: Request) {
-  try {
-    const { room_id, examData } = await request.json();
+    const { room_id, examData, score } = await req.json();
 
     if (!room_id) {
       return NextResponse.json(
@@ -149,15 +116,28 @@ export async function PUT(request: Request) {
     }
 
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_API_KEY!
     );
 
     // Verificar si ya existe un examen para este room_id
     const { data: existingExams, error: fetchError } = await supabase
       .from('user_at_session')
-      .select('exam')
-      .eq('room_id', room_id);
+      .select(`
+      room_id,
+      exam,
+      score,
+      user_id,
+      session:room_id (
+        room_id,
+        theme,
+        transcription,
+        owner_id,
+        date_time
+      )
+      `)
+      .eq('room_id', room_id)
+      .eq('user_id', user.sub);
 
     if (fetchError) {
       console.error('Error específico de Supabase:', fetchError);
@@ -171,6 +151,8 @@ export async function PUT(request: Request) {
       );
     }
 
+    const session = existingExams[0].session[0];
+
     // Verificar si alguno de los registros ya tiene un examen
     const hasExistingExam = existingExams?.some(record => record.exam !== null);
     if (hasExistingExam) {
@@ -183,7 +165,7 @@ export async function PUT(request: Request) {
     // Actualizar todos los registros con el mismo room_id
     const { error: updateError } = await supabase
       .from('user_at_session')
-      .update({ exam: examData })
+      .update({ exam: examData, score: score })
       .eq('room_id', room_id);
 
     if (updateError) {
@@ -197,6 +179,46 @@ export async function PUT(request: Request) {
         { status: 500 }
       );
     }
+
+    // Generate the blockcert package
+    const { blockcertPackage, txHash, nft_id } = await generateBlockcertPackage(user, session, score);
+
+    const nft_metadata: NFTMetadata = {
+      name: session.theme,
+      description: session.theme,
+      image: "https://marketplace.canva.com/EAGPQFRI-qU/1/0/1600w/canva-certificado-diploma-de-reconocimiento-profesional-moderno-verde-y-blanco--y6SjD9IvOc.jpg",
+      attributes: [{ trait_type: "score", value: score.toString() }]
+    };
+
+    const certificate: Certificate = {
+      nft_id,
+      nft_metadata: nft_metadata,
+      image: "https://marketplace.canva.com/EAGPQFRI-qU/1/0/1600w/canva-certificado-diploma-de-reconocimiento-profesional-moderno-verde-y-blanco--y6SjD9IvOc.jpg",
+      user_id: user.sub as number,
+      date: session.date_time ?? new Date().toISOString(),
+      score,
+      session_id: session.room_id,
+      theme: session.theme,
+      nft_transaction: txHash,
+      certificate_metadata: blockcertPackage,
+    };
+
+    const { error } = await supabase
+      .from('certificates')
+      .insert([{
+        ...certificate
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error al guardar el certificado:', error);
+      return NextResponse.json(
+        { success: false, message: 'Error al guardar el certificado' },
+        { status: 500 }
+      );
+    }
+
 
     return NextResponse.json({
       success: true,
@@ -214,4 +236,35 @@ export async function PUT(request: Request) {
       { status: 500 }
     );
   }
+})
+
+const generateBlockcertPackage = async (user: JWTPayload, session: Session, score: number) => {
+  //Generate the blockcerts v3 certificate
+  const recipient: RecipientData = {
+    name: user.user_metadata?.full_name ?? "",
+    email: user.email ?? "",
+    issuedOn: session.date_time ?? new Date().toISOString(),
+    course: session.theme,
+    issuerId: mensisIssuer.ethPubKey,
+  }
+
+  const badge: Badge = {
+    id: session.room_id,
+    name: session.theme,
+    description: session.theme,
+    criteria: {
+      narrative: `Successfully completed the course: ${session.theme} with a score of ${score}`
+    },
+    issuer: mensisIssuer.ethPubKey
+  }
+
+  const totalMintableNFTs = await getTotalMintableNFTs();
+
+  const publicAddress = getPublicAddress(user.user_metadata?.private_key ?? "", PIN);
+  const blockcertsV3 = generateBlockcertsV3(recipient, mensisIssuer, badge);
+  const signature = await signMessage(user.user_metadata?.private_key ?? "", PIN, blockcertsV3);
+  const txHash = await mintNFT(publicAddress, getRandomUUID(), session.theme, score, totalMintableNFTs + 1, signature.toString());
+  const blockcertPackage = generateBlockcertSinglePackage(blockcertsV3, txHash);
+
+  return { blockcertPackage, txHash, nft_id: totalMintableNFTs + 1 };
 }
