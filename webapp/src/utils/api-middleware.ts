@@ -3,10 +3,23 @@ import jwt from "jsonwebtoken"
 
 const JWT_SECRET = process.env.SUPABASE_JWT_SECRET || ''
 
-interface JWTPayload {
+export interface JWTPayload {
   userId: string;
   email: string;
+  role?: string;
+  user_metadata?: JWTUserMetadata;
   [key: string]: unknown;
+}
+
+export interface JWTUserMetadata {
+  accept_terms?: boolean;
+  email?: string;
+  email_verified?: boolean;
+  full_name?: string;
+  phone_verified?: boolean;
+  private_key?: string;
+  role?: string;
+  sub?: string;
 }
 
 export async function withAuth(
@@ -26,6 +39,7 @@ export async function withAuth(
     const token = authHeader.replace('Bearer ', '')
     
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload
+    if(decoded?.user_metadata?.role) decoded.role = decoded.role as string
     
     return handler(req, decoded)
   } catch (error: unknown) {

@@ -7,31 +7,29 @@ import { Footer } from "@/components/organisms/Footer"
 import { ExamComponent } from "@/components/organisms/ExamComponent"
 import { ExamData } from "@/types/exam"
 import { useAuth } from "@/contexts/AuthContext"
+import { useApi } from "@/hooks/useApi"
 
 export default function ExamPage() {
   const params = useParams()
   const sessionId = params.sessionId as string
-  const [isLoading, setIsLoading] = useState(true)
   const [examData, setExamData] = useState<ExamData | null>(null)
   const { user } = useAuth()
+  const { get, post, loading, error } = useApi<ExamData>()
 
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        const response = await fetch(`/api/user/${user?.sub}/exam?room=${sessionId}`)
-        const data = await response.json()
-        setExamData(data)
+        const { data } = await get(`exam?room=${sessionId}`)
+        if (data) setExamData(data)
       } catch (error) {
         console.error("Error fetching session:", error)
-      } finally {
-        setIsLoading(false)
       }
     }
 
     fetchSession()
-  }, [sessionId, user?.sub])
+  }, [sessionId, user?.sub, get])
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-main"></div>
@@ -39,7 +37,7 @@ export default function ExamPage() {
     )
   }
 
-  if (!examData) {
+  if (error || !examData) {
     return (
       <div className="flex flex-col min-h-screen">
         <Header />
@@ -56,10 +54,7 @@ export default function ExamPage() {
 
   const handleSubmit = async (examData: ExamData) => {
     console.log(examData)
-    await fetch(`/api/user/${user?.sub}/exam?room=${sessionId}`, {
-      method: "POST",
-      body: JSON.stringify(examData),
-    })
+    await post('/exam', examData)
   }
 
   return (
@@ -70,7 +65,7 @@ export default function ExamPage() {
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">Certification Exam for {sessionId}</h1>
           <div className="max-w-3xl mx-auto">
-            <ExamComponent sessionId={sessionId} examData={examData} loading={isLoading} onSubmit={handleSubmit} />
+            <ExamComponent sessionId={sessionId} examData={examData} loading={loading} onSubmit={handleSubmit} />
           </div>
         </div>
       </main>

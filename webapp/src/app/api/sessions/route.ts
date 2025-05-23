@@ -10,20 +10,52 @@ const supabase = createClient(
 
 // GET - Obtener todas las sesiones de un mentor
 export const GET = (request: Request) => withAuth(request, async (req, user) => {
-  try {
-    const { data, error } = await supabase
-      .from('session')
-      .select('*')
-      .eq('owner_id', user.sub);
-    
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+  if(user?.user_metadata?.role == "mentor"){
+    try {
+      const { data, error } = await supabase
+        .from('session')
+        .select('*')
+        .eq('owner_id', user.sub);
+      
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
 
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error("Error obteniendo sesiones:", error);
-    return NextResponse.json({ error: "Error al obtener sesiones" }, { status: 500 });
+      return NextResponse.json(data);
+    } catch (error) {
+      console.error("Error obteniendo sesiones:", error);
+      return NextResponse.json({ error: "Error al obtener sesiones" }, { status: 500 });
+    }
+  } else {
+    try {
+      const { data, error } = await supabase
+      .from('user_at_session')
+      .select(`
+        room_id,
+        exam,
+        score,
+        user_id,
+        session:room_id (
+          room_id,
+          theme,
+          transcription,
+          owner_id,
+          date_time
+        )
+      `)
+      .eq('user_id', user.sub)
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+
+      const sessions = data.map((item) => ({...item.session, ...item}));
+
+      return NextResponse.json(sessions);
+    } catch (error) {
+      console.error("Error obteniendo sesiones:", error);
+      return NextResponse.json({ error: "Error al obtener sesiones" }, { status: 500 });
+    }
   }
 });
 
