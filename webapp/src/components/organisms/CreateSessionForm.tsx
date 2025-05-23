@@ -36,8 +36,19 @@ export function CreateSessionForm() {
                 setIsLoading(false)
                 return
             }
-            const createdSession = await createSessionResponse.data
-            console.log("session", createdSession)
+
+            const temporalUserAtSession = {
+                room_id: newRoomId,
+                userEmail: studentEmail,
+            }
+
+            const createUserAtSessionResponse = await post(`/sessions/users`, temporalUserAtSession)
+            if (createUserAtSessionResponse.error) {
+                setError(createUserAtSessionResponse.error)
+                setIsLoading(false)
+                return
+            }
+
             setSuccess(true)
             setStudentEmail("")
             setSubject("")
