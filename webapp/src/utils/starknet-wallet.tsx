@@ -190,6 +190,9 @@ export const deployWithPaymaster = async (encryptedPrivateKey: string, pin: stri
 
     const executeResult = await deployResponse.json();
 
+    console.log("executeResult", executeResult)
+    console.log("WalletHexAddress", WalletHexAddress)
+
     return {
       transactionHash: executeResult.transactionHash,
       contractAddress: WalletHexAddress
