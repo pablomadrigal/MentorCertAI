@@ -92,7 +92,7 @@ mod MentorCertNFT {
         minter: ContractAddress,
         upgrader: ContractAddress,
     ) {
-        self.erc721.initializer("MentorCertNFT", "MCNFT", "");
+        self.erc721.initializer("MentorCertNFT", "MCNFT", "https://mentor-cert-ai.vercel.app/api/nfts/");
         self.accesscontrol.initializer();
         self.erc721_enumerable.initializer();
         self.accesscontrol._grant_role(DEFAULT_ADMIN_ROLE, default_admin);
