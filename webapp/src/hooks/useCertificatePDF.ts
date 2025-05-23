@@ -60,7 +60,7 @@ export function useCertificatePDF() {
   `
 
   const downloadCertificate = async (certificate: Certificate) => {
-    setIsGeneratingPDF(certificate.id)
+    setIsGeneratingPDF(certificate.id ?? 0)
 
     try {
       const { default: jsPDF } = await import("jspdf")
@@ -105,7 +105,7 @@ export function useCertificatePDF() {
 
   //function to download the certificate as a png
   const downloadCertificatePNG = async (certificate: Certificate) => {
-    setIsGeneratingPNG(certificate.id)
+    setIsGeneratingPNG(certificate.id ?? 0)
 
     try {
       const html2canvas = (await import("html2canvas")).default
