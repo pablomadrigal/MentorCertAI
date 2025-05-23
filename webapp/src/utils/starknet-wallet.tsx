@@ -13,6 +13,7 @@ import crypto from "crypto";
 
 const algorithm = "aes-256-ecb"; // Encryption algorithm
 const ARGENT_ACCOUNT_CLASS_HASH = "0x1a736d6ed154502257f02b1ccdf4d9d1089f80811cd6acad48e6b6a9d1f2003";
+const RPC_KEY = process.env.NEXT_PUBLIC_RPC_URL ?? "";
 
 // Derive encryption key from data
 export const getHashFromString = (data: string) => {
@@ -40,7 +41,6 @@ export const decryptData = (encryptedData: string, pin: string): string => {
 export const generatePrivateKeyEncrypted = (pin: string): string => {
   const privateKey = stark.randomAddress();
   const encryptedPrivateKey = encryptData(privateKey, pin);
-  console.log("✅ Encrypted private key:", encryptedPrivateKey);
   return encryptedPrivateKey;
 };
 
@@ -51,7 +51,7 @@ export const getDecryptedPrivateKey = (
   return decryptData(encryptedPrivateKey, pin);
 };
 
-export const getFutureWalletAdress = (
+export const getPublicAddress = (
   encryptedPrivateKey: string,
   pin: string
 ) => {
@@ -75,7 +75,6 @@ export const getFutureWalletAdress = (
     AXConstructorCallData,
     0
   );
-  console.log("✅ Precalculated account address:", AXcontractAddress);
   return AXcontractAddress;
 };
 
@@ -83,7 +82,6 @@ export const generateAndDeployPreChargedWallet = async (
   encryptedPrivateKey: string,
   pin: string
 ) => {
-  const RPC_KEY = process.env.NEXT_PUBLIC_RPC_URL ?? "";
 
   // connect provider
   const provider = new RpcProvider({ nodeUrl: RPC_KEY });
@@ -93,7 +91,6 @@ export const generateAndDeployPreChargedWallet = async (
     "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f";
 
   const privateKey = decryptData(encryptedPrivateKey, pin);
-  console.log("Decrypted private key", privateKey);
 
   const starkKeyPubAX = ec.starkCurve.getStarkKey(privateKey);
 
@@ -112,7 +109,6 @@ export const generateAndDeployPreChargedWallet = async (
     AXConstructorCallData,
     0
   );
-  console.log("Precalculated account address=", AXcontractAddress);
 
   const accountAX = new Account(provider, AXcontractAddress, privateKey);
 
@@ -123,9 +119,8 @@ export const generateAndDeployPreChargedWallet = async (
     addressSalt: starkKeyPubAX,
   };
 
-  const { transaction_hash: AXdAth, contract_address: AXcontractFinalAddress } =
+  const { contract_address: AXcontractFinalAddress } =
     await accountAX.deployAccount(deployAccountPayload);
-  console.log("✅ ArgentX wallet deployed at:", AXcontractFinalAddress, AXdAth);
   return AXcontractFinalAddress;
 };
 
@@ -199,6 +194,43 @@ export const deployWithPaymaster = async (encryptedPrivateKey: string, pin: stri
     };
 
   } catch (error) {
+    console.error('Error deploying with paymaster:', error);
     throw error;
   }
+}
+
+const jsonToTypedData = (json: object) => {
+  return {
+    types: {
+      StarknetDomain: [
+        { name: 'name', type: 'felt' },
+        { name: 'version', type: 'felt' },
+        { name: 'chainId', type: 'felt' }
+      ],
+      Message: [
+        { name: 'content', type: 'felt*' }
+      ]
+    },
+    primaryType: 'Message',
+    domain: {
+      name: 'Mensis Certificate',
+      version: '1',
+      chainId: '0x534e5f5345504f4c4941' // SN_SEPOLIA in hex
+    },
+    message: {
+      content: [JSON.stringify(json)]
+    }
+  }
+};
+
+export const signMessage = async (encryptedPrivateKey: string, pin: string, message: object) => {
+  const privateKey = getDecryptedPrivateKey(encryptedPrivateKey, pin);
+  const publicKey = getPublicAddress(encryptedPrivateKey, pin);
+
+  // connect provider
+  const provider = new RpcProvider({ nodeUrl: RPC_KEY });
+
+  const account = new Account(provider, publicKey, privateKey);
+  const signature = await account.signMessage(jsonToTypedData(message));
+  return signature;
 }

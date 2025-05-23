@@ -28,3 +28,7 @@ export function formatDate(dateString: string): string {
     hour12: true,
   }).format(date)
 }
+
+export function getRandomUUID() {
+  return crypto.randomUUID();
+}

@@ -3,6 +3,7 @@ export interface NFT {
     certificateId?: number
     nft_transaction: string
     nft_metadata?: NFTMetadata
+    image?: string
 } 
 
 export interface NFTMetadata {

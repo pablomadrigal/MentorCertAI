@@ -43,7 +43,6 @@ function RoomWrapper({ roomName, room, displayName, disconnect }: { roomName: st
                 try {
                     await room.connect(process.env.NEXT_PUBLIC_LIVEKIT_URL!, data.token);
                     await room.localParticipant.enableCameraAndMicrophone();
-                    console.log('Camera and microphone enabled');
                 } catch (error) {
                     console.error('Error connecting to room:', error);
                 }
@@ -88,15 +87,26 @@ export default function RoomPage() {
     const router = useRouter();
     const roomName = params?.roomName as string;
     const [enterRoom, setEnterRoom] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [room] = useState(() => new Room({
         adaptiveStream: true,
         dynacast: true,
     }));
 
+    const livekitAIAgentURL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://mentorcertai.onrender.com/health";
+
     const handleDisconnect = () => {
         setEnterRoom(false);
         router.push('/meeting');
     }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch(livekitAIAgentURL)
+            if (response) setIsLoading(false)
+        }
+        fetchData()
+    }, [livekitAIAgentURL])
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -108,7 +118,7 @@ export default function RoomPage() {
                     <div className="bg-gradient-primary min-h-[calc(100vh-64px)]">
                         <div className="absolute inset-0 bg-linear-to-br from-primary-dark via-primary-main to-primary-dark opacity-90"></div>
                         <div className="relative z-10 container mx-auto px-4 py-8">
-                            <PreJoin onSubmit={() => setEnterRoom(true)} />
+                            {isLoading ? <div className="text-white text-xl">Preparing room...</div> : <PreJoin onSubmit={() => setEnterRoom(true)} />}
                         </div>
                     </div>
                 )}
