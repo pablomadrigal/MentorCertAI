@@ -1,13 +1,14 @@
 import { NFT } from "./nft"
 
 export interface Certificate extends NFT {
-  id: number
+  id?: number
   user_id: number
   date: string
   score: number
   image: string
   session_id: number
   theme: string
+  certificate_metadata?: object
 }
 
 export interface CertificateCardProps {
