@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from '@supabase/supabase-js';
 import { withAuth } from '@/utils/api-middleware'
+import { getUserByEmail } from "@/utils/supabase/searchOrCreateUser";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -57,15 +58,15 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
       );
     }
 
-    const { room_id, exam = null, score = null } = body;
+    const { room_id, userEmail } = body;
+
+    const se = await getUserByEmail({ mentorId: user.sub as string, newUserEmail: userEmail })
 
     const { data, error } = await supabase
       .from('user_at_session')
       .insert([{
         room_id,
-        user_id: user.sub, // Usar el ID del usuario autenticado
-        exam,
-        score
+        user_id: se.user,
       }])
       .select()
       .single();
@@ -110,7 +111,7 @@ export async function PUT(request: Request) {
 
     const { room_id, user_id, exam, score } = body;
 
-    const updateData: {exam?: string, score?: number} = {};
+    const updateData: { exam?: string, score?: number } = {};
     if (exam !== undefined) updateData.exam = exam;
     if (score !== undefined) updateData.score = score;
 
