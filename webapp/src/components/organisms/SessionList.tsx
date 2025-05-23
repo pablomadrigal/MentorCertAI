@@ -64,7 +64,7 @@ export function SessionList({ sessions, filter = "all" }: SessionListProps) {
 
   const handleJoinSessionMentor = (sessionId: string) => {
     if (!user) return
-    router.push(`/session/${sessionId}`)
+    router.push(`/meeting/${sessionId}`)
   }
 
   const handleJoinSessionStudent = (sessionId: string, sessionDate?: string, score?: number) => {
@@ -74,7 +74,7 @@ export function SessionList({ sessions, filter = "all" }: SessionListProps) {
     const examPassed = score !== undefined && score >= 70
 
     if (!completed) {
-      router.push(`/session/${sessionId}`)
+      router.push(`/meeting/${sessionId}`)
     } else if (examPassed) {
       router.push(`/student/certificates?sessionId=${sessionId}`)
     } else {

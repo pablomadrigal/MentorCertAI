@@ -93,17 +93,22 @@ export default function RoomPage() {
         dynacast: true,
     }));
 
-    const livekitAIAgentURL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://mentorcertai.onrender.com/health";
+    const livekitAIAgentURL = process.env.NEXT_PUBLIC_LIVEKIT_AI_AGENT_URL ?? "https://mentorcertai.onrender.com/health";
 
     const handleDisconnect = () => {
         setEnterRoom(false);
-        router.push('/meeting');
+        router.push('/');
     }
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch(livekitAIAgentURL)
-            if (response) setIsLoading(false)
+            try {
+                const response = await fetch(livekitAIAgentURL)
+                if (response) setIsLoading(false)
+            } catch (error) {
+                console.error("Error fetching data:", error)
+                setIsLoading(false)
+            }
         }
         fetchData()
     }, [livekitAIAgentURL])
