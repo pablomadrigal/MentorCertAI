@@ -27,7 +27,23 @@ export function ExamResultsComponent({ sessionId }: ExamResultsComponentProps) {
         }
 
         loadResults()
-    }, [sessionId])
+    }, [sessionId, get])
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-main"></div>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-red-500">Error: {error}</div>
+            </div>
+        )
+    }
 
     if (!certificate) {
         return (
