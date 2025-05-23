@@ -24,17 +24,24 @@ export function NFTCard(nft: NFT) {
         </CardHeader>
         <CardContent className="flex-1 flex flex-col pt-0">
           <div className="flex-1 flex flex-col">
-            {nft.nft_metadata?.image && (
-              <div className="relative h-52 w-full overflow-hidden rounded-md flex-shrink-0 mb-3">
-                <Image
-                  src={nft.nft_metadata.image}
-                  alt={nft.nft_metadata.name || "NFT Image"}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            )}
-
+            <div className="relative h-52 w-full overflow-hidden rounded-md flex-shrink-0 mb-3">
+              {nft.nft_metadata && nft.nft_metadata.image ? <Image
+                src={nft.nft_metadata.image}
+                alt={nft.nft_metadata.name || "NFT Image"}
+                fill
+                className="object-cover"
+              /> : nft.image ? <Image
+                src={nft.image}
+                alt={nft.nft_metadata?.name || "NFT Image"}
+                fill
+                className="object-cover"
+              /> : <Image
+                src="/data-science-certificate.png"
+                alt="Placeholder"
+                fill
+                className="object-cover"
+              />}
+            </div>
             {nft.nft_metadata?.description && (
               <div className="relative mb-2">
                 <p className="text-sm h-[70px] overflow-hidden">
