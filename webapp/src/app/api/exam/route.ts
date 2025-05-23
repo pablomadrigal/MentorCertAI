@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import {GoogleGenAI} from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import { list } from '@vercel/blob';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -18,9 +18,10 @@ export async function GET(request: Request) {
       );
     }
 
+    console.log('Room ID:', roomId);
     // List blobs with the room ID prefix
     const { blobs } = await list({ prefix: `transcripts/${roomId}` });
-    
+
     if (blobs.length === 0) {
       return NextResponse.json(
         { success: false, message: 'Transcript not found' },
@@ -43,12 +44,12 @@ export async function GET(request: Request) {
     }).join('\n');
 
     // Send conversation to Gemini for exam generation
-    const ai = new GoogleGenAI({apiKey: GEMINI_API_KEY});
+    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
     let geminiExam = '';
     const model = "gemini-2.0-flash-lite-001";
 
     const prompt =
-    `You are an expert educator. Based on the following conversation, create a comprehensive exam that tests understanding of the discussed topics.
+      `You are an expert educator. Based on the following conversation, create a comprehensive exam that tests understanding of the discussed topics.
       Requirements:
         - Create only multiple choice and yes/no questions
         - Each multiple choice question should have 4 options

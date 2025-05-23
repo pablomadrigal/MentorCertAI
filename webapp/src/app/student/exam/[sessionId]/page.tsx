@@ -32,7 +32,7 @@ export default function ExamPage() {
 
     const fetchSession = async () => {
       try {
-        const { data } = await get(`exam?room=${sessionId}`)
+        const { data } = await get(`/exam?room=${sessionId}`)
         console.log(data)
         if (data) setExamData(data)
       } catch (error) {
