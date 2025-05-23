@@ -17,6 +17,12 @@ export default function ExamPage() {
   const { get, post, loading, error } = useApi<ExamData>()
 
   useEffect(() => {
+
+
+    //PASO #1 Revisar el endpoint GET /sessions/users?room_id=${sessionId} 
+    //Si el examen existe y tiene score, entonces cargar el componente de resultados
+
+    //PASO #2 Si el examen no existe, entonces cargar el examen desde el endpoint GET /exam?room=${sessionId}
     const fetchSession = async () => {
       try {
         const { data } = await get(`exam?room=${sessionId}`)
