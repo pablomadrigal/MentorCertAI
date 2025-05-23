@@ -58,14 +58,6 @@ export function MentorDashboard() {
         )
     }
 
-    if (error) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="text-red-500">Error: {error}</div>
-            </div>
-        )
-    }
-
     return (
 
         <main className="grow py-8">

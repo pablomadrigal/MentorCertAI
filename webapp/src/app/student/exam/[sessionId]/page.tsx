@@ -6,36 +6,45 @@ import { Header } from "@/components/organisms/Header"
 import { Footer } from "@/components/organisms/Footer"
 import { ExamComponent } from "@/components/organisms/ExamComponent"
 import { ExamData } from "@/types/exam"
-import { useAuth } from "@/contexts/AuthContext"
 import { useApi } from "@/hooks/useApi"
+import { ExamResultsComponent } from "@/components/organisms/ExamResultsComponent"
+import { SessionByPerson } from "@/types/session"
 
 export default function ExamPage() {
   const params = useParams()
   const sessionId = params.sessionId as string
   const [examData, setExamData] = useState<ExamData | null>(null)
-  const { user } = useAuth()
-  const { get, post, loading, error } = useApi<ExamData>()
+  const [isExamFinished, setIsExamFinished] = useState<boolean>(false)
+  const { get: sessionByPersonGet, post, loading, error } = useApi<SessionByPerson[]>()
+  const { get, loading: examLoading, error: examError } = useApi<ExamData>()
 
   useEffect(() => {
 
+    const checkExam = async () => {
+      const { data } = await sessionByPersonGet(`/sessions/users?room_id=${sessionId}`)
+      const examExists = data && (data[0]?.exam || data[0]?.score);
+      if (examExists) {
+        setIsExamFinished(true)
+      } else {
+        await fetchSession()
+      }
+    }
 
-    //PASO #1 Revisar el endpoint GET /sessions/users?room_id=${sessionId}
-    //Si el examen existe y tiene score, entonces cargar el componente de resultados setIsExamFinished(true) 
-
-    //PASO #2 Si el examen no existe, entonces cargar el examen desde el endpoint GET /exam?room=${sessionId}
     const fetchSession = async () => {
       try {
-        const { data } = await get(`exam?room=${sessionId}`)
+        const { data } = await get(`/exam?room=${sessionId}`)
+        console.log(data)
         if (data) setExamData(data)
       } catch (error) {
         console.error("Error fetching session:", error)
       }
     }
 
-    fetchSession()
-  }, [sessionId, user?.sub, get])
+    checkExam()
 
-  if (loading) {
+  }, [sessionId, get, sessionByPersonGet])
+
+  if (loading || examLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-main"></div>
@@ -43,7 +52,7 @@ export default function ExamPage() {
     )
   }
 
-  if (error || !examData) {
+  if (error || !examData || examError) {
     return (
       <div className="flex flex-col min-h-screen">
         <Header />
@@ -61,7 +70,7 @@ export default function ExamPage() {
   const handleSubmit = async (examData: ExamData) => {
     console.log(examData)
     await post('/exam', examData)
-    //cambias la variable isExamFinished a true
+    setIsExamFinished(true)
   }
 
   return (
@@ -72,8 +81,7 @@ export default function ExamPage() {
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">Certification Exam for {sessionId}</h1>
           <div className="max-w-3xl mx-auto">
-            {/* Si isExamFinished es true, entonces cargar el componente de resultados, si no lo esta cargar el componente de examen */}
-            <ExamComponent sessionId={sessionId} examData={examData} loading={loading} onSubmit={handleSubmit} />
+            {isExamFinished ? <ExamResultsComponent sessionId={sessionId} /> : <ExamComponent sessionId={sessionId} examData={examData} loading={examLoading} onSubmit={handleSubmit} />}
           </div>
         </div>
       </main>

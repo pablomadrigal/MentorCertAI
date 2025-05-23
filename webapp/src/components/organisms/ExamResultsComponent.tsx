@@ -4,31 +4,46 @@ import { Button } from "@/components/atoms/Button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card"
 import { NFTDisplayComponent } from "@/components/organisms/NFTDisplayComponent"
 import { Certificate } from "@/types/certificate"
-import { useAuth } from "@/contexts/AuthContext"
 import { NFT } from "@/types/nft"
+import { useApi } from "@/hooks/useApi"
 
 interface ExamResultsComponentProps {
-    sessionId: number
+    sessionId: string
 }
 
 export function ExamResultsComponent({ sessionId }: ExamResultsComponentProps) {
     const router = useRouter()
-    const { user } = useAuth()
     const [certificate, setCertificate] = useState<Certificate | null>(null)
+    const { get, loading, error } = useApi<Certificate[]>()
 
     useEffect(() => {
         const loadResults = async () => {
             try {
-                const response = await fetch(`/api/user/${user?.sub}/certificates/${sessionId}`)
-                const certificatesData: Certificate[] = await response.json()
-                setCertificate(certificatesData[0])
+                const { data } = await get(`/api/certificates/${sessionId}`)
+                setCertificate(data?.[0] ?? null)
             } catch (error) {
                 console.error("Error fetching results:", error)
             }
         }
 
         loadResults()
-    }, [user?.sub, sessionId])
+    }, [sessionId, get])
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-main"></div>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-red-500">Error: {error}</div>
+            </div>
+        )
+    }
 
     if (!certificate) {
         return (
