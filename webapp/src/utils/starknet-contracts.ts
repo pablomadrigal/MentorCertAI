@@ -44,6 +44,12 @@ export const mintNFT = async (recipient: string, score: number, token_id: number
         const resIncrement = await mentorCertNFTContract.increment_mint_limit(incrementMintableNFTsCall.calldata);
         await provider.waitForTransaction(resIncrement.transaction_hash);
 
+
+        //Give the user the minter role
+        const giveRoleCall = mentorCertNFTContract.populate('add_minter', [recipient]);
+        const resGiveRole = await mentorCertNFTContract.add_minter(giveRoleCall.calldata);
+        await provider.waitForTransaction(resGiveRole.transaction_hash);
+
         //Then mint the nft
         const mintNFTCall = mentorCertNFTContract.populate('safe_mint', [
             recipient,
