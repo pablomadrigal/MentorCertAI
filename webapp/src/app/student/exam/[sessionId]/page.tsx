@@ -25,6 +25,7 @@ export default function ExamPage() {
       const examExists = data && (data[0]?.exam || data[0]?.score);
       if (examExists) {
         setIsExamFinished(true)
+        setExamData(data[0]?.exam as ExamData)
       } else {
         await fetchSession()
       }
@@ -33,7 +34,6 @@ export default function ExamPage() {
     const fetchSession = async () => {
       try {
         const { data } = await get(`/exam?room=${sessionId}`)
-        console.log(data)
         if (data) setExamData(data)
       } catch (error) {
         console.error("Error fetching session:", error)
@@ -67,9 +67,10 @@ export default function ExamPage() {
     )
   }
 
-  const handleSubmit = async (examData: ExamData) => {
+  const handleSubmit = async (examData: ExamData, score: number) => {
     console.log(examData)
-    await post('/exam', examData)
+    const content = { room_id: sessionId, examData, score };
+    await post("/exam", content)
     setIsExamFinished(true)
   }
 

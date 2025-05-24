@@ -6,11 +6,17 @@ import { Button } from "../atoms/Button"
 import { Logo } from "../atoms/Logo"
 import { useAuth } from "@/contexts/AuthContext"
 import { LoginModal } from "../molecules/LoginModal"
+import { useApi } from "@/hooks/useApi"
 
 export function Header() {
-  const { signOut, isAuthenticated, isMentor, isStudent } = useAuth()
+  const { signOut, isAuthenticated, isMentor, isStudent, publicAddress } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const { get } = useApi<{ publicAddress: string }>()
+
+  const handleDeployWallet = async () => {
+    await get(`/wallet`)
+  }
 
   return (
     <header className="bg-surface shadow-md border-b border-surface-lighter">
@@ -45,6 +51,13 @@ export function Header() {
                     Meeting
                   </Link>
                 )}
+                {publicAddress ? (
+                  <Link href={`https://sepolia.voyager.online/contract/${publicAddress}`} className="text-text-primary hover:text-primary-light transition-colors" target="_blank" rel="noopener noreferrer">
+                    {`${publicAddress.slice(0, 6)}...${publicAddress.slice(-4)}`}
+                  </Link>
+                ) : <Button onClick={handleDeployWallet} className="bg-gradient-to-r from-[#1a9e6e] to-[#4eeeb0] text-primary-dark hover:from-[#4eeeb0] hover:to-[#1a9e6e] transition-all brightness-110 shadow-md hover:shadow-lg [box-shadow:0_0_15px_rgba(61,220,151,0.3)] hover:[box-shadow:0_0_20px_rgba(61,220,151,0.5)]">
+                  Deploy Wallet
+                </Button>}
                 <Button
                   onClick={signOut}
                   variant="outline"
@@ -114,7 +127,13 @@ export function Header() {
                     <Link href="/meeting" className="text-text-primary hover:text-primary-light transition-colors">
                       Meeting
                     </Link>
-                  )}
+                  )}{publicAddress ? (
+                    <Link href={`https://sepolia.voyager.online/contract/${publicAddress}`} className="text-text-primary hover:text-primary-light transition-colors" target="_blank" rel="noopener noreferrer">
+                      {`${publicAddress.slice(0, 6)}...${publicAddress.slice(-4)}`}
+                    </Link>
+                  ) : <Button onClick={handleDeployWallet} className="bg-gradient-to-r from-[#1a9e6e] to-[#4eeeb0] text-primary-dark hover:from-[#4eeeb0] hover:to-[#1a9e6e] transition-all brightness-110 shadow-md hover:shadow-lg [box-shadow:0_0_15px_rgba(61,220,151,0.3)] hover:[box-shadow:0_0_20px_rgba(61,220,151,0.5)]">
+                    Deploy Wallet
+                  </Button>}
                   <Button
                     onClick={signOut}
                     variant="outline"

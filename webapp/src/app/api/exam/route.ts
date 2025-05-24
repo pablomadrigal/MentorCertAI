@@ -5,17 +5,15 @@ import { list } from '@vercel/blob';
 import { JWTPayload, withAuth } from '@/utils/api-middleware';
 import { generateBlockcertSinglePackage, generateBlockcertsV3, mensisIssuer } from '@/utils/certificates/certificates';
 import { Badge, RecipientData } from '@/types/blockcerts';
-import { getPublicAddress, signMessage } from '@/utils/starknet-wallet';
 import { getTotalMintableNFTs, mintNFT } from '@/utils/starknet-contracts';
 import { Session } from '@/types/session';
-import { getRandomUUID } from '@/utils/utils';
 import { Certificate } from '@/types/certificate';
 import { NFTMetadata } from '@/types/nft';
+import { generateCertificateBase64Server } from '@/utils/certificate-image-server';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const PIN = process.env.NEXT_PUBLIC_PASSWORD_PK ?? "";
 
-export async function GET(request: Request) {
+export const GET = (request: Request) => withAuth(request, async () => {
   try {
     // Get room ID from URL
     const url = new URL(request.url);
@@ -26,6 +24,21 @@ export async function GET(request: Request) {
         { success: false, message: 'Room ID is required' },
         { status: 400 }
       );
+    }
+
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_API_KEY!
+    );
+
+    const { data } = await supabase
+      .from('sessions')
+      .select('transcription')
+      .eq('room_id', roomId)
+      .single();
+
+    if (data) {
+      return NextResponse.json(data);
     }
 
     // List blobs with the room ID prefix
@@ -102,7 +115,7 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-}
+})
 
 export const POST = (request: Request) => withAuth(request, async (req, user) => {
   try {
@@ -151,7 +164,7 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
       );
     }
 
-    const session = existingExams[0].session[0];
+    const session: Session = existingExams[0].session[0] ?? existingExams[0].session;
 
     // Verificar si alguno de los registros ya tiene un examen
     const hasExistingExam = existingExams?.some(record => record.exam !== null);
@@ -179,29 +192,40 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
         { status: 500 }
       );
     }
-
     // Generate the blockcert package
     const { blockcertPackage, txHash, nft_id } = await generateBlockcertPackage(user, session, score);
 
-    const nft_metadata: NFTMetadata = {
-      name: session.theme,
-      description: session.theme,
-      image: "https://marketplace.canva.com/EAGPQFRI-qU/1/0/1600w/canva-certificado-diploma-de-reconocimiento-profesional-moderno-verde-y-blanco--y6SjD9IvOc.jpg",
-      attributes: [{ trait_type: "score", value: score.toString() }]
-    };
+
+
 
     const certificate: Certificate = {
-      nft_id,
-      nft_metadata: nft_metadata,
-      image: "https://marketplace.canva.com/EAGPQFRI-qU/1/0/1600w/canva-certificado-diploma-de-reconocimiento-profesional-moderno-verde-y-blanco--y6SjD9IvOc.jpg",
+      nft_id: nft_id.toString(),
       user_id: user.sub as number,
       date: session.date_time ?? new Date().toISOString(),
+      image: "",
       score,
       session_id: session.room_id,
       theme: session.theme,
       nft_transaction: txHash,
       certificate_metadata: blockcertPackage,
     };
+
+    const image = await generateCertificateBase64Server(certificate, user.user_metadata?.full_name ?? "", txHash);
+
+    const nft_metadata: NFTMetadata = {
+      name: session.theme,
+      description: session.theme,
+      image: image,
+      attributes: [
+        { trait_type: "Course", value: session.theme },
+        { trait_type: "Grade", value: `${score.toString()}%` },
+        { trait_type: "Date", value: session.date_time ? new Date(session.date_time).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) },
+        { trait_type: "Student", value: user.user_metadata?.full_name ?? "" }
+      ]
+    };
+
+    certificate.nft_metadata = nft_metadata;
+    certificate.image = image;
 
     const { error } = await supabase
       .from('certificates')
@@ -259,12 +283,13 @@ const generateBlockcertPackage = async (user: JWTPayload, session: Session, scor
   }
 
   const totalMintableNFTs = await getTotalMintableNFTs();
+  console.log("totalMintableNFTs", totalMintableNFTs)
 
-  const publicAddress = getPublicAddress(user.user_metadata?.private_key ?? "", PIN);
+  console.log("publicAddress", user.user_metadata?.public_key)
   const blockcertsV3 = generateBlockcertsV3(recipient, mensisIssuer, badge);
-  const signature = await signMessage(user.user_metadata?.private_key ?? "", PIN, blockcertsV3);
-  const txHash = await mintNFT(publicAddress, getRandomUUID(), session.theme, score, totalMintableNFTs + 1, signature.toString());
+  const txHash = user.user_metadata?.public_key ? await mintNFT(user.user_metadata?.public_key, score, totalMintableNFTs + BigInt(1)) : null;
+
   const blockcertPackage = generateBlockcertSinglePackage(blockcertsV3, txHash);
 
-  return { blockcertPackage, txHash, nft_id: totalMintableNFTs + 1 };
+  return { blockcertPackage, txHash, nft_id: totalMintableNFTs + BigInt(1) };
 }

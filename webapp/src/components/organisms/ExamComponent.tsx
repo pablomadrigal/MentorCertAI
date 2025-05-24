@@ -17,6 +17,7 @@ export function ExamComponent({ examData, loading, onSubmit }: ExamComponentProp
   const handleAnswer = (answer: string) => {
     if (examData) {
       examData.data[currentQuestionIndex].userAnswer = answer
+      setAnswers({ ...answers, [currentQuestionIndex]: answer })
     }
   }
 
@@ -48,7 +49,7 @@ export function ExamComponent({ examData, loading, onSubmit }: ExamComponentProp
       const score = Math.round((correctCount / examData.data.length) * 100)
       examData.score = score
 
-      onSubmit(examData)
+      onSubmit(examData, score)
     } catch (error) {
       console.error("Error submitting exam:", error)
     } finally {
@@ -101,8 +102,8 @@ export function ExamComponent({ examData, loading, onSubmit }: ExamComponentProp
                     key={option}
                     onClick={() => handleAnswer(option)}
                     className={`w-full p-4 text-left rounded-lg border transition-all duration-300 ${currentAnswer === option
-                      ? "border-primary-main bg-primary-main/10"
-                      : "border-surface-lighter hover:border-primary-main/50"
+                      ? "border-accent-main bg-primary-main/10"
+                      : "border-surface-lighter hover:border-primary-light/90"
                       }`}
                   >
                     {option}
@@ -116,8 +117,8 @@ export function ExamComponent({ examData, loading, onSubmit }: ExamComponentProp
                 <button
                   onClick={() => handleAnswer("yes")}
                   className={`flex-1 p-4 rounded-lg border transition-all duration-300 ${currentAnswer === "yes"
-                    ? "border-primary-main bg-primary-main/10"
-                    : "border-surface-lighter hover:border-primary-main/50"
+                    ? "border-accent-main bg-primary-main/10"
+                    : "border-surface-lighter hover:border-primary-light/90"
                     }`}
                 >
                   Yes
@@ -125,8 +126,8 @@ export function ExamComponent({ examData, loading, onSubmit }: ExamComponentProp
                 <button
                   onClick={() => handleAnswer("no")}
                   className={`flex-1 p-4 rounded-lg border transition-all duration-300 ${currentAnswer === "no"
-                    ? "border-primary-main bg-primary-main/10"
-                    : "border-surface-lighter hover:border-primary-main/50"
+                    ? "border-accent-main bg-primary-main/10"
+                    : "border-surface-lighter hover:border-primary-light/90"
                     }`}
                 >
                   No
@@ -138,7 +139,7 @@ export function ExamComponent({ examData, loading, onSubmit }: ExamComponentProp
               <Button
                 onClick={handlePrevious}
                 disabled={currentQuestionIndex === 0}
-                className="bg-surface-lighter border border-surface-lighter text-text-primary hover:bg-secondary-main hover:text-white transition-all duration-300"
+                className="bg-surface-lighter border border-surface-lighter text-text-primary hover:bg-secondary-main hover:text-white transition-all duration-300 disabled:border-surface-lighter enabled:border-secondary-main"
               >
                 Previous
               </Button>
@@ -147,7 +148,7 @@ export function ExamComponent({ examData, loading, onSubmit }: ExamComponentProp
                 <Button
                   onClick={handleSubmit}
                   disabled={!allAnswered || isSubmitting}
-                  className="bg-primary-main text-white hover:bg-primary-light/90 hover:brightness-110 transition-all duration-300"
+                  className="bg-primary-main border text-white hover:bg-primary-light/90 hover:brightness-110 transition-all duration-300 disabled:border-primary-main enabled:border-primary-light/90"
                 >
                   {isSubmitting ? "Submitting..." : "Submit Exam"}
                 </Button>
@@ -155,7 +156,7 @@ export function ExamComponent({ examData, loading, onSubmit }: ExamComponentProp
                 <Button
                   onClick={handleNext}
                   disabled={!isAnswered}
-                  className="bg-primary-main text-white hover:bg-primary-light/90 hover:brightness-110 transition-all duration-300"
+                  className="bg-primary-main border text-white hover:bg-primary-light/90 hover:brightness-110 transition-all duration-300 disabled:border-primary-main enabled:border-primary-light/90"
                 >
                   Next
                 </Button>
@@ -168,7 +169,7 @@ export function ExamComponent({ examData, loading, onSubmit }: ExamComponentProp
                   <div
                     key={index}
                     className={`h-2 w-8 rounded-full ${index === currentQuestionIndex
-                      ? "bg-primary-main"
+                      ? "bg-primary-light/90"
                       : answers[index] !== ""
                         ? "bg-accent-main"
                         : "bg-gray-200"

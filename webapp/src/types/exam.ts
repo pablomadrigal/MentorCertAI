@@ -27,5 +27,5 @@ export interface ExamComponentProps {
   sessionId: string
   examData: ExamData
   loading: boolean
-  onSubmit: (examData: ExamData) => void
+  onSubmit: (examData: ExamData, score: number) => void
 } 

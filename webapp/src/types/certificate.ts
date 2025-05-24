@@ -6,7 +6,7 @@ export interface Certificate extends NFT {
   date: string
   score: number
   image: string
-  session_id: number
+  session_id: string
   theme: string
   certificate_metadata?: object
 }
@@ -16,8 +16,10 @@ export interface CertificateCardProps {
   issueDate: string
   score: number
   image?: string
+  nft_id: number
   onDownload: () => void
   onViewNFT: () => void
+  onDownloadPNG: () => void
   isGeneratingPDF?: boolean
 }
 

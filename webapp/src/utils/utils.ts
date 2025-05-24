@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
-} 
+}
 
 export const convertSignedMessage = (signedMessage: Signature) => {
   if (Array.isArray(signedMessage)) {
@@ -32,3 +32,11 @@ export function formatDate(dateString: string): string {
 export function getRandomUUID() {
   return crypto.randomUUID();
 }
+
+export const splitString = (str: string): string[] => {
+  const chunks: string[] = [];
+  for (let i = 0; i < str.length; i += 20) {
+    chunks.push(str.slice(i, i + 20));
+  }
+  return chunks;
+};

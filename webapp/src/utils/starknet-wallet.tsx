@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Account,
   ec,
@@ -8,12 +9,15 @@ import {
   CairoOption,
   CairoOptionVariant,
   CairoCustomEnum,
+  TypedData,
+  GetTransactionReceiptResponse
 } from "starknet";
 import crypto from "crypto";
 
 const algorithm = "aes-256-ecb"; // Encryption algorithm
 const ARGENT_ACCOUNT_CLASS_HASH = "0x1a736d6ed154502257f02b1ccdf4d9d1089f80811cd6acad48e6b6a9d1f2003";
 const RPC_KEY = process.env.NEXT_PUBLIC_RPC_URL ?? "";
+const UDC_ADDRESS = process.env.UDC_ADDRESS ?? "0x41a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf";
 
 // Derive encryption key from data
 export const getHashFromString = (data: string) => {
@@ -124,102 +128,158 @@ export const generateAndDeployPreChargedWallet = async (
   return AXcontractFinalAddress;
 };
 
+interface StarknetEvent {
+  from_address: string;
+  data: string[];
+  keys: string[];
+}
+
+interface DeploymentData {
+  class_hash: string;
+  salt: string;
+  unique: string;
+  calldata: string[];
+}
+
+const prepareDeploymentData = (starkKeyPub: string): DeploymentData => {
+  const axGuardian = new CairoOption<unknown>(CairoOptionVariant.None);
+  const constructorCallData = CallData.compile({
+    owner: starkKeyPub,
+    guardian: axGuardian,
+  });
+
+  return {
+    class_hash: ARGENT_ACCOUNT_CLASS_HASH,
+    salt: ARGENT_ACCOUNT_CLASS_HASH,
+    unique: "0x1",
+    calldata: constructorCallData.map(x => {
+      const hex = BigInt(x).toString(16);
+      return `0x${hex}`;
+    })
+  };
+};
+
+const calculateWalletAddress = (starkKeyPub: string, constructorCallData: string[]): string => {
+  return hash.calculateContractAddressFromHash(
+    starkKeyPub,
+    ARGENT_ACCOUNT_CLASS_HASH,
+    constructorCallData,
+    0
+  );
+};
+
+const buildTypedData = async (walletAddress: string, deploymentData: DeploymentData, paymasterUrl: string, paymasterApiKey: string) => {
+  const response = await fetch(`${paymasterUrl}/paymaster/v1/build-typed-data`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "api-key": paymasterApiKey,
+    },
+    body: JSON.stringify({
+      userAddress: walletAddress,
+      accountClassHash: ARGENT_ACCOUNT_CLASS_HASH,
+      deploymentData,
+      calls: [],
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to build typed data');
+  }
+};
+
+const executeDeployment = async (walletAddress: string, deploymentData: DeploymentData, paymasterUrl: string, paymasterApiKey: string) => {
+  const response = await fetch(`${paymasterUrl}/paymaster/v1/deploy-account`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "api-key": paymasterApiKey,
+    },
+    body: JSON.stringify({
+      userAddress: walletAddress,
+      deploymentData
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to execute deployment');
+  }
+
+  return response.json();
+};
+
+const getTransactionReceipt = async (provider: RpcProvider, transactionHash: string): Promise<GetTransactionReceiptResponse> => {
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  let receipt: GetTransactionReceiptResponse | undefined;
+  let retries = 5;
+  const RETRY_DELAY = 2000;
+
+  while (retries > 0) {
+    try {
+      receipt = await provider.getTransactionReceipt(transactionHash);
+      if (receipt) {
+        break;
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const isNotFoundError = errorMessage.includes('Transaction hash not found');
+
+      if (!isNotFoundError) {
+        throw error;
+      }
+
+      retries--;
+      if (retries > 0) {
+        await sleep(RETRY_DELAY);
+      }
+    }
+  }
+
+  if (!receipt) {
+    throw new Error(`Failed to get transaction receipt after 5 attempts for tx: ${transactionHash}`);
+  }
+
+  return receipt;
+};
+
+const findDeployedContractAddress = (receipt: GetTransactionReceiptResponse): string | undefined => {
+  if ('events' in receipt) {
+    const deployedEvent = receipt.events.find(
+      (event: StarknetEvent) => event.from_address === UDC_ADDRESS
+    );
+    if (deployedEvent) {
+      const contractAddress = deployedEvent.data[0];
+      return contractAddress;
+    }
+  }
+  return undefined;
+};
+
 export const deployWithPaymaster = async (encryptedPrivateKey: string, pin: string, paymasterUrl: string, paymasterApiKey: string) => {
   try {
     const privateKey = getDecryptedPrivateKey(encryptedPrivateKey, pin);
     const starkKeyPub = ec.starkCurve.getStarkKey(privateKey);
 
-    const axGuardian = new CairoOption<unknown>(CairoOptionVariant.None);
-    const ArgentAAConstructorCallData = CallData.compile({
-      owner: starkKeyPub,
-      guardian: axGuardian,
-    });
+    const deploymentData = prepareDeploymentData(starkKeyPub);
+    const walletAddress = calculateWalletAddress(starkKeyPub, deploymentData.calldata);
 
-    const WalletHexAddress = hash.calculateContractAddressFromHash(
-      starkKeyPub,
-      ARGENT_ACCOUNT_CLASS_HASH,
-      ArgentAAConstructorCallData,
-      0
-    );
+    await buildTypedData(walletAddress, deploymentData, paymasterUrl, paymasterApiKey);
+    const executeResult = await executeDeployment(walletAddress, deploymentData, paymasterUrl, paymasterApiKey);
 
-    const deploymentData = {
-      class_hash: ARGENT_ACCOUNT_CLASS_HASH,
-      salt: ARGENT_ACCOUNT_CLASS_HASH,
-      unique: "0x1",
-      calldata: ArgentAAConstructorCallData.map(x => {
-        const hex = BigInt(x).toString(16);
-        return `0x${hex}`;
-      })
-    };
+    const provider = new RpcProvider({ nodeUrl: RPC_KEY });
+    const receipt = await getTransactionReceipt(provider, executeResult.transactionHash);
 
-    const buildTypedDataResponse = await fetch(`${paymasterUrl}/paymaster/v1/build-typed-data`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": paymasterApiKey,
-      },
-      body: JSON.stringify({
-        userAddress: WalletHexAddress,
-        accountClassHash: ARGENT_ACCOUNT_CLASS_HASH,
-        deploymentData,
-        calls: [],
-      })
-    });
-
-    if (!buildTypedDataResponse.ok) {
-      throw new Error('Failed to build typed data');
+    const contractAddress = findDeployedContractAddress(receipt);
+    if (!contractAddress) {
+      throw new Error('Could not find deployed contract address in transaction events');
     }
-
-    const deployResponse = await fetch(`${paymasterUrl}/paymaster/v1/deploy-account`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": paymasterApiKey,
-      },
-      body: JSON.stringify({
-        userAddress: WalletHexAddress,
-        deploymentData
-      })
-    })
-
-    if (!deployResponse.ok) {
-      throw new Error('Failed to execute deployment');
-    }
-
-    const executeResult = await deployResponse.json();
 
     return {
       transactionHash: executeResult.transactionHash,
-      contractAddress: WalletHexAddress
+      contractAddress
     };
-
   } catch (error) {
-    console.error('Error deploying with paymaster:', error);
     throw error;
-  }
-}
-
-const jsonToTypedData = (json: object) => {
-  return {
-    types: {
-      StarknetDomain: [
-        { name: 'name', type: 'felt' },
-        { name: 'version', type: 'felt' },
-        { name: 'chainId', type: 'felt' }
-      ],
-      Message: [
-        { name: 'content', type: 'felt*' }
-      ]
-    },
-    primaryType: 'Message',
-    domain: {
-      name: 'Mensis Certificate',
-      version: '1',
-      chainId: '0x534e5f5345504f4c4941' // SN_SEPOLIA in hex
-    },
-    message: {
-      content: [JSON.stringify(json)]
-    }
   }
 };
 
@@ -231,6 +291,10 @@ export const signMessage = async (encryptedPrivateKey: string, pin: string, mess
   const provider = new RpcProvider({ nodeUrl: RPC_KEY });
 
   const account = new Account(provider, publicKey, privateKey);
-  const signature = await account.signMessage(jsonToTypedData(message));
-  return signature;
+  const stringified = JSON.stringify(message);
+  const feltHash = hash.starknetKeccak(stringified);
+
+  //const signature = await account.signMessage(feltHash);
+  ///const signature = await account.signMessage(toTypedDataFromJson({ content: JSON.stringify(message) }));
+  return feltHash;
 }

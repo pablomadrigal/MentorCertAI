@@ -40,7 +40,17 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ ...data.nft_metadata, image: data.image ?? `${process.env.MENTOR_CERT_AI_URL}/data-science-certificate.png` });
+    // Format metadata for Voyager
+    const metadata = {
+      name: data.nft_metadata?.name || `Certificate #${nft_id}`,
+      description: data.nft_metadata?.description || "Certificate of completion",
+      image: data.image?.startsWith('data:image')
+        ? `${process.env.MENTOR_CERT_AI_URL}/api/nfts/${nft_id}/image`
+        : (data.image ?? `${process.env.MENTOR_CERT_AI_URL}/data-science-certificate.png`),
+      attributes: data.nft_metadata?.attributes || []
+    };
+
+    return NextResponse.json(metadata);
   } catch (error) {
     console.error("Error obteniendo NFT:", error);
     return NextResponse.json(

@@ -5,17 +5,14 @@ import { OtpStep } from "./login/OtpStep"
 import { SignupStep } from "./login/SignupStep"
 import supabase from "@/utils/supabase/client"
 import { LoginModalProps } from "@/types/auth"
-import { deployWithPaymaster, generatePrivateKeyEncrypted } from "@/utils/starknet-wallet"
-
-
-const paymasterUrl = process.env.NEXT_PUBLIC_PAYMASTER_URL ?? ""
-const paymasterApiKey = process.env.NEXT_PUBLIC_AVNU_PAYMASTER_API_KEY ?? ""
-const passwordPk = process.env.NEXT_PUBLIC_PASSWORD_PK ?? ""
+import { useApi } from "@/hooks/useApi"
 
 export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const [loading, setLoading] = useState(false)
   const [loginStep, setLoginStep] = useState<"email" | "otp" | "signup">("email")
   const [email, setEmail] = useState("")
+
+  const { get } = useApi<{ publicAddress: string }>()
 
   const handleEmailSubmit = async (email: string) => {
     try {
@@ -79,14 +76,11 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const handleSignupSubmit = async (data: { fullName: string; role: "student" | "mentor"; acceptTerms: boolean }) => {
     try {
       setLoading(true)
-      const privateKey = generatePrivateKeyEncrypted(passwordPk)
-      await deployWithPaymaster(privateKey, passwordPk, paymasterUrl, paymasterApiKey)
-
       const { error } = await supabase.auth.updateUser({
-        data: { full_name: data.fullName, accept_terms: data.acceptTerms, role: data.role, private_key: privateKey },
+        data: { full_name: data.fullName, accept_terms: data.acceptTerms, role: data.role },
         email,
       })
-
+      await get(`/wallet`)
       if (error) throw error
       onClose()
     } catch (error) {
