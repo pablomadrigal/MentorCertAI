@@ -282,6 +282,7 @@ const generateBlockcertPackage = async (user: JWTPayload, session: Session, scor
   const totalMintableNFTs = await getTotalMintableNFTs();
   console.log("totalMintableNFTs", totalMintableNFTs)
 
+  console.log("user", user)
   console.log("publicAddress", user.user_metadata?.public_key)
   const blockcertsV3 = generateBlockcertsV3(recipient, mensisIssuer, badge);
   const txHash = user.user_metadata?.public_key ? await mintNFT(user.user_metadata?.public_key, score, totalMintableNFTs + BigInt(1)) : null;
