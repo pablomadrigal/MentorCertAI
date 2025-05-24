@@ -5,14 +5,13 @@ import { list } from '@vercel/blob';
 import { JWTPayload, withAuth } from '@/utils/api-middleware';
 import { generateBlockcertSinglePackage, generateBlockcertsV3, mensisIssuer } from '@/utils/certificates/certificates';
 import { Badge, RecipientData } from '@/types/blockcerts';
-import { getPublicAddress } from '@/utils/starknet-wallet';
 import { getTotalMintableNFTs, mintNFT } from '@/utils/starknet-contracts';
 import { Session } from '@/types/session';
 import { Certificate } from '@/types/certificate';
 import { NFTMetadata } from '@/types/nft';
+import { generateCertificateBase64Server } from '@/utils/certificate-image-server';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const PIN = process.env.PASSWORD_PK ?? "";
 
 export const GET = (request: Request) => withAuth(request, async () => {
   try {
@@ -196,25 +195,37 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
     // Generate the blockcert package
     const { blockcertPackage, txHash, nft_id } = await generateBlockcertPackage(user, session, score);
 
-    const nft_metadata: NFTMetadata = {
-      name: session.theme,
-      description: session.theme,
-      image: "https://marketplace.canva.com/EAGPQFRI-qU/1/0/1600w/canva-certificado-diploma-de-reconocimiento-profesional-moderno-verde-y-blanco--y6SjD9IvOc.jpg",
-      attributes: [{ trait_type: "score", value: score.toString() }]
-    };
+
+
 
     const certificate: Certificate = {
       nft_id: nft_id.toString(),
-      nft_metadata: nft_metadata,
-      image: "https://marketplace.canva.com/EAGPQFRI-qU/1/0/1600w/canva-certificado-diploma-de-reconocimiento-profesional-moderno-verde-y-blanco--y6SjD9IvOc.jpg",
       user_id: user.sub as number,
       date: session.date_time ?? new Date().toISOString(),
+      image: "",
       score,
       session_id: session.room_id,
       theme: session.theme,
       nft_transaction: txHash,
       certificate_metadata: blockcertPackage,
     };
+
+    const image = await generateCertificateBase64Server(certificate, user.user_metadata?.full_name ?? "", txHash);
+
+    const nft_metadata: NFTMetadata = {
+      name: session.theme,
+      description: session.theme,
+      image: image,
+      attributes: [
+        { trait_type: "Course", value: session.theme },
+        { trait_type: "Grade", value: `${score.toString()}%` },
+        { trait_type: "Date", value: session.date_time ? new Date(session.date_time).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) },
+        { trait_type: "Student", value: user.user_metadata?.full_name ?? "" }
+      ]
+    };
+
+    certificate.nft_metadata = nft_metadata;
+    certificate.image = image;
 
     const { error } = await supabase
       .from('certificates')
@@ -274,10 +285,9 @@ const generateBlockcertPackage = async (user: JWTPayload, session: Session, scor
   const totalMintableNFTs = await getTotalMintableNFTs();
   console.log("totalMintableNFTs", totalMintableNFTs)
 
-  const publicAddress = getPublicAddress(user.user_metadata?.private_key ?? "", PIN);
-  console.log("publicAddress", publicAddress)
+  console.log("publicAddress", user.user_metadata?.public_key)
   const blockcertsV3 = generateBlockcertsV3(recipient, mensisIssuer, badge);
-  const txHash = await mintNFT(publicAddress, score, totalMintableNFTs + BigInt(1));
+  const txHash = user.user_metadata?.public_key ? await mintNFT(user.user_metadata?.public_key, score, totalMintableNFTs + BigInt(1)) : null;
 
   const blockcertPackage = generateBlockcertSinglePackage(blockcertsV3, txHash);
 

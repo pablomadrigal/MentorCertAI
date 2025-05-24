@@ -18,6 +18,7 @@ export interface CertificateCardProps {
   image?: string
   onDownload: () => void
   onViewNFT: () => void
+  onDownloadPNG: () => void
   isGeneratingPDF?: boolean
 }
 

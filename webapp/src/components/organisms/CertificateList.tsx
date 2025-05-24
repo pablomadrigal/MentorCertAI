@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useCertificatePDF } from "@/hooks/useCertificatePDF"
 import { Certificate, CertificateListProps } from "@/types/certificate"
+import { useAuth } from "@/contexts/AuthContext"
 
 export function CertificateList({ certificates, isLoading }: CertificateListProps) {
   const router = useRouter()
-  const { isGeneratingPDF, downloadCertificate } = useCertificatePDF()
+  const { isGeneratingPDF, downloadCertificate, downloadCertificatePNG } = useCertificatePDF()
+  const { user } = useAuth()
 
   // Cargar jsPDF dinámicamente para evitar problemas con SSR
   useEffect(() => {
@@ -40,7 +42,11 @@ export function CertificateList({ certificates, isLoading }: CertificateListProp
   }
 
   const handleDownload = (certificate: Certificate) => {
-    downloadCertificate(certificate)
+    downloadCertificate(certificate, user?.full_name ?? "Student foo")
+  }
+
+  const handleDownloadPNG = (certificate: Certificate) => {
+    downloadCertificatePNG(certificate, user?.full_name ?? "Student foo")
   }
 
   return (
@@ -54,6 +60,7 @@ export function CertificateList({ certificates, isLoading }: CertificateListProp
           image={certificate.image}
           onDownload={() => handleDownload(certificate)}
           onViewNFT={() => handleViewNFT(certificate.id ?? 0)}
+          onDownloadPNG={() => handleDownloadPNG(certificate)}
           isGeneratingPDF={isGeneratingPDF === certificate.id}
         />
       ))}

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card"
@@ -5,9 +6,14 @@ import { NFT } from "@/types/nft"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
+import { useImage } from "@/hooks/useImage"
 
 export function NFTCard(nft: NFT) {
   const [showFullDescription, setShowFullDescription] = useState(false)
+  const { url, isBase64, alt } = useImage({
+    src: nft.nft_metadata?.image || nft.image,
+    alt: nft.nft_metadata?.name || "NFT Image"
+  })
 
   // Truncar la descripción si es demasiado larga
   const isDescriptionLong = nft.nft_metadata?.description?.length ? nft.nft_metadata?.description?.length > 100 : false
@@ -26,22 +32,20 @@ export function NFTCard(nft: NFT) {
         <CardContent className="flex-1 flex flex-col pt-0">
           <div className="flex-1 flex flex-col">
             <div className="relative h-52 w-full overflow-hidden rounded-md flex-shrink-0 mb-3">
-              {nft.nft_metadata && nft.nft_metadata.image ? <Image
-                src={nft.nft_metadata.image}
-                alt={nft.nft_metadata.name || "NFT Image"}
-                fill
-                className="object-cover"
-              /> : nft.image ? <Image
-                src={nft.image}
-                alt={nft.nft_metadata?.name || "NFT Image"}
-                fill
-                className="object-cover"
-              /> : <Image
-                src="/data-science-certificate.png"
-                alt="Placeholder"
-                fill
-                className="object-cover"
-              />}
+              {isBase64 ? (
+                <img
+                  src={url}
+                  alt={alt}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Image
+                  src={url}
+                  alt={alt}
+                  fill
+                  className="object-cover"
+                />
+              )}
             </div>
             {nft.nft_metadata?.description && (
               <div className="relative mb-2">

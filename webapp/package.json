@@ -18,6 +18,8 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
     "merkletreejs": "^0.5.2",
+    "node-html-to-image": "^5.0.0",
+    "sharp": "^0.34.2",
     "starknet": "^6.24.1"
   },
   "devDependencies": {
