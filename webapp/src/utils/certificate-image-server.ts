@@ -5,28 +5,33 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
   // Create a simple SVG with the certificate content
   const svgContent = `
     <svg width="760" height="600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <style>
+          text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        </style>
+      </defs>
       <rect width="760" height="600" fill="white"/>
-      <text x="380" y="50" font-family="Arial" font-size="24" text-anchor="middle" fill="#2A1A67">CERTIFICATE</text>
-      <text x="380" y="80" font-family="Arial" font-size="16" text-anchor="middle" fill="#3DDC97">OF COMPLETION</text>
-      <text x="380" y="120" font-family="Arial" font-size="14" text-anchor="middle" fill="#475569">This certificate is presented to</text>
-      <text x="380" y="160" font-family="Arial" font-size="20" text-anchor="middle" fill="#7B61FF">${userName}</text>
-      <text x="380" y="200" font-family="Arial" font-size="14" text-anchor="middle" fill="#475569">
+      <text x="380" y="50" font-size="24" text-anchor="middle" fill="#2A1A67">CERTIFICATE</text>
+      <text x="380" y="80" font-size="16" text-anchor="middle" fill="#3DDC97">OF COMPLETION</text>
+      <text x="380" y="120" font-size="14" text-anchor="middle" fill="#475569">This certificate is presented to</text>
+      <text x="380" y="160" font-size="20" text-anchor="middle" fill="#7B61FF">${userName}</text>
+      <text x="380" y="200" font-size="14" text-anchor="middle" fill="#475569">
         has successfully completed the <tspan fill="#2A1A67" font-weight="bold">${certificate.theme}</tspan> course
       </text>
-      <text x="380" y="230" font-family="Arial" font-size="14" text-anchor="middle" fill="#475569">
+      <text x="380" y="230" font-size="14" text-anchor="middle" fill="#475569">
         with a grade of <tspan fill="#2AB77A" font-weight="bold">${certificate.score}%</tspan>
       </text>
-      <text x="380" y="280" font-family="Arial" font-size="12" text-anchor="middle" fill="#64748b">
+      <text x="380" y="280" font-size="12" text-anchor="middle" fill="#64748b">
         This certificate is issued by MentorCertAI to recognize outstanding achievement
       </text>
-      <text x="380" y="300" font-family="Arial" font-size="12" text-anchor="middle" fill="#64748b">
+      <text x="380" y="300" font-size="12" text-anchor="middle" fill="#64748b">
         and commitment to learning.
       </text>
-      <text x="380" y="350" font-family="Arial" font-size="12" text-anchor="middle" fill="#64748b">
+      <text x="380" y="350" font-size="12" text-anchor="middle" fill="#64748b">
         Date Issued: ${new Date(certificate.date).toLocaleDateString()}
       </text>
       ${transactionHash ? `
-        <text x="380" y="380" font-family="Arial" font-size="12" text-anchor="middle" fill="#64748b">
+        <text x="380" y="380" font-size="12" text-anchor="middle" fill="#64748b">
           Transaction Hash: ${transactionHash}
         </text>
       ` : ''}
