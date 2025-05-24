@@ -38,6 +38,8 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
     </svg>
   `;
 
+  console.log("svgContent", svgContent)
+
   // Convert SVG to PNG using sharp
   const imageBuffer = await sharp(Buffer.from(svgContent))
     .resize(760, 600)
