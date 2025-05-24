@@ -195,9 +195,6 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
     // Generate the blockcert package
     const { blockcertPackage, txHash, nft_id } = await generateBlockcertPackage(user, session, score);
 
-
-
-
     const certificate: Certificate = {
       nft_id: nft_id.toString(),
       user_id: user.sub as number,
