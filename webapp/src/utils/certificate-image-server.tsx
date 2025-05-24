@@ -14,6 +14,7 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
         )
 
         const buffer = await response.arrayBuffer()
+        console.log("buffer", `data:image/png;base64,${Buffer.from(buffer).toString('base64')}`)
         return `data:image/png;base64,${Buffer.from(buffer).toString('base64')}`
     } catch (error) {
         console.error('Error generating certificate:', error)
