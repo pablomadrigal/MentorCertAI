@@ -9,6 +9,7 @@ export interface UserProfile {
   full_name: string
   role: UserRole
   accept_terms: boolean
+  public_key?: string
 }
 
 export interface AuthContextType {
@@ -18,7 +19,8 @@ export interface AuthContextType {
   isAuthenticated: boolean
   isMentor: boolean
   isStudent: boolean
-} 
+  publicAddress: string | undefined
+}
 
 export interface LoginModalProps {
   isOpen: boolean

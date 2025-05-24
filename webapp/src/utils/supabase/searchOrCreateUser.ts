@@ -2,10 +2,6 @@ import { CreateUserIfNotExistsProps } from '@/types/user';
 import { createClient } from '@supabase/supabase-js';
 
 export async function getUserByEmail({ mentorId, newUserEmail }: CreateUserIfNotExistsProps) {
-
-  console.log("SUPABASE_URL", process.env.SUPABASE_URL);
-  console.log("SUPABASE_SERVICE_ROL", process.env.SUPABASE_SERVICE_ROL);
-
   const supabase = createClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROL!, {

@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card"
 import { NFT } from "@/types/nft"
 import Image from "next/image"
+import Link from "next/link"
 import { useState } from "react"
 
 export function NFTCard(nft: NFT) {
@@ -66,7 +67,7 @@ export function NFTCard(nft: NFT) {
             )}
 
             {nft.nft_metadata?.attributes && (
-              <div className="grid grid-cols-2 gap-2 mt-auto">
+              <div className="grid grid-cols-2 gap-2">
                 {nft.nft_metadata.attributes.map((attr, index) => (
                   <div key={index} className="rounded-md bg-background p-2">
                     <p className="text-xs text-text-secondary truncate" title={attr.trait_type}>
@@ -80,6 +81,18 @@ export function NFTCard(nft: NFT) {
               </div>
             )}
           </div>
+          {nft.nft_transaction && (
+            <div className="mt-auto pt-4 border-t">
+              <Link
+                href={`https://sepolia.voyager.online/tx/${nft.nft_transaction}`}
+                className="w-full px-4 py-2 rounded-md bg-gradient-to-r from-secondary-dark to-secondary-main text-white hover:from-secondary-main hover:to-secondary-dark transition-all brightness-110 shadow-lg hover:shadow-xl [box-shadow:0_0_10px_rgba(123,97,255,0.2)] hover:[box-shadow:0_0_15px_rgba(123,97,255,0.3)] flex justify-center"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View transaction
+              </Link>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

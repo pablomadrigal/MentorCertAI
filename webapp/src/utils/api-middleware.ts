@@ -18,6 +18,7 @@ export interface JWTUserMetadata {
   full_name?: string;
   phone_verified?: boolean;
   private_key?: string;
+  public_key?: string;
   role?: string;
   sub?: string;
 }

@@ -12,7 +12,7 @@ import { Certificate } from '@/types/certificate';
 import { NFTMetadata } from '@/types/nft';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const PIN = process.env.NEXT_PUBLIC_PASSWORD_PK ?? "";
+const PIN = process.env.PASSWORD_PK ?? "";
 
 export const GET = (request: Request) => withAuth(request, async () => {
   try {
