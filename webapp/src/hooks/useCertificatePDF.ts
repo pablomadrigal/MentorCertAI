@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Certificate } from "@/types/certificate"
-import { generateCertificatePDF, generateCertificatePNG } from "@/utils/certificate"
+import { generateCertificatePDF, generateCertificatePNG } from "@/utils/certificate-image"
 
 export function useCertificatePDF() {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState<number | null>(null)

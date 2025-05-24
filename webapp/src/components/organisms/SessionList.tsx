@@ -67,16 +67,13 @@ export function SessionList({ sessions, filter = "all" }: SessionListProps) {
     router.push(`/meeting/${sessionId}`)
   }
 
-  const handleJoinSessionStudent = (sessionId: string, sessionDate?: string, score?: number) => {
+  const handleJoinSessionStudent = (sessionId: string, sessionDate?: string) => {
     if (!user) return
 
     const completed = sessionDate ? new Date(sessionDate) < new Date() : false
-    const examPassed = score !== undefined && score >= 70
 
     if (!completed) {
       router.push(`/meeting/${sessionId}`)
-    } else if (examPassed) {
-      router.push(`/student/certificates?sessionId=${sessionId}`)
     } else {
       router.push(`/student/exam/${sessionId}`)
     }
@@ -92,8 +89,8 @@ export function SessionList({ sessions, filter = "all" }: SessionListProps) {
             <StudentSessionCard
               session={session as StudentSession}
               mentorName={session.owner_id || "Mentor"}
-              onJoin={() => handleJoinSessionStudent(session.room_id, session.date_time, (session as StudentSession).score)}
-              onViewCertificate={() => router.push(`/student/certificates?sessionId=${session.room_id}`)}
+              onJoin={() => handleJoinSessionStudent(session.room_id, session.date_time)}
+              onViewCertificate={() => router.push(`/student/exam/${session.room_id}`)}
             />
           ) : (
             <MentorSessionCard

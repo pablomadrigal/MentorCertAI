@@ -53,7 +53,7 @@ export function CertificateCard({ id, issueDate, score, image, onDownload, onVie
         </CardHeader>
         <CardContent className="flex-1 flex flex-col pt-0">
           <div className="flex-1 flex flex-col">
-            <div className="relative h-52 w-full overflow-hidden rounded-md flex-shrink-0 mb-3 bg-surface-lighter">
+            <div className="relative h-72 w-full overflow-hidden rounded-md flex-shrink-0 mb-3 bg-surface-lighter">
               {isBase64 ? (
                 <img
                   src={url}
