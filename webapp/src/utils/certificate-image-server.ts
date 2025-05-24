@@ -35,6 +35,7 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
       ` : ''}
     </svg>
   `;
+  console.log("svgContent", svgContent)
 
   try {
     const buffer = await svgToPng(svgContent, {
