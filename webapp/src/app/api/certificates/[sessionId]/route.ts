@@ -25,8 +25,8 @@ export const GET = (
 
     const { data, error } = await supabase
       .from('certificates')
-      .select('nft_metadata, image')
-      .eq('sessionId', sessionId)
+      .select('*')
+      .eq('session_id', sessionId)
       .single();
 
     if (error) {
@@ -35,14 +35,13 @@ export const GET = (
     }
 
     if (!data) {
-      console.log('No certificate found for sessionId:', sessionId);
       return NextResponse.json(
         { error: 'NFT no encontrado' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ ...data.nft_metadata, image: data.image ?? `${process.env.MENTOR_CERT_AI_URL}/data-science-certificate.png` });
+    return NextResponse.json({ ...data.nft_metadata, image: data.image ?? `${process.env.MENTOR_CERT_AI_URL}/data-science-certificate.png`, ...data });
   } catch (error) {
     console.error("Error obteniendo NFT:", error);
     if (error instanceof Error) {

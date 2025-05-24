@@ -1,3 +1,5 @@
+import { ExamData } from "./exam"
+
 export type FilterType = "all" | "upcoming" | "completed"
 
 export interface ApiSession {
@@ -18,7 +20,7 @@ export interface Session {
 export interface SessionByPerson {
   room_id: string
   user_id: string
-  exam?: JSON
+  exam?: JSON | ExamData
   score?: number
 }
 
@@ -32,7 +34,7 @@ export interface SessionListProps {
   sessions: Session[]
   filter?: "all" | "upcoming" | "completed"
   loading?: boolean
-} 
+}
 
 export interface SessionCardProps {
   dateTime: string

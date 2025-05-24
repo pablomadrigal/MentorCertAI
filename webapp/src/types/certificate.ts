@@ -16,6 +16,7 @@ export interface CertificateCardProps {
   issueDate: string
   score: number
   image?: string
+  nft_id: number
   onDownload: () => void
   onViewNFT: () => void
   onDownloadPNG: () => void

@@ -9,7 +9,7 @@ import { CertificateCardProps } from "@/types/certificate"
 import { useImage } from "@/hooks/useImage"
 import { useState, useEffect } from "react"
 
-export function CertificateCard({ id, issueDate, score, image, onDownload, onViewNFT, onDownloadPNG, isGeneratingPDF }: CertificateCardProps) {
+export function CertificateCard({ id, issueDate, score, image, onDownload, onViewNFT, onDownloadPNG, isGeneratingPDF, nft_id }: CertificateCardProps) {
   const [imageError, setImageError] = useState(false)
   const [currentImage, setCurrentImage] = useState(image)
 
@@ -93,12 +93,12 @@ export function CertificateCard({ id, issueDate, score, image, onDownload, onVie
               >
                 {isGeneratingPDF ? "Generating..." : "Download PDF"}
               </Button>
-              <Button
+              {nft_id && <Button
                 onClick={onViewNFT}
                 className="flex-1 bg-[#36b9f3] text-white hover:brightness-110 hover:shadow-md transition-all duration-300"
               >
                 View NFT
-              </Button>
+              </Button>}
               <Button
                 onClick={onDownloadPNG}
                 className="flex-1 bg-accent-main text-primary-dark hover:from-accent-main hover:to-accent-dark transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg"
