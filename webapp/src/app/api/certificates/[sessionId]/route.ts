@@ -27,6 +27,8 @@ export const GET = (
       .from('certificates')
       .select('*')
       .eq('session_id', sessionId)
+      .order('date', { ascending: false })
+      .limit(1)
       .single();
 
     if (error) {
