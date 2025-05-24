@@ -21,7 +21,8 @@
     "node-html-to-image": "^5.0.0",
     "sharp": "^0.34.2",
     "starknet": "^6.24.1",
-    "svg-to-png": "^4.0.0"
+    "svg-to-png": "^4.0.0",
+    "svg2img": "^1.0.0-beta.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

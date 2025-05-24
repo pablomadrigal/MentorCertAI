@@ -1,5 +1,5 @@
 import { Certificate } from "@/types/certificate"
-import { svgToPng } from 'svg-to-png'
+import svg2img from 'svg2img'
 
 export const generateCertificateBase64Server = async (certificate: Certificate, userName: string, transactionHash?: string) => {
   // Create a simple SVG with the certificate content
@@ -35,16 +35,17 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
       ` : ''}
     </svg>
   `;
-  console.log("svgContent", svgContent)
 
   try {
-    const buffer = await svgToPng(svgContent, {
-      width: 760,
-      height: 600,
-      quality: 0.6
+    return new Promise((resolve, reject) => {
+      svg2img(svgContent, { format: 'png', quality: 60 }, (error: Error | null, buffer: Buffer) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(`data:image/png;base64,${buffer.toString('base64')}`);
+      });
     });
-
-    return `data:image/png;base64,${buffer.toString('base64')}`;
   } catch (error) {
     console.error('Error generating certificate:', error);
     throw error;
