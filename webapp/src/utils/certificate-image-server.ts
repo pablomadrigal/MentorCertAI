@@ -5,11 +5,6 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
   // Create a simple SVG with the certificate content
   const svgContent = `
     <svg width="760" height="600" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <style>
-          text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        </style>
-      </defs>
       <rect width="760" height="600" fill="white"/>
       <rect x="0" y="0" width="760" height="8" fill="#38bdf8"/>
       <rect x="0" y="592" width="760" height="8" fill="#3DDC97"/>
@@ -58,4 +53,4 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
     console.error('Error generating certificate:', error);
     throw error;
   }
-} 
+}
