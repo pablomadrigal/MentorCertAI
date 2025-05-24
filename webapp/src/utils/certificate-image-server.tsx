@@ -5,6 +5,8 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
     try {
         const response = new ImageResponse(
             <div style={{
+                display: 'flex',
+                flexDirection: 'column',
                 width: '760px',
                 margin: '0 auto',
                 background: '#fff',
@@ -17,6 +19,7 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
                 border: '2px solid #7B61FF'
             }}>
                 <div style={{
+                    display: 'block',
                     borderTop: '8px solid #38bdf8',
                     borderRadius: '8px 8px 0 0',
                     width: '100%',
@@ -45,7 +48,8 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
                     marginBottom: '32px'
                 }}>This certificate is presented to</p>
                 <div style={{
-                    textAlign: 'center',
+                    display: 'flex',
+                    justifyContent: 'center',
                     marginBottom: '16px'
                 }}>
                     <span style={{
@@ -58,7 +62,9 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
                     }}>{userName}</span>
                 </div>
                 <div style={{
-                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
                     fontSize: '18px',
                     color: '#475569',
                     marginBottom: '24px'
@@ -67,7 +73,8 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
                     with a grade of <span style={{ color: '#2AB77A', fontWeight: 'bold' }}>{certificate.score}</span>
                 </div>
                 <div style={{
-                    textAlign: 'center',
+                    display: 'flex',
+                    justifyContent: 'center',
                     fontSize: '14px',
                     color: '#64748b',
                     marginBottom: '32px',
@@ -83,7 +90,7 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
                     alignItems: 'flex-end',
                     marginTop: '48px'
                 }}>
-                    <div style={{ textAlign: 'left' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
                         <div style={{ fontSize: '14px', color: '#64748b' }}>Date Issued</div>
                         <div style={{
                             fontSize: '16px',
@@ -94,8 +101,8 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
                             paddingBottom: '10px'
                         }}>{new Date(certificate.date).toLocaleDateString()}</div>
                     </div>
-                    <div style={{ textAlign: 'center', flex: 1 }} />
-                    <div style={{ textAlign: 'right' }}>
+                    <div style={{ display: 'flex', flex: 1 }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'right' }}>
                         <div style={{ fontSize: '14px', color: '#64748b' }}>Certificate ID</div>
                         <div style={{
                             fontSize: '16px',
@@ -114,7 +121,7 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
                         alignItems: 'flex-end',
                         marginTop: '40px'
                     }}>
-                        <div style={{ textAlign: 'center', flex: 1 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'center', flex: 1 }}>
                             <div style={{ fontSize: '14px', color: '#64748b' }}>Transaction Hash</div>
                             <div style={{
                                 fontSize: '13px',
@@ -128,6 +135,7 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
                     </div>
                 )}
                 <div style={{
+                    display: 'block',
                     borderBottom: '8px solid #3DDC97',
                     borderRadius: '0 0 8px 8px',
                     width: '100%',

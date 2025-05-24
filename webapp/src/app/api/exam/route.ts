@@ -192,22 +192,23 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
         { status: 500 }
       );
     }
-    // Generate the blockcert package
-    const { blockcertPackage, txHash, nft_id } = await generateBlockcertPackage(user, session, score);
 
     const certificate: Certificate = {
-      nft_id: nft_id.toString(),
       user_id: user.sub as number,
       date: session.date_time ?? new Date().toISOString(),
       image: "",
       score,
       session_id: session.room_id,
-      theme: session.theme,
-      nft_transaction: txHash,
-      certificate_metadata: blockcertPackage,
+      theme: session.theme
     };
 
-    const image = await generateCertificateBase64Server(certificate, user.user_metadata?.full_name ?? "", txHash) as string;
+    console.log("certificate", certificate)
+    console.log("Generating certificate image")
+    const image = await generateCertificateBase64Server(certificate, user.user_metadata?.full_name ?? "") as string;
+
+    // Generate the blockcert package
+    const { blockcertPackage, txHash, nft_id } = await generateBlockcertPackage(user, session, score);
+
 
     const nft_metadata: NFTMetadata = {
       name: session.theme,
@@ -221,6 +222,9 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
       ]
     };
 
+    certificate.nft_id = nft_id.toString();
+    certificate.nft_transaction = txHash;
+    certificate.certificate_metadata = blockcertPackage;
     certificate.nft_metadata = nft_metadata;
     certificate.image = image;
 
