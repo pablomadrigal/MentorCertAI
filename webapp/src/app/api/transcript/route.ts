@@ -6,11 +6,11 @@ import { createClient } from '@supabase/supabase-js';
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROL!, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
   }
+}
 );
 
 export async function GET(request: Request) {
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
 
     // List blobs with the room ID prefix
     const { blobs } = await list({ prefix: `transcripts/${roomId}` });
-    
+
     if (blobs.length === 0) {
       return NextResponse.json(
         { success: false, message: 'Transcript not found' },
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     // Create a unique filename with timestamp
     const timestamp = new Date().toISOString();
     const filename = `transcripts/${data.room}/${timestamp}.json`;
-    
+
     // Upload to Vercel Blob
     const blob = await put(filename, JSON.stringify(data, null, 2), {
       access: 'public',
@@ -80,14 +80,15 @@ export async function POST(request: Request) {
       .eq('room_id', data.room);
 
     if (error) {
+      console.error('Error updating session:', error);
       return NextResponse.json(
         { success: false, message: 'Transcript file saved but session not updated' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: 'Transcript saved successfully',
       url: blob.url
     });

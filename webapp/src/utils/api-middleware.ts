@@ -29,7 +29,7 @@ export async function withAuth(
 ) {
   try {
     const authHeader = req.headers.get('Authorization')
-    
+
     if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json(
         { error: 'Missing or invalid authorization header' },
@@ -38,10 +38,9 @@ export async function withAuth(
     }
 
     const token = authHeader.replace('Bearer ', '')
-    
+
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload
-    if(decoded?.user_metadata?.role) decoded.role = decoded.role as string
-    
+    if (decoded?.user_metadata?.role) decoded.role = decoded.role as string
     return handler(req, decoded)
   } catch (error: unknown) {
     console.error('JWT verification failed:', error)

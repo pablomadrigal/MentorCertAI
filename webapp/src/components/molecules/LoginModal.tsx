@@ -81,6 +81,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         email,
       })
       await get(`/wallet`)
+      await supabase.auth.refreshSession();
       if (error) throw error
       onClose()
     } catch (error) {
