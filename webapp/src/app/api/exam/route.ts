@@ -207,7 +207,7 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
       certificate_metadata: blockcertPackage,
     };
 
-    const image = await generateCertificateBase64Server(certificate, user.user_metadata?.full_name ?? "", txHash);
+    const image = await generateCertificateBase64Server(certificate, user.user_metadata?.full_name ?? "", txHash) as string;
 
     const nft_metadata: NFTMetadata = {
       name: session.theme,
