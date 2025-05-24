@@ -11,10 +11,11 @@ const supabase = createClient(
 // GET - Obtener NFT por ID
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id: nft_id } = await params;
+    const nft_id = params.id;
+    console.log("Fetching NFT with ID:", nft_id);
 
     if (!nft_id) {
       return NextResponse.json(
@@ -30,15 +31,23 @@ export async function GET(
       .single();
 
     if (error) {
+      console.error("Supabase error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     if (!data) {
+      console.log("No NFT found for ID:", nft_id);
       return NextResponse.json(
         { error: 'NFT no encontrado' },
         { status: 404 }
       );
     }
+
+    console.log("NFT data found:", {
+      hasMetadata: !!data.nft_metadata,
+      hasImage: !!data.image,
+      imageType: data.image?.substring(0, 20) // Log first 20 chars of image
+    });
 
     // Format metadata for Voyager
     const metadata = {
@@ -54,7 +63,7 @@ export async function GET(
   } catch (error) {
     console.error("Error obteniendo NFT:", error);
     return NextResponse.json(
-      { error: "Error al obtener el NFT" },
+      { error: "Error al obtener el NFT", details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
