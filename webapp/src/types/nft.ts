@@ -1,10 +1,10 @@
 export interface NFT {
-    nft_id: number
-    certificateId?: number
-    nft_transaction: string
-    nft_metadata?: NFTMetadata
-    image?: string
-} 
+  nft_id?: number
+  certificateId?: number
+  nft_transaction?: string
+  nft_metadata?: NFTMetadata
+  image?: string
+}
 
 export interface NFTMetadata {
   name?: string
@@ -17,10 +17,10 @@ export interface NFTMetadata {
 }
 
 export interface NFTListProps {
-    nfts: NFT[]
-    isLoading: boolean
+  nfts: NFT[]
+  isLoading: boolean
 }
 
 export interface NFTDisplayComponentProps {
-    nft: NFT
+  nft: NFT
 }

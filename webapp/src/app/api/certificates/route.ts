@@ -12,11 +12,12 @@ const supabase = createClient(
 // GET - Obtener todos los certificados por usuario
 export const GET = (request: Request) => withAuth(request, async (req, user) => {
   try {
-
     const { data, error } = await supabase
       .from('certificates')
       .select("*")
       .eq('user_id', user.sub)
+      .order('created_at', { ascending: false })
+      .limit(1)
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
