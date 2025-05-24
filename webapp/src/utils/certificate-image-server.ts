@@ -36,6 +36,8 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
     </svg>
   `;
 
+  console.log("svgContent !", svgContent)
+
   try {
     return new Promise((resolve, reject) => {
       svg2img(svgContent, { format: 'png', quality: 60 }, (error: Error | null, buffer: Buffer) => {
