@@ -1,5 +1,5 @@
 import { Certificate } from "@/types/certificate"
-import sharp from 'sharp'
+import { svgToPng } from 'svg-to-png'
 
 export const generateCertificateBase64Server = async (certificate: Certificate, userName: string, transactionHash?: string) => {
   // Create a simple SVG with the certificate content
@@ -35,20 +35,16 @@ export const generateCertificateBase64Server = async (certificate: Certificate, 
       ` : ''}
     </svg>
   `;
+  console.log("svgContent", svgContent)
 
   try {
-    // Convert SVG to PNG using sharp
-    const imageBuffer = await sharp(Buffer.from(svgContent))
-      .resize(760, 600)
-      .png()
-      .toBuffer();
+    const buffer = await svgToPng(svgContent, {
+      width: 760,
+      height: 600,
+      quality: 0.6
+    });
 
-    // Compress image
-    const compressedBuffer = await sharp(imageBuffer)
-      .png({ quality: 60, compressionLevel: 8 })
-      .toBuffer();
-
-    return `data:image/png;base64,${compressedBuffer.toString('base64')}`;
+    return `data:image/png;base64,${buffer.toString('base64')}`;
   } catch (error) {
     console.error('Error generating certificate:', error);
     throw error;
