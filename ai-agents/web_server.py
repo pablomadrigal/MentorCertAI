@@ -75,6 +75,7 @@ async def generate_certificate(request):
 
         # Convert to base64
         base64_image = base64.b64encode(compressed_bytes).decode('utf-8')
+        print(f"Certificate generated successfully")
         return web.Response(text=f"data:image/png;base64,{base64_image}")
 
     except Exception as e:
