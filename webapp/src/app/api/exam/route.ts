@@ -209,6 +209,9 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
     const [certificateImageData, blockcertData] = await Promise.all([
       fetch(`${PYTHON_SERVER}/certificate/generate`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
           certificate: {
             id: session.room_id,
@@ -229,8 +232,9 @@ export const POST = (request: Request) => withAuth(request, async (req, user) =>
             });
             throw new Error(`Certificate generation failed: ${errorText}`);
           }
+          const data = await res.text();
           console.log('Certificate image generated successfully');
-          return res.text();
+          return `${data}`;
         })
         .catch(error => {
           console.error('Error generating certificate:', error);
