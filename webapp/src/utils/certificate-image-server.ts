@@ -1,19 +1,25 @@
 import { Certificate } from "@/types/certificate"
-import { ImageResponse } from '@vercel/og'
-import { generateCertificateHTML } from './certificate-image'
+import nodeHtmlToImage from 'node-html-to-image'
+import { generateCertificateHTML } from "./certificate-image";
+import sharp from 'sharp'
 
-export const generateCertificateBase64Server = async (certificate: Certificate, userName: string, transactionHash?: string): Promise<string> => {
-  try {
-    const htmlContent = generateCertificateHTML(certificate, userName, transactionHash)
-    const response = new ImageResponse(htmlContent, {
-      width: 760,
-      height: 600,
-    })
 
-    const buffer = await response.arrayBuffer()
-    return `data:image/png;base64,${Buffer.from(buffer).toString('base64')}`
-  } catch (error) {
-    console.error('Error generating certificate:', error)
-    throw error
-  }
-}
+export const generateCertificateBase64Server = async (certificate: Certificate, userName: string, transactionHash?: string) => {
+  const html = generateCertificateHTML(certificate, userName, transactionHash);
+
+  const imageBuffer = await nodeHtmlToImage({
+    html,
+    type: 'png',
+    quality: 100,
+    puppeteerArgs: {
+      args: ['--no-sandbox']
+    }
+  });
+
+  // Compress image
+  const compressedBuffer = await sharp(imageBuffer)
+    .png({ quality: 60, compressionLevel: 8 })
+    .toBuffer();
+
+  return `data:image/png;base64,${compressedBuffer.toString('base64')}`;
+} 

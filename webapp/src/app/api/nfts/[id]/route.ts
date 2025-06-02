@@ -42,12 +42,6 @@ export async function GET(
       );
     }
 
-    console.log("NFT data found:", {
-      hasMetadata: !!data.nft_metadata,
-      hasImage: !!data.image,
-      imageType: data.image?.substring(0, 20) // Log first 20 chars of image
-    });
-
     // Format metadata for Voyager
     const metadata = {
       name: data.nft_metadata?.name || `Certificate #${nft_id}`,
