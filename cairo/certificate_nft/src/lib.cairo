@@ -92,7 +92,9 @@ mod MentorCertNFT {
         minter: ContractAddress,
         upgrader: ContractAddress,
     ) {
-        self.erc721.initializer("MentorCertNFT", "MCNFT", "");
+        self
+            .erc721
+            .initializer("MentorCertNFT", "MCNFT", "https://mentor-cert-ai.vercel.app/api/nfts/");
         self.accesscontrol.initializer();
         self.erc721_enumerable.initializer();
         self.accesscontrol._grant_role(DEFAULT_ADMIN_ROLE, default_admin);
@@ -119,6 +121,12 @@ mod MentorCertNFT {
         fn add_admin(ref self: ContractState, new_admin: ContractAddress) {
             self.accesscontrol.assert_only_role(DEFAULT_ADMIN_ROLE);
             self.accesscontrol._grant_role(DEFAULT_ADMIN_ROLE, new_admin);
+        }
+
+        #[external(v0)]
+        fn add_minter(ref self: ContractState, new_minter: ContractAddress) {
+            self.accesscontrol.assert_only_role(DEFAULT_ADMIN_ROLE);
+            self.accesscontrol._grant_role(MINTER_ROLE, new_minter);
         }
 
         #[external(v0)]
@@ -154,7 +162,10 @@ mod MentorCertNFT {
             token_id: u256,
             data: felt252,
         ) {
-            self.accesscontrol.assert_only_role(MINTER_ROLE);
+            let caller = starknet::get_caller_address();
+            let has_minter_role = self.accesscontrol.has_role(MINTER_ROLE, caller);
+            let has_admin_role = self.accesscontrol.has_role(DEFAULT_ADMIN_ROLE, caller);
+            assert(has_minter_role || has_admin_role, 'Caller is not minter or admin');
 
             // Check if user has reached their mint limit
             let current_count = self.mint_counts.read(recipient);
