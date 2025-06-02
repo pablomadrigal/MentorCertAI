@@ -93,7 +93,7 @@ export default function RoomPage() {
         dynacast: true,
     }));
 
-    const livekitAIAgentURL = process.env.NEXT_PUBLIC_LIVEKIT_AI_AGENT_URL ?? "https://mentorcertai.onrender.com/health";
+    const livekitAIAgentURL = process.env.NEXT_PUBLIC_LIVEKIT_AI_AGENT_URL ?? "https://mentorcertai.onrender.com";
 
     const handleDisconnect = () => {
         setEnterRoom(false);
@@ -103,7 +103,7 @@ export default function RoomPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(livekitAIAgentURL)
+                const response = await fetch(`${livekitAIAgentURL}/health`)
                 if (response) setIsLoading(false)
             } catch (error) {
                 console.error("Error fetching data:", error)

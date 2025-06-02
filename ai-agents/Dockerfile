@@ -11,6 +11,7 @@ RUN apt-get update && \
     gcc \
     python3-dev \
     build-essential \
+    wkhtmltopdf \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first to leverage Docker cache
